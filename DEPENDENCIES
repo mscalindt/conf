@@ -1,0 +1,22 @@
+  This file lists external dependencies used in conf.
+  Formatted by fields for easier automated parsing.
+  New entries are added at the end.
+  The fields are to appear respectively:
+  - web address (W)
+  - name (N)
+  - copyright notice (C)
+  - description (D)
+  - version (V)
+  - license name (L)
+  - SPDX license identifier (S)
+  - author name (A)
+  - maintainer email (E)
+
+---
+
+W: https://github.com/mscalindt/syscfg
+N: syscfg
+C: Copyright (C) 2021 Dimitar Yurukov <mscalindt@protonmail.com>
+L: KEYCLA 1.0 License
+A: Dimitar Yurukov
+E: mscalindt@protonmail.com
