@@ -8,7 +8,7 @@
 
 My system configuration/dotfiles. Managed with `syscfg`.
 
-[syscfg at GitHub](https://github.com/mscalindt/syscfg)
+[syscfg at GitHub](https://github.com/mscalindt/syscfg)\
 [syscfg at GitLab](https://gitlab.com/mscalindt/syscfg)
 
 ## License
