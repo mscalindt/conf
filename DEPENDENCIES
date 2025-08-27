@@ -2,6 +2,7 @@
   Formatted by fields for easier automated parsing.
   New entries are added at the end.
   The fields are to appear respectively:
+  - git tag name (T)
   - web address (W)
   - name (N)
   - copyright notice (C)
