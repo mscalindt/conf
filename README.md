@@ -1,8 +1,9 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [License](#license)
-3. [Notice](#notice)
+2. [Releases](#releases)
+3. [License](#license)
+4. [Notice](#notice)
 
 ## Introduction
 
@@ -10,6 +11,14 @@ My system configuration/dotfiles. Managed with `syscfg`.
 
 [syscfg at GitHub](https://github.com/mscalindt/syscfg)\
 [syscfg at GitLab](https://gitlab.com/mscalindt/syscfg)
+
+## Releases
+
+Source code releases follow the `YYYYMMDD` format.
+
+To list the available releases, check out the available tags or use `git tag`.
+
+For updates on recent changes, see the [NEWS](NEWS) file.
 
 ## License
 
