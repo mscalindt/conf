@@ -10,7 +10,8 @@
 The system configuration/dotfiles of `mscalindt`. Managed with `syscfg`.
 
 [syscfg at GitHub](https://github.com/mscalindt/syscfg)\
-[syscfg at GitLab](https://gitlab.com/mscalindt/syscfg)
+[syscfg at GitLab](https://gitlab.com/mscalindt/syscfg)\
+[syscfg at Codeberg](https://codeberg.org/mscalindt/syscfg)
 
 ## Releases
 
