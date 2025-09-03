@@ -13,31 +13,19 @@
 #   Subdevices: 1/1
 #   Subdevice #0: subdevice #0
 _alsa_conf() {
-    FILE_PATH \
-<<'ASOUND_CONF'
-/etc/asound.conf
-ASOUND_CONF
+    OBJ=\
+'defaults.pcm.rate_converter "speexrate_medium"
+'
+    [ ! "$audio_hq_resamp" ] || OBJ=\
+'defaults.pcm.rate_converter "speexrate_best"
+'
 
-    if [ "$audio_hq_resamp" = 1 ]; then
-        FILE \
-<<'ASOUND_CONF'
-defaults.pcm.rate_converter "speexrate_best"
-ASOUND_CONF
-    else
-        FILE \
-<<'ASOUND_CONF'
-defaults.pcm.rate_converter "speexrate_medium"
-ASOUND_CONF
-    fi
-
-    if [ "$m533ia" = 1 ]; then
-        FILE \
-<<'ASOUND_CONF'
-defaults.pcm.card 1
+    [ ! "$m533ia" ] || OBJ="$OBJ"\
+'defaults.pcm.card 1
 defaults.ctl.card 1
-ASOUND_CONF
-    fi
+'
 
+    OBJ_PATH='/etc/asound.conf'
     __file_write;
 }
 
@@ -76,16 +64,26 @@ ASOUND_CONF
 #
 # An alternative to systemd shall be considered.
 _autostart() {
-    if [ "$init" = systemd ]; then
-        if [ "$bluetooth" = 1 ]; then
-            FILE_PATH \
-<<'BLUETOOTH_SERVICE'
-/etc/systemd/system/bluetooth.service
-BLUETOOTH_SERVICE
+    ___AT_SPI_DBUS_BUS_SERVICE() {
+        [ ! "${1:-$arch_linux}" ] && {
+            OBJ_PATH="$home/.config/systemd/user/at-spi-dbus-bus.service"
+            __loc_delete;
+        } || {
+            OBJ='/dev/null'
+            OBJ_PATH="$home/.config/systemd/user/at-spi-dbus-bus.service"
+            __loc_target_link_overwrite;
+        }
+    }
+    ___BLUETOOTH_SERVICE() {
+        [ ! "${1:-$bluetooth}" ] && {
+            OBJ_PATH='/etc/systemd/system/bluetooth.service'
+            __loc_delete;
 
-            FILE \
-<<'BLUETOOTH_SERVICE'
-[Unit]
+            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluetooth.service'
+            __loc_delete;
+        } || {
+            OBJ=\
+'[Unit]
 Description=Bluetooth service
 Requires=dbus.service
 After=dbus.service
@@ -98,47 +96,26 @@ TimeoutStopSec=3
 
 [Install]
 WantedBy=multi-user.target
-BLUETOOTH_SERVICE
+'
 
+            OBJ_PATH='/etc/systemd/system/bluetooth.service'
             __file_write;
 
-            FILE_PATH \
-<<'BLUETOOTH_SERVICE'
-/etc/systemd/system/bluetooth.service
-BLUETOOTH_SERVICE
-
-            FILE_PATH_TARGET \
-<<'BLUETOOTH_SERVICE'
-/etc/systemd/system/multi-user.target.wants/bluetooth.service
-BLUETOOTH_SERVICE
-
+            OBJ='/etc/systemd/system/bluetooth.service'
+            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluetooth.service'
             __loc_target_link_overwrite;
-        else
-            FILE_PATH \
-<<'BLUETOOTH_SERVICE'
-/etc/systemd/system/bluetooth.service
-BLUETOOTH_SERVICE
-
+        }
+    }
+    ___DNSMASQ_SERVICE() {
+        [ ! "${1:-$dns0}" = dnsmasq ] && {
+            OBJ_PATH='/etc/systemd/system/dnsmasq.service'
             __loc_delete;
 
-            FILE_PATH \
-<<'BLUETOOTH_SERVICE'
-/etc/systemd/system/multi-user.target.wants/bluetooth.service
-BLUETOOTH_SERVICE
-
+            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/dnsmasq.service'
             __loc_delete;
-        fi
-
-        if [ "$dns" = localhost ]; then
-            if [ "$dns0" = dnsmasq ]; then
-                FILE_PATH \
-<<'DNSMASQ_SERVICE'
-/etc/systemd/system/dnsmasq.service
-DNSMASQ_SERVICE
-
-                FILE \
-<<'DNSMASQ_SERVICE'
-[Unit]
+        } || {
+            OBJ=\
+'[Unit]
 Description=Caching DNS server
 Wants=dbus.service
 
@@ -149,120 +126,65 @@ TimeoutStopSec=3
 
 [Install]
 WantedBy=multi-user.target
-DNSMASQ_SERVICE
+'
 
-                __file_write;
+            OBJ_PATH='/etc/systemd/system/dnsmasq.service'
+            __file_write;
 
-                FILE_PATH \
-<<'DNSMASQ_SERVICE'
-/etc/systemd/system/dnsmasq.service
-DNSMASQ_SERVICE
-
-                FILE_PATH_TARGET \
-<<'DNSMASQ_SERVICE'
-/etc/systemd/system/multi-user.target.wants/dnsmasq.service
-DNSMASQ_SERVICE
-
-                __loc_target_link_overwrite;
-            elif [ "$dns0" = none ] || [ ! "$dns0" ]; then
-                FILE_PATH \
-<<'DNSMASQ_SERVICE'
-/etc/systemd/system/dnsmasq.service
-DNSMASQ_SERVICE
-
-                __loc_delete;
-
-                FILE_PATH \
-<<'DNSMASQ_SERVICE'
-/etc/systemd/system/multi-user.target.wants/dnsmasq.service
-DNSMASQ_SERVICE
-
-                __loc_delete;
-            fi
-        elif [ "$dns" = none ] || [ ! "$dns" ]; then
-            FILE_PATH \
-<<'DNSMASQ_SERVICE'
-/etc/systemd/system/dnsmasq.service
-DNSMASQ_SERVICE
-
+            OBJ='/etc/systemd/system/dnsmasq.service'
+            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/dnsmasq.service'
+            __loc_target_link_overwrite;
+        }
+    }
+    ___EVTEST_GRAB_SERVICE() {
+        [ ! "${1:-$m533ia}" ] && {
+            OBJ_PATH='/etc/systemd/system/evtest-grab.service'
             __loc_delete;
 
-            FILE_PATH \
-<<'DNSMASQ_SERVICE'
-/etc/systemd/system/multi-user.target.wants/dnsmasq.service
-DNSMASQ_SERVICE
-
+            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/evtest-grab.service'
             __loc_delete;
-        fi
-
-        if [ "$m533ia" = 1 ]; then
-            FILE_PATH \
-<<'EVTEST_GRAB_SERVICE'
-/etc/systemd/system/evtest-grab.service
-EVTEST_GRAB_SERVICE
-
-            FILE \
-<<'EVTEST_GRAB_SERVICE'
-[Unit]
+        } || {
+            OBJ=\
+'[Unit]
 Description=Grab m533ia keyboard at startup
 
 [Service]
 Type=simple
-ExecStart=/bin/bash -c '\
-device="$(/usr/bin/awk '\''\
+ExecStart=/bin/bash -c '\''\
+device="$(/usr/bin/awk '\''\'\'''\''\
 /AT Translated Set 2 keyboard/ { found=1; next } \
 found && /Handlers=/ { \
   for (i=1; i<=NF; i++) \
     if ($i ~ /^event[0-9]+$/) { \
       print "/dev/input/" $i; exit \
     } \
-}'\'' /proc/bus/input/devices)"; \
-exec /usr/bin/evtest --grab "$device"'
+}'\''\'\'''\'' /proc/bus/input/devices)"; \
+exec /usr/bin/evtest --grab "$device"'\''
 User=root
 StandardOutput=null
 
 [Install]
 WantedBy=multi-user.target
-EVTEST_GRAB_SERVICE
+'
 
+            OBJ_PATH='/etc/systemd/system/evtest-grab.service'
             __file_write;
 
-            FILE_PATH \
-<<'EVTEST_GRAB_SERVICE'
-/etc/systemd/system/evtest-grab.service
-EVTEST_GRAB_SERVICE
-
-            FILE_PATH_TARGET \
-<<'EVTEST_GRAB_SERVICE'
-/etc/systemd/system/multi-user.target.wants/evtest-grab.service
-EVTEST_GRAB_SERVICE
-
+            OBJ='/etc/systemd/system/evtest-grab.service'
+            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/evtest-grab.service'
             __loc_target_link_overwrite;
-        else
-            FILE_PATH \
-<<'EVTEST_GRAB_SERVICE'
-/etc/systemd/system/evtest-grab.service
-EVTEST_GRAB_SERVICE
-
+        }
+    }
+    ___IWD_SERVICE() {
+        [ ! "${1:-$wland}" = iwd ] && {
+            OBJ_PATH='/etc/systemd/system/iwd.service'
             __loc_delete;
 
-            FILE_PATH \
-<<'EVTEST_GRAB_SERVICE'
-/etc/systemd/system/multi-user.target.wants/evtest-grab.service
-EVTEST_GRAB_SERVICE
-
+            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/iwd.service'
             __loc_delete;
-        fi
-
-        if [ "$wland" = iwd ]; then
-            FILE_PATH \
-<<'IWD_SERVICE'
-/etc/systemd/system/iwd.service
-IWD_SERVICE
-
-            FILE \
-<<'IWD_SERVICE'
-[Unit]
+        } || {
+            OBJ=\
+'[Unit]
 Description=Wireless service
 
 [Service]
@@ -270,46 +192,26 @@ ExecStart=/usr/lib/iwd/iwd
 
 [Install]
 WantedBy=multi-user.target
-IWD_SERVICE
+'
 
+            OBJ_PATH='/etc/systemd/system/iwd.service'
             __file_write;
 
-            FILE_PATH \
-<<'IWD_SERVICE'
-/etc/systemd/system/iwd.service
-IWD_SERVICE
-
-            FILE_PATH_TARGET \
-<<'IWD_SERVICE'
-/etc/systemd/system/multi-user.target.wants/iwd.service
-IWD_SERVICE
-
+            OBJ='/etc/systemd/system/iwd.service'
+            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/iwd.service'
             __loc_target_link_overwrite;
-        elif [ "$wland" = none ] || [ ! "$wland" ]; then
-            FILE_PATH \
-<<'IWD_SERVICE'
-/etc/systemd/system/iwd.service
-IWD_SERVICE
-
+        }
+    }
+    ___MOC_SERVICE() {
+        [ ! "${1:-$audio_playerd}" = moc ] && {
+            OBJ_PATH="$home/.config/systemd/user/moc.service"
             __loc_delete;
 
-            FILE_PATH \
-<<'IWD_SERVICE'
-/etc/systemd/system/multi-user.target.wants/iwd.service
-IWD_SERVICE
-
+            OBJ_PATH="$home/.config/systemd/user/default.target.wants/moc.service"
             __loc_delete;
-        fi
-
-        if [ "$audio_playerd" = moc ]; then
-            FILE_PATH \
-<<MOC_SERVICE
-$home/.config/systemd/user/moc.service
-MOC_SERVICE
-
-            FILE \
-<<'MOC_SERVICE'
-[Unit]
+        } || {
+            OBJ=\
+'[Unit]
 Description=MOC server
 
 [Service]
@@ -320,46 +222,101 @@ TimeoutStopSec=3
 
 [Install]
 WantedBy=default.target
-MOC_SERVICE
+'
 
+            OBJ_PATH="$home/.config/systemd/user/moc.service"
             __file_write;
 
-            FILE_PATH \
-<<MOC_SERVICE
-$home/.config/systemd/user/moc.service
-MOC_SERVICE
-
-            FILE_PATH_TARGET \
-<<MOC_SERVICE
-$home/.config/systemd/user/default.target.wants/moc.service
-MOC_SERVICE
-
+            OBJ="$home/.config/systemd/user/moc.service"
+            OBJ_PATH="$home/.config/systemd/user/default.target.wants/moc.service"
             __loc_target_link_overwrite;
-        elif [ "$audio_playerd" = none ] || [ ! "$audio_playerd" ]; then
-            FILE_PATH \
-<<MOC_SERVICE
-$home/.config/systemd/user/moc.service
-MOC_SERVICE
+        }
+    }
+    ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE() {
+        [ ! "${1:-$arch_linux}" ] && {
+            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.impl.portal.desktop.gtk
+Exec=/usr/bin/true
+'
 
+            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service"
+            __file_write;
+        }
+    }
+    ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE() {
+        [ ! "${1:-$arch_linux}" ] && {
+            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.impl.portal.desktop.wlr
+Exec=/usr/bin/true
+'
+
+            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service"
+            __file_write;
+        }
+    }
+    ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE() {
+        [ ! "${1:-$arch_linux}" ] && {
+            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.PermissionStore.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.impl.portal.PermissionStore
+Exec=/usr/bin/true
+'
+
+            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.PermissionStore.service"
+            __file_write;
+        }
+    }
+    ___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE() {
+        [ ! "${1:-$arch_linux}" ] && {
+            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.portal.Desktop
+Exec=/usr/bin/true
+'
+
+            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service"
+            __file_write;
+        }
+    }
+    ___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE() {
+        [ ! "${1:-$arch_linux}" ] && {
+            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Documents.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.portal.Documents
+Exec=/usr/bin/true
+'
+
+            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Documents.service"
+            __file_write;
+        }
+    }
+    ___PIPEWIRE_SERVICE() {
+        [ ! "${1:-$audio_server}" = pipewire ] && {
+            OBJ_PATH="$home/.config/systemd/user/pipewire.service"
             __loc_delete;
 
-            FILE_PATH \
-<<MOC_SERVICE
-$home/.config/systemd/user/default.target.wants/moc.service
-MOC_SERVICE
-
+            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire.service"
             __loc_delete;
-        fi
-
-        if [ "$audio_server" = pipewire ]; then
-            FILE_PATH \
-<<PIPEWIRE_SERVICE
-$home/.config/systemd/user/pipewire.service
-PIPEWIRE_SERVICE
-
-            FILE \
-<<'PIPEWIRE_SERVICE'
-[Unit]
+        } || {
+            OBJ=\
+'[Unit]
 Description=PipeWire Multimedia Service
 
 [Service]
@@ -367,31 +324,26 @@ ExecStart=/usr/bin/pipewire
 
 [Install]
 WantedBy=default.target
-PIPEWIRE_SERVICE
+'
 
+            OBJ_PATH="$home/.config/systemd/user/pipewire.service"
             __file_write;
 
-            FILE_PATH \
-<<PIPEWIRE_SERVICE
-$home/.config/systemd/user/pipewire.service
-PIPEWIRE_SERVICE
-
-            FILE_PATH_TARGET \
-<<PIPEWIRE_SERVICE
-$home/.config/systemd/user/default.target.wants/pipewire.service
-PIPEWIRE_SERVICE
-
+            OBJ="$home/.config/systemd/user/pipewire.service"
+            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire.service"
             __loc_target_link_overwrite;
+        }
+    }
+    ___PIPEWIRE_MEDIA_SESSION_SERVICE() {
+        [ ! "${1:-$pipewire_manager}" = pipewire ] && {
+            OBJ_PATH="$home/.config/systemd/user/pipewire-media-session.service"
+            __loc_delete;
 
-            if [ "$pipewire_manager" = pipewire ]; then
-                FILE_PATH \
-<<PIPEWIRE_MEDIA_SESSION_SERVICE
-$home/.config/systemd/user/pipewire-media-session.service
-PIPEWIRE_MEDIA_SESSION_SERVICE
-
-                FILE \
-<<'PIPEWIRE_MEDIA_SESSION_SERVICE'
-[Unit]
+            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-media-session.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[Unit]
 Description=PipeWire Media Session Manager
 After=pipewire.service
 BindsTo=pipewire.service
@@ -402,45 +354,26 @@ ExecStart=/usr/bin/pipewire-media-session
 
 [Install]
 WantedBy=pipewire.service
-PIPEWIRE_MEDIA_SESSION_SERVICE
+'
 
-                __file_write;
+            OBJ_PATH="$home/.config/systemd/user/pipewire-media-session.service"
+            __file_write;
 
-                FILE_PATH \
-<<PIPEWIRE_MEDIA_SESSION_SERVICE
-$home/.config/systemd/user/pipewire-media-session.service
-PIPEWIRE_MEDIA_SESSION_SERVICE
+            OBJ="$home/.config/systemd/user/pipewire-media-session.service"
+            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-media-session.service"
+            __loc_target_link_overwrite;
+        }
+    }
+    ___PIPEWIRE_PULSE_SERVICE() {
+        [ ! "${1:-$audio_server}" = pipewire ] && {
+            OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.service"
+            __loc_delete;
 
-                FILE_PATH_TARGET \
-<<PIPEWIRE_MEDIA_SESSION_SERVICE
-$home/.config/systemd/user/pipewire.service.wants/pipewire-media-session.service
-PIPEWIRE_MEDIA_SESSION_SERVICE
-
-                __loc_target_link_overwrite;
-            elif [ "$pipewire_manager" = none ] || [ ! "$pipewire_manager" ]; then
-                FILE_PATH \
-<<PIPEWIRE_MEDIA_SESSION_SERVICE
-$home/.config/systemd/user/pipewire-media-session.service
-PIPEWIRE_MEDIA_SESSION_SERVICE
-
-                __loc_delete;
-
-                FILE_PATH \
-<<PIPEWIRE_MEDIA_SESSION_SERVICE
-$home/.config/systemd/user/pipewire.service.wants/pipewire-media-session.service
-PIPEWIRE_MEDIA_SESSION_SERVICE
-
-                __loc_delete;
-            fi
-
-            FILE_PATH \
-<<PIPEWIRE_PULSE_SERVICE
-$home/.config/systemd/user/pipewire-pulse.service
-PIPEWIRE_PULSE_SERVICE
-
-            FILE \
-<<'PIPEWIRE_PULSE_SERVICE'
-[Unit]
+            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-pulse.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[Unit]
 Description=PipeWire PulseAudio
 After=pipewire.service
 BindsTo=pipewire.service
@@ -450,74 +383,53 @@ ExecStart=/usr/bin/pipewire-pulse
 
 [Install]
 WantedBy=pipewire.service
-PIPEWIRE_PULSE_SERVICE
+'
 
+            OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.service"
             __file_write;
 
-            FILE_PATH \
-<<PIPEWIRE_PULSE_SERVICE
-$home/.config/systemd/user/pipewire-pulse.service
-PIPEWIRE_PULSE_SERVICE
-
-            FILE_PATH_TARGET \
-<<PIPEWIRE_PULSE_SERVICE
-$home/.config/systemd/user/pipewire.service.wants/pipewire-pulse.service
-PIPEWIRE_PULSE_SERVICE
-
+            OBJ="$home/.config/systemd/user/pipewire-pulse.service"
+            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-pulse.service"
             __loc_target_link_overwrite;
-        elif [ "$audio_server" = none ] || [ ! "$audio_server" ]; then
-            FILE_PATH \
-<<PIPEWIRE_SERVICE
-$home/.config/systemd/user/pipewire.service
-PIPEWIRE_SERVICE
-
+        }
+    }
+    ___PIPEWIRE_SOCKET() {
+        [ ! "${1:-$audio_server}" = pipewire ] && {
+            OBJ_PATH="$home/.config/systemd/user/pipewire.socket"
             __loc_delete;
-
-            FILE_PATH \
-<<PIPEWIRE_SERVICE
-$home/.config/systemd/user/default.target.wants/pipewire.service
-PIPEWIRE_SERVICE
-
+        } || {
+            OBJ='/dev/null'
+            OBJ_PATH="$home/.config/systemd/user/pipewire.socket"
+            __loc_target_link_overwrite;
+        }
+    }
+    ___PIPEWIRE_PULSE_SOCKET() {
+        [ ! "${1:-$audio_server}" = pipewire ] && {
+            OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.socket"
             __loc_delete;
-
-            FILE_PATH \
-<<PIPEWIRE_MEDIA_SESSION_SERVICE
-$home/.config/systemd/user/pipewire-media-session.service
-PIPEWIRE_MEDIA_SESSION_SERVICE
-
+        } || {
+            OBJ='/dev/null'
+            OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.socket"
+            __loc_target_link_overwrite;
+        }
+    }
+    ___RTKIT_DAEMON_SERVICE() {
+        [ ! "${1:-$arch_linux}" ] && {
+            OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
             __loc_delete;
-
-            FILE_PATH \
-<<PIPEWIRE_MEDIA_SESSION_SERVICE
-$home/.config/systemd/user/pipewire.service.wants/pipewire-media-session.service
-PIPEWIRE_MEDIA_SESSION_SERVICE
-
+        } || {
+            OBJ='/dev/null'
+            OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
+            __loc_target_link_overwrite;
+        }
+    }
+    ___XDG_DESKTOP_PORTAL_SERVICE() {
+        [ ! "${1:-$portal}" ] && {
+            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal.service"
             __loc_delete;
-
-            FILE_PATH \
-<<PIPEWIRE_PULSE_SERVICE
-$home/.config/systemd/user/pipewire-pulse.service
-PIPEWIRE_PULSE_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<PIPEWIRE_PULSE_SERVICE
-$home/.config/systemd/user/pipewire.service.wants/pipewire-pulse.service
-PIPEWIRE_PULSE_SERVICE
-
-            __loc_delete;
-        fi
-
-        if [ "$portal" = 1 ]; then
-            FILE_PATH \
-<<XDG_DESKTOP_PORTAL_SERVICE
-$home/.config/systemd/user/xdg-desktop-portal.service
-XDG_DESKTOP_PORTAL_SERVICE
-
-            FILE \
-<<'XDG_DESKTOP_PORTAL_SERVICE'
-[Unit]
+        } || {
+            OBJ=\
+'[Unit]
 Description=Portal service
 PartOf=graphical-session.target
 
@@ -526,18 +438,19 @@ Type=dbus
 BusName=org.freedesktop.portal.Desktop
 ExecStart=/usr/lib/xdg-desktop-portal
 Slice=session.slice
-XDG_DESKTOP_PORTAL_SERVICE
+'
 
+            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal.service"
             __file_write;
-
-            FILE_PATH \
-<<XDG_DESKTOP_PORTAL_GTK_SERVICE
-$home/.config/systemd/user/xdg-desktop-portal-gtk.service
-XDG_DESKTOP_PORTAL_GTK_SERVICE
-
-            FILE \
-<<'XDG_DESKTOP_PORTAL_GTK_SERVICE'
-[Unit]
+        }
+    }
+    ___XDG_DESKTOP_PORTAL_GTK_SERVICE() {
+        [ ! "${1:-$portal}" ] && {
+            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-gtk.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[Unit]
 Description=Portal service (GTK/GNOME implementation)
 PartOf=graphical-session.target
 
@@ -546,18 +459,19 @@ Type=dbus
 BusName=org.freedesktop.impl.portal.desktop.gtk
 ExecStart=/usr/lib/xdg-desktop-portal-gtk
 Slice=session.slice
-XDG_DESKTOP_PORTAL_GTK_SERVICE
+'
 
+            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-gtk.service"
             __file_write;
-
-            FILE_PATH \
-<<XDG_DESKTOP_PORTAL_WLR_SERVICE
-$home/.config/systemd/user/xdg-desktop-portal-wlr.service
-XDG_DESKTOP_PORTAL_WLR_SERVICE
-
-            FILE \
-<<'XDG_DESKTOP_PORTAL_WLR_SERVICE'
-[Unit]
+        }
+    }
+    ___XDG_DESKTOP_PORTAL_WLR_SERVICE() {
+        [ ! "${1:-$portal}" ] && {
+            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-wlr.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[Unit]
 Description=Portal service (wlroots implementation)
 PartOf=graphical-session.target
 
@@ -566,18 +480,19 @@ Type=dbus
 BusName=org.freedesktop.impl.portal.desktop.wlr
 ExecStart=/usr/lib/xdg-desktop-portal-wlr
 Slice=session.slice
-XDG_DESKTOP_PORTAL_WLR_SERVICE
+'
 
+            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-wlr.service"
             __file_write;
-
-            FILE_PATH \
-<<XDG_DOCUMENT_PORTAL_SERVICE
-$home/.config/systemd/user/xdg-document-portal.service
-XDG_DOCUMENT_PORTAL_SERVICE
-
-            FILE \
-<<'XDG_DOCUMENT_PORTAL_SERVICE'
-[Unit]
+        }
+    }
+    ___XDG_DOCUMENT_PORTAL_SERVICE() {
+        [ ! "${1:-$portal}" ] && {
+            OBJ_PATH="$home/.config/systemd/user/xdg-document-portal.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[Unit]
 Description=flatpak document portal service
 PartOf=graphical-session.target
 
@@ -586,18 +501,19 @@ Type=dbus
 BusName=org.freedesktop.portal.Documents
 ExecStart=/usr/lib/xdg-document-portal
 Slice=session.slice
-XDG_DOCUMENT_PORTAL_SERVICE
+'
 
+            OBJ_PATH="$home/.config/systemd/user/xdg-document-portal.service"
             __file_write;
-
-            FILE_PATH \
-<<XDG_PERMISSION_STORE_SERVICE
-$home/.config/systemd/user/xdg-permission-store.service
-XDG_PERMISSION_STORE_SERVICE
-
-            FILE \
-<<'XDG_PERMISSION_STORE_SERVICE'
-[Unit]
+        }
+    }
+    ___XDG_PERMISSION_STORE_SERVICE() {
+        [ ! "${1:-$portal}" ] && {
+            OBJ_PATH="$home/.config/systemd/user/xdg-permission-store.service"
+            __loc_delete;
+        } || {
+            OBJ=\
+'[Unit]
 Description=sandboxed app permission store
 PartOf=graphical-session.target
 
@@ -606,466 +522,83 @@ Type=dbus
 BusName=org.freedesktop.impl.portal.PermissionStore
 ExecStart=/usr/lib/xdg-permission-store
 Slice=session.slice
-XDG_PERMISSION_STORE_SERVICE
+'
 
+            OBJ_PATH="$home/.config/systemd/user/xdg-permission-store.service"
             __file_write;
-        else
-            FILE_PATH \
-<<XDG_DESKTOP_PORTAL_SERVICE
-$home/.config/systemd/user/xdg-desktop-portal.service
-XDG_DESKTOP_PORTAL_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<XDG_DESKTOP_PORTAL_GTK_SERVICE
-$home/.config/systemd/user/xdg-desktop-portal-gtk.service
-XDG_DESKTOP_PORTAL_GTK_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<XDG_DESKTOP_PORTAL_WLR_SERVICE
-$home/.config/systemd/user/xdg-desktop-portal-wlr.service
-XDG_DESKTOP_PORTAL_WLR_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<XDG_DOCUMENT_PORTAL_SERVICE
-$home/.config/systemd/user/xdg-document-portal.service
-XDG_DOCUMENT_PORTAL_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<XDG_PERMISSION_STORE_SERVICE
-$home/.config/systemd/user/xdg-permission-store.service
-XDG_PERMISSION_STORE_SERVICE
-
-            __loc_delete;
-        fi
-
-        if [ "$arch_linux" = 1 ]; then
-            FILE_PATH \
-<<'NULL'
-/dev/null
-NULL
-
-            FILE_PATH_TARGET \
-<<'RTKIT_DAEMON_SERVICE'
-/etc/systemd/system/rtkit-daemon.service
-RTKIT_DAEMON_SERVICE
-
-            __loc_target_link_overwrite;
-
-            FILE_PATH \
-<<'NULL'
-/dev/null
-NULL
-
-            FILE_PATH_TARGET \
-<<AT_SPI_DBUS_BUS_SERVICE
-$home/.config/systemd/user/at-spi-dbus-bus.service
-AT_SPI_DBUS_BUS_SERVICE
-
-            __loc_target_link_overwrite;
-
-            FILE_PATH \
-<<'NULL'
-/dev/null
-NULL
-
-            if [ "$audio_server" = pipewire ]; then
-                FILE_PATH_TARGET \
-<<PIPEWIRE_SOCKET
-$home/.config/systemd/user/pipewire.socket
-PIPEWIRE_SOCKET
-
-                __loc_target_link_overwrite;
-
-                FILE_PATH \
-<<'NULL'
-/dev/null
-NULL
-
-                FILE_PATH_TARGET \
-<<PIPEWIRE_PULSE_SOCKET
-$home/.config/systemd/user/pipewire-pulse.socket
-PIPEWIRE_PULSE_SOCKET
-
-                __loc_target_link_overwrite;
-            elif [ "$audio_server" = none ] || [ ! "$audio_server" ]; then
-                FILE_PATH \
-<<PIPEWIRE_SOCKET
-$home/.config/systemd/user/pipewire.socket
-PIPEWIRE_SOCKET
-
-                __loc_delete;
-
-                FILE_PATH \
-<<PIPEWIRE_PULSE_SOCKET
-$home/.config/systemd/user/pipewire-pulse.socket
-PIPEWIRE_PULSE_SOCKET
-
-                __loc_delete;
-            fi
-
-            FILE_PATH \
-<<ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service
-ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE
-
-            FILE \
-<<'ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE'
-[D-BUS Service]
-Name=org.freedesktop.impl.portal.desktop.gtk
-Exec=/usr/bin/true
-ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE
-
-            __file_write;
-
-            FILE_PATH \
-<<ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service
-ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE
-
-            FILE \
-<<'ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE'
-[D-BUS Service]
-Name=org.freedesktop.impl.portal.desktop.wlr
-Exec=/usr/bin/true
-ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE
-
-            __file_write;
-
-            FILE_PATH \
-<<ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.PermissionStore.service
-ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE
-
-            FILE \
-<<'ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE'
-[D-BUS Service]
-Name=org.freedesktop.impl.portal.PermissionStore
-Exec=/usr/bin/true
-ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE
-
-            __file_write;
-
-            FILE_PATH \
-<<ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service
-ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE
-
-            FILE \
-<<'ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE'
-[D-BUS Service]
-Name=org.freedesktop.portal.Desktop
-Exec=/usr/bin/true
-ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE
-
-            __file_write;
-
-            FILE_PATH \
-<<ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.portal.Documents.service
-ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE
-
-            FILE \
-<<'ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE'
-[D-BUS Service]
-Name=org.freedesktop.portal.Documents
-Exec=/usr/bin/true
-ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE
-
-            __file_write;
-        else
-            FILE_PATH \
-<<'RTKIT_DAEMON_SERVICE'
-/etc/systemd/system/rtkit-daemon.service
-RTKIT_DAEMON_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<AT_SPI_DBUS_BUS_SERVICE
-$home/.config/systemd/user/at-spi-dbus-bus.service
-AT_SPI_DBUS_BUS_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<PIPEWIRE_SOCKET
-$home/.config/systemd/user/pipewire.socket
-PIPEWIRE_SOCKET
-
-            __loc_delete;
-
-            FILE_PATH \
-<<PIPEWIRE_PULSE_SOCKET
-$home/.config/systemd/user/pipewire-pulse.socket
-PIPEWIRE_PULSE_SOCKET
-
-            __loc_delete;
-
-            FILE_PATH \
-<<ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service
-ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service
-ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.PermissionStore.service
-ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service
-ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE
-
-            __loc_delete;
-
-            FILE_PATH \
-<<ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.portal.Documents.service
-ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE
-
-            __loc_delete;
-        fi
-    elif [ "$init" = none ] || [ ! "$init" ]; then
-        FILE_PATH \
-<<'BLUETOOTH_SERVICE'
-/etc/systemd/system/bluetooth.service
-BLUETOOTH_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<'BLUETOOTH_SERVICE'
-/etc/systemd/system/multi-user.target.wants/bluetooth.service
-BLUETOOTH_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<'DNSMASQ_SERVICE'
-/etc/systemd/system/dnsmasq.service
-DNSMASQ_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<'DNSMASQ_SERVICE'
-/etc/systemd/system/multi-user.target.wants/dnsmasq.service
-DNSMASQ_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<'EVTEST_GRAB_SERVICE'
-/etc/systemd/system/evtest-grab.service
-EVTEST_GRAB_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<'EVTEST_GRAB_SERVICE'
-/etc/systemd/system/multi-user.target.wants/evtest-grab.service
-EVTEST_GRAB_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<'IWD_SERVICE'
-/etc/systemd/system/iwd.service
-IWD_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<'IWD_SERVICE'
-/etc/systemd/system/multi-user.target.wants/iwd.service
-IWD_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<MOC_SERVICE
-$home/.config/systemd/user/moc.service
-MOC_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<MOC_SERVICE
-$home/.config/systemd/user/default.target.wants/moc.service
-MOC_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<PIPEWIRE_SERVICE
-$home/.config/systemd/user/pipewire.service
-PIPEWIRE_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<PIPEWIRE_SERVICE
-$home/.config/systemd/user/default.target.wants/pipewire.service
-PIPEWIRE_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<PIPEWIRE_MEDIA_SESSION_SERVICE
-$home/.config/systemd/user/pipewire-media-session.service
-PIPEWIRE_MEDIA_SESSION_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<PIPEWIRE_MEDIA_SESSION_SERVICE
-$home/.config/systemd/user/pipewire.service.wants/pipewire-media-session.service
-PIPEWIRE_MEDIA_SESSION_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<PIPEWIRE_PULSE_SERVICE
-$home/.config/systemd/user/pipewire-pulse.service
-PIPEWIRE_PULSE_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<PIPEWIRE_PULSE_SERVICE
-$home/.config/systemd/user/pipewire.service.wants/pipewire-pulse.service
-PIPEWIRE_PULSE_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<XDG_DESKTOP_PORTAL_SERVICE
-$home/.config/systemd/user/xdg-desktop-portal.service
-XDG_DESKTOP_PORTAL_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<XDG_DESKTOP_PORTAL_GTK_SERVICE
-$home/.config/systemd/user/xdg-desktop-portal-gtk.service
-XDG_DESKTOP_PORTAL_GTK_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<XDG_DESKTOP_PORTAL_WLR_SERVICE
-$home/.config/systemd/user/xdg-desktop-portal-wlr.service
-XDG_DESKTOP_PORTAL_WLR_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<XDG_DOCUMENT_PORTAL_SERVICE
-$home/.config/systemd/user/xdg-document-portal.service
-XDG_DOCUMENT_PORTAL_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<XDG_PERMISSION_STORE_SERVICE
-$home/.config/systemd/user/xdg-permission-store.service
-XDG_PERMISSION_STORE_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<'RTKIT_DAEMON_SERVICE'
-/etc/systemd/system/rtkit-daemon.service
-RTKIT_DAEMON_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<AT_SPI_DBUS_BUS_SERVICE
-$home/.config/systemd/user/at-spi-dbus-bus.service
-AT_SPI_DBUS_BUS_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<PIPEWIRE_SOCKET
-$home/.config/systemd/user/pipewire.socket
-PIPEWIRE_SOCKET
-
-        __loc_delete;
-
-        FILE_PATH \
-<<PIPEWIRE_PULSE_SOCKET
-$home/.config/systemd/user/pipewire-pulse.socket
-PIPEWIRE_PULSE_SOCKET
-
-        __loc_delete;
-
-        FILE_PATH \
-<<ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service
-ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service
-ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.PermissionStore.service
-ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service
-ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE
-
-        __loc_delete;
-
-        FILE_PATH \
-<<ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE
-$home/.local/share/dbus-1/services/org.freedesktop.portal.Documents.service
-ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE
-
-        __loc_delete;
-    fi
+        }
+    }
+
+    [ "$init" = systemd ] && {
+        ___AT_SPI_DBUS_BUS_SERVICE;
+        ___BLUETOOTH_SERVICE;
+
+        [ "$dns" ] && {
+            ___DNSMASQ_SERVICE;
+        } || {
+            ___DNSMASQ_SERVICE ''
+        }
+
+        ___EVTEST_GRAB_SERVICE;
+        ___IWD_SERVICE;
+        ___MOC_SERVICE;
+        ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE;
+        ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE;
+        ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE;
+        ___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE;
+        ___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE;
+
+        ___PIPEWIRE_SERVICE;
+        ___PIPEWIRE_PULSE_SERVICE;
+        [ "$audio_server" = pipewire ] && {
+            ___PIPEWIRE_MEDIA_SESSION_SERVICE;
+        } || {
+            ___PIPEWIRE_MEDIA_SESSION_SERVICE ''
+        }
+
+        [ "$arch_linux" ] && {
+            ___PIPEWIRE_SOCKET;
+            ___PIPEWIRE_PULSE_SOCKET;
+        } || {
+            ___PIPEWIRE_SOCKET ''
+            ___PIPEWIRE_PULSE_SOCKET ''
+        }
+
+        ___RTKIT_DAEMON_SERVICE;
+        ___XDG_DESKTOP_PORTAL_SERVICE;
+        ___XDG_DESKTOP_PORTAL_GTK_SERVICE;
+        ___XDG_DESKTOP_PORTAL_WLR_SERVICE;
+        ___XDG_DOCUMENT_PORTAL_SERVICE;
+        ___XDG_PERMISSION_STORE_SERVICE;
+    } || {
+        ___AT_SPI_DBUS_BUS_SERVICE ''
+        ___BLUETOOTH_SERVICE ''
+        ___DNSMASQ_SERVICE ''
+        ___EVTEST_GRAB_SERVICE ''
+        ___IWD_SERVICE ''
+        ___MOC_SERVICE ''
+        ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE ''
+        ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE ''
+        ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE ''
+        ___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE ''
+        ___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE ''
+        ___PIPEWIRE_SERVICE ''
+        ___PIPEWIRE_PULSE_SERVICE ''
+        ___PIPEWIRE_MEDIA_SESSION_SERVICE ''
+        ___PIPEWIRE_SOCKET ''
+        ___PIPEWIRE_PULSE_SOCKET ''
+        ___RTKIT_DAEMON_SERVICE ''
+        ___XDG_DESKTOP_PORTAL_SERVICE ''
+        ___XDG_DESKTOP_PORTAL_GTK_SERVICE ''
+        ___XDG_DESKTOP_PORTAL_WLR_SERVICE ''
+        ___XDG_DOCUMENT_PORTAL_SERVICE ''
+        ___XDG_PERMISSION_STORE_SERVICE ''
+    }
 }
 
 _bash_conf() {
-    FILE_PATH \
-<<_BASH_FUNCTIONS
-$home/.bash_functions
-_BASH_FUNCTIONS
-
-    FILE \
-<<'_BASH_FUNCTIONS'
-# System management
+    OBJ=\
+'# System management
 sys_pwr_fw() { pwr_fw; }
 sys_pwr_off() { pwr_off "$@"; }
 sys_pwr_reset() { pwr_reset "$@"; }
@@ -1085,14 +618,14 @@ pkg_get() (
         ;;
     esac
 
-    ARGS='--sync'
+    ARGS='\''--sync'\''
 
     while [ "$1" ]; do
         ARGS="$ARGS"" \"$1\""
         shift
     done
 
-    eval "su -c 'pacman ${ARGS}'"
+    eval "su -c '\''pacman ${ARGS}'\''"
 )
 pkg_rm() (
     case ":$1" in
@@ -1103,16 +636,16 @@ pkg_rm() (
         ;;
     esac
 
-    ARGS='--remove'
-    ARGS="$ARGS"' --nosave'
-    ARGS="$ARGS"' --recursive'
+    ARGS='\''--remove'\''
+    ARGS="$ARGS"'\'' --nosave'\''
+    ARGS="$ARGS"'\'' --recursive'\''
 
     while [ "$1" ]; do
         ARGS="$ARGS"" \"$1\""
         shift
     done
 
-    eval "su -c 'pacman ${ARGS}'"
+    eval "su -c '\''pacman ${ARGS}'\''"
 )
 pkg_rmF() (
     case ":$1" in
@@ -1123,56 +656,56 @@ pkg_rmF() (
         ;;
     esac
 
-    ARGS='--remove'
-    ARGS="$ARGS"' --nosave'
-    ARGS="$ARGS"' --recursive'
-    ARGS="$ARGS"' -dd'
+    ARGS='\''--remove'\''
+    ARGS="$ARGS"'\'' --nosave'\''
+    ARGS="$ARGS"'\'' --recursive'\''
+    ARGS="$ARGS"'\'' -dd'\''
 
     while [ "$1" ]; do
         ARGS="$ARGS"" \"$1\""
         shift
     done
 
-    eval "su -c 'pacman ${ARGS}'"
+    eval "su -c '\''pacman ${ARGS}'\''"
 )
 
 # Power management
 pwr_fw() (
-    su -c 'systemctl reboot --firmware-setup'
+    su -c '\''systemctl reboot --firmware-setup'\''
 )
 pwr_off() (
     case ":$1" in
-        :) su -c 'shutdown -P now' ;;
+        :) su -c '\''shutdown -P now'\'' ;;
         *) su -c "shutdown -P $1" ;;
     esac
 )
 pwr_reset() (
     case ":$1" in
-        :) su -c 'shutdown -r now' ;;
+        :) su -c '\''shutdown -r now'\'' ;;
         *) su -c "shutdown -r $1" ;;
     esac
 )
 
 # Update management
 up() (
-    ARGS='--sync'
-    ARGS="$ARGS"' --refresh'
-    ARGS="$ARGS"' --sysupgrade'
+    ARGS='\''--sync'\''
+    ARGS="$ARGS"'\'' --refresh'\''
+    ARGS="$ARGS"'\'' --sysupgrade'\''
 
-    eval "su -c 'pacman ${ARGS}'"
+    eval "su -c '\''pacman ${ARGS}'\''"
 )
 upF() (
-    ARGS='--sync'
-    ARGS="$ARGS"' -yyuu'
+    ARGS='\''--sync'\''
+    ARGS="$ARGS"'\'' -yyuu'\''
 
-    eval "su -c 'pacman ${ARGS}'"
+    eval "su -c '\''pacman ${ARGS}'\''"
 )
 
 # Other management
 ramfs_c() (
     su -c "
         [ ! -e /mnt/ramdisk ] || {
-            echo 'fail: /mnt/ramdisk already exists'; exit 0
+            echo '\''fail: /mnt/ramdisk already exists'\''; exit 0
         }
         mkdir /mnt/ramdisk 2> /dev/null
         mount -t ramfs ramfs /mnt/ramdisk && \
@@ -1183,7 +716,7 @@ ramfs_c() (
 ramfs_d() (
     su -c "
         [ -e /mnt/ramdisk ] || {
-            echo 'fail: /mnt/ramdisk does not exist'; exit 0
+            echo '\''fail: /mnt/ramdisk does not exist'\''; exit 0
         }
         umount /mnt/ramdisk && \
         rm -rf /mnt/ramdisk
@@ -1220,8 +753,8 @@ tar_e() {
 steamwinerun() ( WINEPREFIX="$HOME"/.steam/root/steamapps/compatdata/$1/pfx wine "$2"; )
 dgrd() (
     if [ ! "$1" ] || [ ! "$2" ]; then
-        printf "%s\n" 'STEP (1-X) = $1'
-        printf "%s\n" 'NAME = $2+'
+        printf "%s\n" '\''STEP (1-X) = $1'\''
+        printf "%s\n" '\''NAME = $2+'\''
         exit 2
     fi
 
@@ -1237,7 +770,7 @@ dgrd() (
         )
 
         if [ ! "$FILES" ]; then
-            printf "%s\n" 'ERR NO FILES. NAME=%s' "$NAME"
+            printf "%s\n" '\''ERR NO FILES. NAME=%s'\'' "$NAME"
             exit 1
         fi
 
@@ -1246,11 +779,11 @@ dgrd() (
 
             LINE="${LINE#* }"
             if [ "$OUT_FLAG" = 0 ]; then
-                printf "%s\n" 'pacman -U \'
+                printf "%s\n" '\''pacman -U \'\''
                 OUT_FLAG=1
             fi
             if [ "$2" ]; then
-                printf "%s %s\n" "$LINE" '\'
+                printf "%s %s\n" "$LINE" '\''\'\''
             else
                 printf "%s\n" "$LINE"
             fi
@@ -1263,64 +796,54 @@ EOF
         exit 1
     done
 )
-ipv6disable() { su -c 'sysctl -w net.ipv6.conf.all.disable_ipv6=1; sysctl -w net.ipv6.conf.default.disable_ipv6=1'; }
-ipv6enable() { su -c 'sysctl -w net.ipv6.conf.all.disable_ipv6=0; sysctl -w net.ipv6.conf.default.disable_ipv6=0'; }
-_BASH_FUNCTIONS
+ipv6disable() { su -c '\''sysctl -w net.ipv6.conf.all.disable_ipv6=1; sysctl -w net.ipv6.conf.default.disable_ipv6=1'\''; }
+ipv6enable() { su -c '\''sysctl -w net.ipv6.conf.all.disable_ipv6=0; sysctl -w net.ipv6.conf.default.disable_ipv6=0'\''; }
+'
 
+    OBJ_PATH="$home/.bash_functions"
     __file_write;
 
-    FILE_PATH \
-<<_BASHRC
-$home/.bashrc
-_BASHRC
-
-    FILE \
-<<'_BASHRC'
-# Don't parse .bashrc if not running interactively
+    OBJ=\
+'# Don'\''t parse .bashrc if not running interactively
 [[ $- != *i* ]] && return
 
 PS1=\
-'\[\033[1;32m\]['\
+'\''\[\033[1;32m\]['\''\
 "\$(\
 RC=\$?; \
 [ "\$RC" -eq 0 ] \
-    && printf "%s%d" '\[\033[1;32m\]' "\$RC" \
-    || printf "%s%d" '\[\033[1;33m\]' "\$RC" \
-)"' '\
-'\[\033[1;36m\]\u@\h '\
-'\[\033[1;31m\]\W\[\033[1;32m\]]\$\[\033[0m\] '
+    && printf "%s%d" '\''\[\033[1;32m\]'\'' "\$RC" \
+    || printf "%s%d" '\''\[\033[1;33m\]'\'' "\$RC" \
+)"'\'' '\''\
+'\''\[\033[1;36m\]\u@\h '\''\
+'\''\[\033[1;31m\]\W\[\033[1;32m\]]\$\[\033[0m\] '\''
 
 export HISTCONTROL=ignoreboth:erasedups
 
-alias ls='ls --color'
-alias grep='grep --color=always'
-alias ip='ip --color'
-alias yt-dlp='yt-dlp --mtime'
-alias clr='tput reset; stty -ixon susp undef'
-alias gfix='git add .; git commit --amend --date="now" -s'
-alias gfixf='git add .; git commit --amend --date="now" --no-edit -s'
-alias gchk='git diff --check HEAD~10'
+alias ls='\''ls --color'\''
+alias grep='\''grep --color=always'\''
+alias ip='\''ip --color'\''
+alias yt-dlp='\''yt-dlp --mtime'\''
+alias clr='\''tput reset; stty -ixon susp undef'\''
+alias gfix='\''git add .; git commit --amend --date="now" -s'\''
+alias gfixf='\''git add .; git commit --amend --date="now" --no-edit -s'\''
+alias gchk='\''git diff --check HEAD~10'\''
 
 # Source useful custom functions
 [ -f "$HOME"/.bash_functions ] && . "$HOME"/.bash_functions
 
-# '-ixon': Disable "Ctrl + S"; WHY IS THIS STILL DEFAULT?
-# 'susp undef': Disable "Ctrl + Z"
+# '\''-ixon'\'': Disable "Ctrl + S"; WHY IS THIS STILL DEFAULT?
+# '\''susp undef'\'': Disable "Ctrl + Z"
 stty -ixon susp undef
-_BASHRC
+'
 
+    OBJ_PATH="$home/.bashrc"
     __file_write;
 }
 
 _bluez_conf() {
-    FILE_PATH \
-<<'MAIN_CONF'
-/etc/bluetooth/main.conf
-MAIN_CONF
-
-    FILE \
-<<'MAIN_CONF'
-[General]
+    OBJ=\
+'[General]
 Name = gUcciestBlueZ420
 DiscoverableTimeout = 0
 FastConnectable = true
@@ -1329,8 +852,9 @@ FastConnectable = true
 AutoEnable=false
 ReconnectAttempts=3
 ReconnectIntervals=2,8,16
-MAIN_CONF
+'
 
+    OBJ_PATH='/etc/bluetooth/main.conf'
     __file_write_overwrite;
 }
 
@@ -1406,63 +930,61 @@ _conf_2() {
     _sh;
     _tz;
 
-    if file '/etc/dhcpcd.conf'; then
+    { file '/etc/dhcpcd.conf'; } && {
         _dhcpcd_conf;
-    else
+    } || {
         _info -yellow - 'Skipped _dhcpcd_conf()'
-    fi
+    }
 
-    if file '/etc/dnsmasq.conf'; then
+    { file '/etc/dnsmasq.conf'; } && {
         _dnsmasq_conf;
-    else
+    } || {
         _info -yellow - 'Skipped _dnsmasq_conf()'
-    fi
+    }
 
-    if file '/etc/gai.conf'; then
+    { file '/etc/gai.conf'; } && {
         _gai_conf;
-    else
+    } || {
         _info -yellow - 'Skipped _gai_conf()'
-    fi
+    }
 
-    if cmd 'grub-install' && cmd 'grub-mkconfig'; then
+    { cmd 'grub-install' && cmd 'grub-mkconfig'; } && {
         _grub;
 
-        if file '/etc/default/grub'; then
+        { file '/etc/default/grub'; } && {
             _grub_conf;
-        else
+        } || {
             _info -yellow - 'Skipped _grub_conf()'
-        fi
-    else
+        }
+    } || {
         _info -yellow - 'Skipped _grub()'
         _info -yellow - 'Skipped _grub_conf()'
-    fi
+    }
 
-    if file '/etc/mkinitcpio.conf'; then
+    { file '/etc/mkinitcpio.conf'; } && {
         _initramfs_conf;
-    else
+    } || {
         _info -yellow - 'Skipped _initramfs_conf()'
-    fi
+    }
 
-    if file '/etc/makepkg.conf'; then
+    { file '/etc/makepkg.conf'; } && {
         _makepkg_conf;
-    else
+    } || {
         _info -yellow - 'Skipped _makepkg_conf()'
-    fi
+    }
 
-    if file '/etc/pacman.conf'; then
+    { file '/etc/pacman.conf'; } && {
         _pacman_conf;
-    else
+    } || {
         _info -yellow - 'Skipped _pacman_conf()'
-    fi
+    }
 
-    if file '/etc/security/faillock.conf' && \
-       file '/etc/login.defs' && \
-       file '/etc/pam.d/su' && \
-       file '/etc/pam.d/system-auth'; then
+    { file '/etc/security/faillock.conf' && file '/etc/login.defs' && \
+        file '/etc/pam.d/su' && file '/etc/pam.d/system-auth'; } && {
         _pam_conf;
-    else
+    } || {
         _info -yellow - 'Skipped _pam_conf()'
-    fi
+    }
 }
 
 # Software configuration - stage 3
@@ -1483,23 +1005,23 @@ _conf_2() {
 # are influenced by utility switches; never to be defined in any other _conf_*()
 # functions.
 _conf_3() {
-    if file '/etc/bluetooth/main.conf'; then
+    { file '/etc/bluetooth/main.conf'; } && {
         _bluez_conf;
-    else
+    } || {
         _info -yellow - 'Skipped _bluez_conf()'
-    fi
+    }
 
-    if file "$home"/'.mozilla/firefox/profiles.ini'; then
+    { file "$home/.mozilla/firefox/profiles.ini"; } && {
         _firefox_conf;
-    else
+    } || {
         _info -yellow - 'Skipped _firefox_conf()'
-    fi
+    }
 
-    if file '/etc/fuse.conf'; then
+    { file '/etc/fuse.conf'; } && {
         _fuse_conf;
-    else
+    } || {
         _info -yellow - 'Skipped _fuse_conf()'
-    fi
+    }
 }
 
 # Software configuration - stage 4
@@ -1533,54 +1055,41 @@ _conf_4() {
     _sway_conf;
     _tz;
 
-    if file '/etc/dhcpcd.conf'; then
+    { ! file '/etc/dhcpcd.conf'; } || {
         _dhcpcd_conf;
-    fi
+    }
 
-    if file '/etc/dnsmasq.conf'; then
+    { ! file '/etc/dnsmasq.conf'; } || {
         _dnsmasq_conf;
-    fi
+    }
 
-    if file '/etc/gai.conf'; then
+    { ! file '/etc/gai.conf'; } || {
         _gai_conf;
-    fi
+    }
 
-    if cmd 'grub-mkconfig' && file '/etc/default/grub'; then
+    { ! file '/etc/default/grub' || ! cmd 'grub-mkconfig'; } || {
         _grub_conf;
-    fi
+    }
 
-    if file '/etc/mkinitcpio.conf'; then
+    { ! file '/etc/mkinitcpio.conf'; } || {
         _initramfs_conf;
-    fi
+    }
 }
 
 _dhcpcd_conf() {
-    FILE_PATH \
-<<'DHCPCD_CONF'
-/etc/dhcpcd.conf
-DHCPCD_CONF
-
-    if [ "$ipv6" = 1 ]; then
-        FILE \
-<<'DHCPCD_CONF'
-static domain_name_servers=::1 127.0.0.1
-duid
-slaac private
-
-DHCPCD_CONF
-    else
-        FILE \
-<<'DHCPCD_CONF'
-static domain_name_servers=127.0.0.1
+    OBJ=\
+'static domain_name_servers=127.0.0.1
 clientid
 noipv6
+'
+    [ ! "$ipv6" ] || OBJ=\
+'static domain_name_servers=::1 127.0.0.1
+duid
+slaac private
+'
 
-DHCPCD_CONF
-    fi
-
-    FILE \
-<<'DHCPCD_CONF'
-option classless_static_routes
+    OBJ="$OBJ"\
+'option classless_static_routes
 option interface_mtu
 option host_name
 option rapid_commit
@@ -1589,21 +1098,16 @@ require dhcp_server_identifier
 noarp
 nohook resolv.conf
 noipv4ll
-DHCPCD_CONF
+'
 
+    OBJ_PATH='/etc/dhcpcd.conf'
     __file_write_overwrite;
 }
 
 # DNS stub resolver configuration
 _dnsmasq_conf() {
-    FILE_PATH \
-<<'DNSMASQ_CONF'
-/etc/dnsmasq.conf
-DNSMASQ_CONF
-
-    FILE \
-<<'DNSMASQ_CONF'
-bind-interfaces
+    OBJ=\
+'bind-interfaces
 cache-size=2048
 domain-needed
 bogus-priv
@@ -1616,12 +1120,11 @@ dnssec-check-unsigned
 trust-anchor=.,20326,8,2,E06D44B80B8F1D39A95C0B0D7C65D08458E880409BBC683457104237C7F8EC8D
 trust-anchor=.,38696,8,2,683D2D0ACB8C9B712A1948B27F741219298D0A450D612C483AF444A4C0FB2B16
 all-servers
-DNSMASQ_CONF
+'
 
-    if [ "$ipv6" = 1 ]; then
-        FILE \
-<<'DNSMASQ_CONF'
-listen-address=::1,127.0.0.1
+    [ "$ipv6" ] && {
+        OBJ="$OBJ"\
+'listen-address=::1,127.0.0.1
 server=2606:4700:4700::1111
 server=2606:4700:4700::1001
 server=2620:119:35::35
@@ -1638,11 +1141,10 @@ server=8.8.8.8
 server=8.8.4.4
 server=9.9.9.9
 server=149.112.112.112
-DNSMASQ_CONF
-    else
-        FILE \
-<<'DNSMASQ_CONF'
-listen-address=127.0.0.1
+'
+    } || {
+        OBJ="$OBJ"\
+'listen-address=127.0.0.1
 server=1.1.1.1
 server=1.0.0.1
 server=208.67.222.222
@@ -1651,193 +1153,173 @@ server=8.8.8.8
 server=8.8.4.4
 server=9.9.9.9
 server=149.112.112.112
-DNSMASQ_CONF
-    fi
+'
+    }
 
+    OBJ_PATH='/etc/dnsmasq.conf'
     __file_write_overwrite;
 }
 
 _doas_conf() {
-    FILE_PATH \
-<<'DOAS_CONF'
-/etc/doas.conf
-DOAS_CONF
+    OBJ=\
+'permit persist :wheel as root
+'
 
-    FILE \
-<<'DOAS_CONF'
-permit persist :wheel as root
-DOAS_CONF
-
+    OBJ_PATH='/etc/doas.conf'
     __file_write;
+
+    OBJ_PATH='/etc/doas.conf'
     __loc_chmod '0400'
 }
 
 _env() {
-    FILE_PATH \
-<<BROWSER
-$home/.syscfg_env/browser
-BROWSER
-
-    if [ "$browser" = firefox ] && [ "$display_server" = wayland ]; then
-        FILE \
-<<'BROWSER'
-MOZ_ENABLE_WAYLAND=1
-BROWSER
-
-        __file_write_overwrite;
-    elif [ "$browser" = none ] || [ ! "$browser" ] || \
-        [ "$display_server" = none ] || [ ! "$display_server" ]; then
-        __loc_delete;
-    fi
-
-    FILE_PATH \
-<<QT_THEME
-$home/.syscfg_env/qt_theme
-QT_THEME
-
-    if [ "$qt_theme" = kvantum ]; then
-        FILE \
-<<'QT_THEME'
-QT_STYLE_OVERRIDE=kvantum
-QT_THEME
-
-        __file_write_overwrite;
-    elif [ "$qt_theme" = none ] || [ ! "$qt_theme" ]; then
-        __loc_delete;
-    fi
-
-    FILE_PATH \
-<<DISPLAY_SERVER
-$home/.syscfg_env/display_server
-DISPLAY_SERVER
-
-    if [ "$display_server" = wayland ]; then
-        FILE \
-<<'DISPLAY_SERVER'
-QT_QPA_PLATFORM=wayland
-QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-SDL_VIDEODRIVER=wayland
-GDK_BACKEND=wayland
-GTK_A11Y=none
-DISPLAY_SERVER
-
-        if [ "$portal" = 1 ]; then
-            FILE \
-<<'DISPLAY_SERVER'
-GTK_USE_PORTAL=1
-DISPLAY_SERVER
-        else
-            FILE \
-<<'DISPLAY_SERVER'
-GTK_USE_PORTAL=0
-DISPLAY_SERVER
-        fi
-
-        __file_write_overwrite;
-    elif [ "$display_server" = none ] || [ ! "$display_server" ]; then
-        __loc_delete;
-    fi
-
-    FILE_PATH \
-<<ENV
-$home/.syscfg_env/env
-ENV
-
-    FILE \
-<<'ENV'
-EDITOR=nano
-PATH="${PATH}:$HOME/.local/bin:$HOME/scripts"
-ENV
-
-    __file_write_overwrite;
-
-    FILE_PATH \
-<<WM
-$home/.syscfg_env/wm
-WM
-
-    if [ "$wm" = sway ]; then
-        FILE \
-<<'WM'
-XDG_CURRENT_DESKTOP=sway
-XDG_SESSION_DESKTOP=sway
-DESKTOP_SESSION=sway
-WM
-
-        __file_write_overwrite;
-    elif [ "$wm" = none ] || [ ! "$wm" ]; then
-        __loc_delete;
-    fi
-
-    FILE_PATH \
-<<_BASH_PROFILE
-$home/.bash_profile
-_BASH_PROFILE
-
-    FILE \
-<<'_BASH_PROFILE'
-set -a; for file in "$HOME"/.syscfg_env/*; do
+    ____BASH_PROFILE() {
+        OBJ=\
+'set -a; for file in "$HOME"/.syscfg_env/*; do
     . "$file"
 done; set +a
-_BASH_PROFILE
+'
 
-    if [ "$wm" = sway ]; then
-        FILE \
-<<'_BASH_PROFILE'
-
-if [ -z "$DISPLAY" ] && [ "$(tty)" = '/dev/tty1' ]; then
+        [ ! "${1:-$wm}" = sway ] || OBJ="$OBJ"\
+'
+if [ -z "$DISPLAY" ] && [ "$(tty)" = '\''/dev/tty1'\'' ]; then
     if command -v sway > /dev/null 2>&1; then
         exec sway > /var/log/sway.log 2>&1
     fi
 fi
-_BASH_PROFILE
-    fi
+'
 
-    __file_write;
+        OBJ_PATH="$home/.bash_profile"
+        __file_write;
+    }
+    ___BROWSER() {
+        [ ! "${1:-$browser}" = firefox ] && {
+            OBJ_PATH="$home/.syscfg_env/browser"
+            __loc_delete;
+        } || {
+            OBJ=\
+'MOZ_ENABLE_WAYLAND=1
+'
 
-    if [ "$wm" = sway ]; then
-        FILE_PATH \
-<<'SWAY_LOG'
-/var/log/sway.log
-SWAY_LOG
+            OBJ_PATH="$home/.syscfg_env/browser"
+            __file_write_overwrite;
+        }
+    }
+    ___DISPLAY_SERVER() {
+        [ ! "$display_server" = wayland ] && {
+            OBJ_PATH="$home/.syscfg_env/display_server"
+            __loc_delete;
+        } || {
+            OBJ=\
+'GTK_A11Y=none
+GDK_BACKEND=wayland
+QT_QPA_PLATFORM=wayland
+QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+SDL_VIDEODRIVER=wayland
+'
 
-        __loc_empty;
-        __loc_chmod '0644'
-        __loc_chown "$user"
-    else
-        FILE_PATH \
-<<'SWAY_LOG'
-/var/log/sway.log
-SWAY_LOG
+            OBJ_PATH="$home/.syscfg_env/display_server"
+            __file_write_overwrite;
+        }
+    }
+    ___ENV() {
+        OBJ=\
+'EDITOR=nano
+PATH="${PATH}:$HOME/.local/bin:$HOME/scripts"
+'
 
-        __loc_delete;
-    fi
+        OBJ_PATH="$home/.syscfg_env/env"
+        __file_write_overwrite;
+    }
+    ___PORTAL() {
+        [ ! "${1:-$portal}" ] && {
+            OBJ_PATH="$home/.syscfg_env/portal"
+            __loc_delete;
+        } || {
+            OBJ=\
+'GTK_USE_PORTAL=1
+'
+
+            OBJ_PATH="$home/.syscfg_env/portal"
+            __file_write_overwrite;
+        }
+    }
+    ___QT_THEME() {
+        [ ! "${1:-$qt_theme}" = kvantum ] && {
+            OBJ_PATH="$home/.syscfg_env/qt_theme"
+            __loc_delete;
+        } || {
+            OBJ=\
+'QT_STYLE_OVERRIDE=kvantum
+'
+
+            OBJ_PATH="$home/.syscfg_env/qt_theme"
+            __file_write_overwrite;
+        }
+    }
+    ___SWAY_LOG() {
+        [ ! "${1:-$wm}" = sway ] && {
+            OBJ_PATH='/var/log/sway.log'
+            __loc_delete;
+        } || {
+            OBJ_PATH='/var/log/sway.log'
+            __loc_empty;
+
+            OBJ_PATH='/var/log/sway.log'
+            __loc_chmod '0644'
+
+            OBJ_PATH='/var/log/sway.log'
+            __loc_chown "$user"
+        }
+    }
+    ___WM() {
+        [ ! "${1:-$wm}" = sway ] && {
+            OBJ_PATH="$home/.syscfg_env/wm"
+            __loc_delete;
+        } || {
+            OBJ=\
+'XDG_CURRENT_DESKTOP=sway
+XDG_SESSION_DESKTOP=sway
+DESKTOP_SESSION=sway
+'
+
+            OBJ_PATH="$home/.syscfg_env/wm"
+            __file_write_overwrite;
+        }
+    }
+
+    ___DISPLAY_SERVER;
+    ___ENV;
+
+    [ "$display_server" = wayland ] && {
+        ____BASH_PROFILE;
+        ___BROWSER;
+        ___PORTAL;
+        ___QT_THEME;
+        ___SWAY_LOG;
+        ___WM;
+    } || {
+        ____BASH_PROFILE ''
+        ___BROWSER ''
+        ___PORTAL ''
+        ___QT_THEME ''
+        ___SWAY_LOG ''
+        ___WM ''
+    }
 }
 
 # .face png in $home (user $HOME); some applications use this file.
 _face_bin() {
-    FILE_PATH \
-<<_FACE
-$home/.face
-_FACE
+    OBJ=\
+'\0211\0120\0116\0107\0015\0012\0032\0012\0000\0000\0000\0015\0111\0110\0104\0122\0000\0000\0000\0144\0000\0000\0000\0144\0010\0002\0000\0000\0000\0377\0200\0002\0003\0000\0000\0000\0003\0163\0102\0111\0124\0010\0010\0010\0333\0341\0117\0340\0000\0000\0010\0010\0111\0104\0101\0124\0170\0234\0355\0235\0117\0150\0023\0117\0024\0307\0137\0252\0325\0370\0277\0326\0077\0304\0077\0075\0010\0125\0243\0124\0232\0050\0005\0251\0010\0332\0136\0104\0004\0053\0036\0104\0301\0322\0256\0005\0017\0005\0351\0101\0017\0036\0212\0207\0212\0050\0071\0064\0170\0116\0215\0030\0355\0105\0321\0252\0330\0253\0101\0244\0212\0042\0046\0324\0103\0113\0212\0177\0132\0264\0242\0025\0135\0250\0156\0252\0326\0375\0035\0346\0327\0141\0234\0375\0237\0314\0314\0116\0045\0237\0123\0166\0166\0063\0373\0366\0333\0231\0267\0157\0346\0315\0244\0001\0135\0327\0241\0204\0073\0312\0374\0066\0140\0066\0121\0022\0313\0003\0045\0261\0074\0120\0022\0313\0003\0045\0261\0074\0060\0013\0304\0112\0247\0323\0175\0175\0175\0176\0133\0001\0060\0053\0304\0112\0245\0122\0207\0016\0035\0272\0172\0365\0252\0337\0206\0000\0350\0162\0323\0335\0335\0215\0115\0115\0046\0223\0376\0032\0043\0173\0313\0032\0031\0031\0301\0237\0133\0133\0133\0375\0155\0137\0054\0305\0312\0144\0062\0055\0055\0055\0147\0317\0236\0145\0130\0047\0205\0317\0172\0261\0155\0250\0065\0065\0065\0000\0120\0133\0133\0313\0252\0302\0366\0366\0166\0243\0315\0167\0356\0334\0141\0125\0277\0047\0030\0167\0303\0301\0301\0301\0171\0363\0346\0145\0263\0331\0160\0070\0314\0266\0146\0222\0267\0157\0337\0362\0253\0334\0006\0366\0076\0353\0324\0251\0123\0000\0060\0074\0074\0314\0111\0057\0105\0121\0072\0072\0072\0170\0324\0354\0010\0173\0261\0142\0261\0130\0165\0165\0065\0160\0323\0153\0303\0206\0015\0314\0353\0164\0111\0121\0142\0145\0062\0031\0323\0160\0061\0227\0313\0141\0275\0366\0356\0335\0133\0314\0055\0244\0242\0050\0261\0042\0221\0110\0062\0231\0104\0375\0216\0042\0227\0313\0125\0124\0124\0000\0100\0072\0235\0276\0161\0343\0106\0061\0167\0261\0047\0036\0217\0007\0002\0001\0176\0365\0223\0024\0333\0015\0357\0336\0275\0333\0327\0327\0267\0151\0323\0046\0143\0304\0360\0365\0353\0327\0271\0163\0347\0002\0000\0127\0027\0063\0070\0070\0310\0257\0162\0012\0006\0076\0153\0164\0164\0364\0335\0273\0167\0027\0057\0136\0154\0153\0153\0243\0116\0041\0231\0046\0046\0046\0166\0355\0332\0125\0374\0215\0214\0234\0077\0177\0376\0312\0225\0053\0074\0152\0066\0207\0131\0014\0122\0126\0006\0146\0021\0026\0352\0214\0000\0160\0374\0370\0361\0002\0252\0065\0306\0131\0135\0135\0135\0350\0124\0127\0127\0027\0363\0247\0260\0207\0331\0333\0160\0172\0172\0072\0020\0010\0144\0263\0331\0225\0053\0127\0222\0345\0270\0063\0246\0122\0051\0206\0316\0053\0036\0217\0167\0166\0166\0262\0252\0315\0045\0054\0103\0207\0077\0177\0376\0000\0300\0227\0057\0137\0202\0301\0040\0131\0216\0175\0126\0001\0043\0041\0112\0172\0104\0042\0221\0270\0166\0355\0132\0101\0066\0026\0005\0343\0070\0113\0327\0165\0000\0230\0232\0232\0042\0365\0212\0305\0142\0353\0326\0255\0003\0200\0261\0261\0061\0257\0221\0304\0304\0304\0204\0261\0060\0223\0311\0274\0174\0371\0262\0070\0113\0013\0201\0175\0120\0212\0365\0132\0270\0160\0041\0056\0074\0172\0364\0050\0372\0120\0174\0044\0061\0060\0060\0060\0060\0060\0120\0114\0015\0205\0303\0311\0027\0242\0312\0053\0052\0052\0160\0011\0152\0134\0000\0260\0177\0377\0176\0367\0365\0234\0076\0175\0332\0307\0247\0240\0340\0170\0033\0024\0053\0256\0130\0261\0002\0035\0222\0217\0175\0375\0372\0165\0367\0365\0140\0225\0377\0145\0261\0364\0031\0275\0252\0253\0253\0321\0141\0141\0215\0313\0164\0226\0306\0027\0261\0370\0316\0224\0176\0370\0360\0001\0000\0106\0106\0106\0220\0137\0157\0152\0152\0102\0345\0375\0375\0375\0356\0075\0227\0351\0013\0321\0027\0370\0212\0025\0012\0205\0132\0133\0133\0001\0040\0235\0116\0267\0265\0265\0055\0130\0260\0000\0237\0352\0355\0355\0165\0131\0211\0351\0013\0221\0244\0256\0256\0256\0140\0013\0275\0041\0240\0365\0342\0111\0225\0023\0047\0116\0220\0016\0310\0245\0347\0262\0357\0206\0212\0242\0360\0266\0037\0043\0042\0141\0361\0372\0365\0353\0245\0113\0227\0002\0100\0117\0117\0317\0326\0255\0133\0161\0271\0313\0306\0225\0315\0146\0155\0316\0212\0234\0336\0022\0224\0335\0121\0125\0025\0015\0036\0037\0075\0172\0204\0013\0135\0172\0256\0071\0163\0346\0330\0234\0135\0274\0170\0161\0361\0346\0271\0144\0256\0260\0073\0115\0117\0117\0227\0225\0225\0115\0115\0115\0221\0205\0157\0336\0274\0161\0374\0242\0225\0317\0332\0261\0143\0307\0341\0303\0207\0205\0116\0061\0013\0353\0360\0272\0131\0204\0351\0030\0103\0220\0111\0126\0222\0140\0060\0070\0076\0076\0056\0306\0154\0214\0350\0214\0364\0242\0105\0213\0250\0307\0266\0167\0363\0212\0242\0230\0212\0325\0331\0331\0051\0314\0146\0214\0150\0261\0352\0353\0353\0251\0307\0306\0363\0123\0106\0056\0135\0272\0144\0252\0324\0366\0355\0333\0105\0332\0214\0021\0235\0276\0067\0212\0145\0105\0076\0237\0267\0352\0203\0113\0226\0054\0141\0147\0221\0007\0104\0213\0025\0213\0305\0052\0053\0053\0335\0134\0171\0341\0302\0205\0217\0037\0077\0232\0236\0232\0077\0177\0076\0123\0243\0334\0342\0303\0302\0020\0074\0135\0143\0317\0373\0367\0357\0255\0116\0215\0216\0216\0262\0063\0307\0003\0376\0257\0242\0061\0215\0071\0343\0361\0270\0115\0046\0142\0150\0150\0150\0150\0150\0210\0247\0121\0346\0370\0057\0326\0203\0007\0017\0214\0205\0337\0276\0175\0263\0377\0326\0275\0173\0367\0370\0230\0143\0207\0377\0142\0151\0232\0266\0173\0367\0156\0257\0337\0372\0371\0363\0047\0017\0143\0354\0361\0137\0054\0000\0170\0374\0370\0061\0065\0356\0031\0033\0033\0363\0313\0030\0033\0244\0020\0013\0376\0036\0124\0333\0073\0054\0304\0357\0337\0277\0071\0133\0144\0202\0017\0142\0151\0232\0146\0054\0044\0007\0325\0246\0316\0073\0032\0215\0222\0207\0317\0237\0077\0347\0141\0233\0003\0202\0203\0140\0253\0070\0023\0146\0306\0211\0232\0246\0205\0102\0041\0343\0131\0343\0014\0237\0247\0211\0174\0046\0210\0233\0165\0100\0220\0013\0152\0051\0120\0343\0032\0036\0036\0066\0215\0105\0311\0304\0032\0042\0227\0313\0061\0066\0316\0011\0321\0142\0331\0323\0333\0333\0153\0332\0254\0140\0046\0035\0111\0202\0126\0005\0210\0104\0012\0261\0312\0313\0313\0177\0375\0372\0005\0000\0375\0375\0375\0246\0027\0050\0212\0162\0346\0314\0231\0055\0133\0266\0210\0265\0213\0106\0264\0203\0067\0365\0356\0015\0015\0015\0366\0337\0332\0274\0171\0163\0070\0034\0246\0026\0135\0212\0177\0041\0012\0025\0313\0064\0046\0120\0024\0005\0255\0251\0264\0042\0030\0014\0066\0067\0067\0003\0000\0025\0273\0212\0357\0206\0102\0305\0062\0365\0356\0216\0031\0207\0366\0366\0166\0344\0310\0326\0256\0135\0113\0226\0377\0343\0055\0313\0264\0017\0002\0000\0231\0117\0064\0262\0176\0375\0172\0364\0101\0125\0125\0262\0034\0255\0160\0022\0212\0260\0040\0305\0052\0302\0102\0063\0245\0126\0013\0032\0310\0264\0340\0370\0370\0070\0231\0351\0011\0207\0303\0302\0214\0107\0210\0153\0131\0126\0021\0026\0312\0145\0341\0314\0076\0005\0331\0111\0103\0241\0320\0221\0043\0107\0360\0241\0370\0211\0032\0101\0142\0045\0022\0011\0323\0105\0125\0216\0333\0045\0250\0264\0340\0306\0215\0033\0311\0103\0301\0023\0065\0202\0304\0262\0132\0253\0207\0033\0216\0351\0024\0240\0243\0224\0077\0176\0374\0140\0142\0236\0113\0104\0210\0145\0325\0254\0200\0150\0070\0224\0363\0106\0124\0125\0125\0121\0045\0124\0302\0125\0260\0217\0027\0041\0326\0223\0047\0117\0114\0233\0225\0143\0303\0061\0106\0122\0324\0362\0243\0313\0227\0057\0347\0363\0371\0342\0055\0164\0011\0307\0315\0231\0211\0104\0142\0337\0276\0175\0015\0015\0015\0126\0223\0123\0216\0021\0226\0061\0222\0242\0032\0240\0252\0252\0075\0075\0075\0205\0332\0353\0031\0226\0101\0160\0044\0022\0171\0361\0342\0305\0253\0127\0257\0122\0251\0124\0115\0115\0315\0247\0117\0237\0154\0326\0024\0107\0243\0321\0110\0044\0142\0137\0041\0336\0160\0200\0071\0170\0360\0140\0074\0036\0047\0113\0076\0177\0376\0134\0260\0301\0236\0141\0036\0214\0240\0325\0105\0216\0120\0211\0350\0155\0333\0266\0121\0027\0230\0246\0235\0065\0115\0243\0026\0331\0237\0073\0167\0216\0371\0043\0130\0301\0336\0147\0251\0252\0352\0250\0027\0325\0254\0022\0211\0204\0261\0201\0054\0137\0276\0334\0370\0305\0140\0060\0270\0163\0347\0116\0262\0104\0344\0010\0221\0213\0203\0167\0324\0253\0271\0271\0371\0300\0201\0003\0350\0163\0046\0223\0271\0165\0353\0226\0125\0362\0331\0010\0025\0152\0211\0034\0041\0362\0372\0263\0250\0252\0272\0152\0325\0052\0352\0115\0037\0215\0106\0053\0053\0053\0033\0033\0033\0311\0227\0140\0044\0022\0131\0263\0146\0215\0373\0232\0251\0165\0070\0102\0243\0007\0256\0235\0274\0251\0251\0251\0256\0256\0256\0161\0206\0373\0367\0357\0133\0135\0151\0164\0366\0215\0215\0215\0246\0127\0122\0043\0304\0075\0173\0366\0160\0063\0237\0106\0226\0137\0014\0061\0256\0262\0265\0022\0113\0327\0365\0143\0307\0216\0341\0313\0202\0301\0240\0246\0151\0142\0214\0224\0045\0157\0150\0144\0365\0352\0325\0126\0247\0110\0267\0225\0317\0347\0237\0076\0175\0052\0304\0042\0151\0222\0254\0106\0310\0165\0315\0024\0224\0053\0174\0366\0354\0031\0177\0163\0000\0344\0021\0313\0323\0066\0212\0362\0362\0162\0362\0160\0162\0162\0222\0265\0071\0346\0310\0042\0226\0161\0111\0262\0115\0114\0160\0362\0344\0111\0362\0120\0330\0010\0121\0026\0261\0214\0330\0104\0233\0124\0246\0107\0330\0010\0121\0026\0261\0274\0356\0146\0242\0062\0075\0142\0106\0210\0262\0210\0365\0375\0373\0167\0117\0327\0123\0356\0137\0314\0240\0107\0026\0261\0360\0076\0152\0214\0375\0070\0246\0243\0243\0243\0245\0245\0005\0037\0212\0131\0333\0046\0213\0130\0140\0310\0131\0070\0066\0226\0144\0062\0211\0365\0272\0171\0363\0046\0047\0253\0110\0044\0022\0253\0200\0115\0230\0130\0057\0061\0231\0036\0211\0304\0242\0334\0226\0313\0351\0004\0254\0227\0210\0114\0217\0230\0121\0225\0113\0226\0055\0133\0206\0015\0363\0264\0217\0272\0273\0273\0373\0341\0303\0207\0334\0354\0372\0037\0271\0304\0242\0266\0215\0211\0137\0333\0147\0217\0104\0335\0020\0014\0357\0104\0067\0273\0021\0105\0042\0227\0130\0360\0367\0146\0225\0333\0267\0157\0373\0150\0211\0011\0176\0067\0155\0023\0012\0330\0164\0056\0006\0351\0132\0026\0374\0335\0270\0344\0352\0211\0176\0377\0265\0314\0301\0211\0173\0117\0357\0104\0336\0110\0052\0226\0116\0154\0020\0226\0247\0047\0312\0330\0015\0021\0223\0223\0223\0150\0304\0343\0376\0267\0105\0170\0043\0257\0130\0000\0020\0213\0305\0300\0343\0017\0327\0360\0305\0357\0246\0355\0000\0032\0312\0124\0125\0125\0371\0155\0210\0256\0313\0354\0263\0060\0110\0257\0372\0372\0172\0277\0015\0231\0015\0142\0351\0063\0172\0025\0366\0343\0235\0014\0231\0035\0142\0351\0063\0172\0371\0373\0146\0224\0142\0357\0216\0033\0222\0311\0144\0155\0155\0255\0233\0237\0264\0343\0107\0100\0057\0375\0143\0065\0327\0110\0035\0072\0310\0106\0111\0054\0017\0224\0304\0362\0100\0111\0054\0017\0224\0304\0362\0100\0111\0054\0017\0374\0007\0045\0367\0037\0310\0075\0064\0164\0315\0000\0000\0000\0000\0111\0105\0116\0104\0256\0102\0140\0202'
 
-    FILE_octal \
-<<'_FACE'
-\0211\0120\0116\0107\0015\0012\0032\0012\0000\0000\0000\0015\0111\0110\0104\0122\0000\0000\0000\0144\0000\0000\0000\0144\0010\0002\0000\0000\0000\0377\0200\0002\0003\0000\0000\0000\0003\0163\0102\0111\0124\0010\0010\0010\0333\0341\0117\0340\0000\0000\0010\0010\0111\0104\0101\0124\0170\0234\0355\0235\0117\0150\0023\0117\0024\0307\0137\0252\0325\0370\0277\0326\0077\0304\0077\0075\0010\0125\0243\0124\0232\0050\0005\0251\0010\0332\0136\0104\0004\0053\0036\0104\0301\0322\0256\0005\0017\0005\0351\0101\0017\0036\0212\0207\0212\0050\0071\0064\0170\0116\0215\0030\0355\0105\0321\0252\0330\0253\0101\0244\0212\0042\0046\0324\0103\0113\0212\0177\0132\0264\0242\0025\0135\0250\0156\0252\0326\0375\0035\0346\0327\0141\0234\0375\0237\0314\0314\0116\0045\0237\0123\0166\0166\0063\0373\0366\0333\0231\0267\0157\0346\0315\0244\0001\0135\0327\0241\0204\0073\0312\0374\0066\0140\0066\0121\0022\0313\0003\0045\0261\0074\0120\0022\0313\0003\0045\0261\0074\0060\0013\0304\0112\0247\0323\0175\0175\0175\0176\0133\0001\0060\0053\0304\0112\0245\0122\0207\0016\0035\0272\0172\0365\0252\0337\0206\0000\0350\0162\0323\0335\0335\0215\0115\0115\0046\0223\0376\0032\0043\0173\0313\0032\0031\0031\0301\0237\0133\0133\0133\0375\0155\0137\0054\0305\0312\0144\0062\0055\0055\0055\0147\0317\0236\0145\0130\0047\0205\0317\0172\0261\0155\0250\0065\0065\0065\0000\0120\0133\0133\0313\0252\0302\0366\0366\0166\0243\0315\0167\0356\0334\0141\0125\0277\0047\0030\0167\0303\0301\0301\0301\0171\0363\0346\0145\0263\0331\0160\0070\0314\0266\0146\0222\0267\0157\0337\0362\0253\0334\0006\0366\0076\0353\0324\0251\0123\0000\0060\0074\0074\0314\0111\0057\0105\0121\0072\0072\0072\0170\0324\0354\0010\0173\0261\0142\0261\0130\0165\0165\0065\0160\0323\0153\0303\0206\0015\0314\0353\0164\0111\0121\0142\0145\0062\0031\0323\0160\0061\0227\0313\0141\0275\0366\0356\0335\0133\0314\0055\0244\0242\0050\0261\0042\0221\0110\0062\0231\0104\0375\0216\0042\0227\0313\0125\0124\0124\0000\0100\0072\0235\0276\0161\0343\0106\0061\0167\0261\0047\0036\0217\0007\0002\0001\0176\0365\0223\0024\0333\0015\0357\0336\0275\0333\0327\0327\0267\0151\0323\0046\0143\0304\0360\0365\0353\0327\0271\0163\0347\0002\0000\0127\0027\0063\0070\0070\0310\0257\0162\0012\0006\0076\0153\0164\0164\0364\0335\0273\0167\0027\0057\0136\0154\0153\0153\0243\0116\0041\0231\0046\0046\0046\0166\0355\0332\0125\0374\0215\0214\0234\0077\0177\0376\0312\0225\0053\0074\0152\0066\0207\0131\0014\0122\0126\0006\0146\0021\0026\0352\0214\0000\0160\0374\0370\0361\0002\0252\0065\0306\0131\0135\0135\0135\0350\0124\0127\0127\0027\0363\0247\0260\0207\0331\0333\0160\0172\0172\0072\0020\0010\0144\0263\0331\0225\0053\0127\0222\0345\0270\0063\0246\0122\0051\0206\0316\0053\0036\0217\0167\0166\0166\0262\0252\0315\0045\0054\0103\0207\0077\0177\0376\0000\0300\0227\0057\0137\0202\0301\0040\0131\0216\0175\0126\0001\0043\0041\0112\0172\0104\0042\0221\0270\0166\0355\0132\0101\0066\0026\0005\0343\0070\0113\0327\0165\0000\0230\0232\0232\0042\0365\0212\0305\0142\0353\0326\0255\0003\0200\0261\0261\0061\0257\0221\0304\0304\0304\0204\0261\0060\0223\0311\0274\0174\0371\0262\0070\0113\0013\0201\0175\0120\0212\0365\0132\0270\0160\0041\0056\0074\0172\0364\0050\0372\0120\0174\0044\0061\0060\0060\0060\0060\0060\0120\0114\0015\0205\0303\0311\0027\0242\0312\0053\0052\0052\0160\0011\0152\0134\0000\0260\0177\0377\0176\0367\0365\0234\0076\0175\0332\0307\0247\0240\0340\0170\0033\0024\0053\0256\0130\0261\0002\0035\0222\0217\0175\0375\0372\0165\0367\0365\0140\0225\0377\0145\0261\0364\0031\0275\0252\0253\0253\0321\0141\0141\0215\0313\0164\0226\0306\0027\0261\0370\0316\0224\0176\0370\0360\0001\0000\0106\0106\0106\0220\0137\0157\0152\0152\0102\0345\0375\0375\0375\0356\0075\0227\0351\0013\0321\0027\0370\0212\0025\0012\0205\0132\0133\0133\0001\0040\0235\0116\0267\0265\0265\0055\0130\0260\0000\0237\0352\0355\0355\0165\0131\0211\0351\0013\0221\0244\0256\0256\0256\0140\0013\0275\0041\0240\0365\0342\0111\0225\0023\0047\0116\0220\0016\0310\0245\0347\0262\0357\0206\0212\0242\0360\0266\0037\0043\0042\0141\0361\0372\0365\0353\0245\0113\0227\0002\0100\0117\0117\0317\0326\0255\0133\0161\0271\0313\0306\0225\0315\0146\0155\0316\0212\0234\0336\0022\0224\0335\0121\0125\0025\0015\0036\0037\0075\0172\0204\0013\0135\0172\0256\0071\0163\0346\0330\0234\0135\0274\0170\0161\0361\0346\0271\0144\0256\0260\0073\0115\0117\0117\0227\0225\0225\0115\0115\0115\0221\0205\0157\0336\0274\0161\0374\0242\0225\0317\0332\0261\0143\0307\0341\0303\0207\0205\0116\0061\0013\0353\0360\0272\0131\0204\0351\0030\0103\0220\0111\0126\0222\0140\0060\0070\0076\0076\0056\0306\0154\0214\0350\0214\0364\0242\0105\0213\0250\0307\0266\0167\0363\0212\0242\0230\0212\0325\0331\0331\0051\0314\0146\0214\0150\0261\0352\0353\0353\0251\0307\0306\0363\0123\0106\0056\0135\0272\0144\0252\0324\0366\0355\0333\0105\0332\0214\0021\0235\0276\0067\0212\0145\0105\0076\0237\0267\0352\0203\0113\0226\0054\0141\0147\0221\0007\0104\0213\0025\0213\0305\0052\0053\0053\0335\0134\0171\0341\0302\0205\0217\0037\0077\0232\0236\0232\0077\0177\0076\0123\0243\0334\0342\0303\0302\0020\0074\0135\0143\0317\0373\0367\0357\0255\0116\0215\0216\0216\0262\0063\0307\0003\0376\0257\0242\0061\0215\0071\0343\0361\0270\0115\0046\0142\0150\0150\0150\0150\0150\0210\0247\0121\0346\0370\0057\0326\0203\0007\0017\0214\0205\0337\0276\0175\0263\0377\0326\0275\0173\0367\0370\0230\0143\0207\0377\0142\0151\0232\0266\0173\0367\0156\0257\0337\0372\0371\0363\0047\0017\0143\0354\0361\0137\0054\0000\0170\0374\0370\0061\0065\0356\0031\0033\0033\0363\0313\0030\0033\0244\0020\0013\0376\0036\0124\0333\0073\0054\0304\0357\0337\0277\0071\0133\0144\0202\0017\0142\0151\0232\0146\0054\0044\0007\0325\0246\0316\0073\0032\0215\0222\0207\0317\0237\0077\0347\0141\0233\0003\0202\0203\0140\0253\0070\0023\0146\0306\0211\0232\0246\0205\0102\0041\0343\0131\0343\0014\0237\0247\0211\0174\0046\0210\0233\0165\0100\0220\0013\0152\0051\0120\0343\0032\0036\0036\0066\0215\0105\0311\0304\0032\0042\0227\0313\0061\0066\0316\0011\0321\0142\0331\0323\0333\0333\0153\0332\0254\0140\0046\0035\0111\0202\0126\0005\0210\0104\0012\0261\0312\0313\0313\0177\0375\0372\0005\0000\0375\0375\0375\0246\0027\0050\0212\0162\0346\0314\0231\0055\0133\0266\0210\0265\0213\0106\0264\0203\0067\0365\0356\0015\0015\0015\0366\0337\0332\0274\0171\0163\0070\0034\0246\0026\0135\0212\0177\0041\0012\0025\0313\0064\0046\0120\0024\0005\0255\0251\0264\0042\0030\0014\0066\0067\0067\0003\0000\0025\0273\0212\0357\0206\0102\0305\0062\0365\0356\0216\0031\0207\0366\0366\0166\0344\0310\0326\0256\0135\0113\0226\0377\0343\0055\0313\0264\0017\0002\0000\0231\0117\0064\0262\0176\0375\0172\0364\0101\0125\0125\0262\0034\0255\0160\0022\0212\0260\0040\0305\0052\0302\0102\0063\0245\0126\0013\0032\0310\0264\0340\0370\0370\0070\0231\0351\0011\0207\0303\0302\0214\0107\0210\0153\0131\0126\0021\0026\0312\0145\0341\0314\0076\0005\0331\0111\0103\0241\0320\0221\0043\0107\0360\0241\0370\0211\0032\0101\0142\0045\0022\0011\0323\0105\0125\0216\0333\0045\0250\0264\0340\0306\0215\0033\0311\0103\0301\0023\0065\0202\0304\0262\0132\0253\0207\0033\0216\0351\0024\0240\0243\0224\0077\0176\0374\0140\0142\0236\0113\0104\0210\0145\0325\0254\0200\0150\0070\0224\0363\0106\0124\0125\0125\0121\0045\0124\0302\0125\0260\0217\0027\0041\0326\0223\0047\0117\0114\0233\0225\0143\0303\0061\0106\0122\0324\0362\0243\0313\0227\0057\0347\0363\0371\0342\0055\0164\0011\0307\0315\0231\0211\0104\0142\0337\0276\0175\0015\0015\0015\0126\0223\0123\0216\0021\0226\0061\0222\0242\0032\0240\0252\0252\0075\0075\0075\0205\0332\0353\0031\0226\0101\0160\0044\0022\0171\0361\0342\0305\0253\0127\0257\0122\0251\0124\0115\0115\0315\0247\0117\0237\0154\0326\0024\0107\0243\0321\0110\0044\0142\0137\0041\0336\0160\0200\0071\0170\0360\0140\0074\0036\0047\0113\0076\0177\0376\0134\0260\0301\0236\0141\0036\0214\0240\0325\0105\0216\0120\0211\0350\0155\0333\0266\0121\0027\0230\0246\0235\0065\0115\0243\0026\0331\0237\0073\0167\0216\0371\0043\0130\0301\0336\0147\0251\0252\0352\0250\0027\0325\0254\0022\0211\0204\0261\0201\0054\0137\0276\0334\0370\0305\0140\0060\0270\0163\0347\0116\0262\0104\0344\0010\0221\0213\0203\0167\0324\0253\0271\0271\0371\0300\0201\0003\0350\0163\0046\0223\0271\0165\0353\0226\0125\0362\0331\0010\0025\0152\0211\0034\0041\0362\0372\0263\0250\0252\0272\0152\0325\0052\0352\0115\0037\0215\0106\0053\0053\0053\0033\0033\0033\0311\0227\0140\0044\0022\0131\0263\0146\0215\0373\0232\0251\0165\0070\0102\0243\0007\0256\0235\0274\0251\0251\0251\0256\0256\0256\0161\0206\0373\0367\0357\0133\0135\0151\0164\0366\0215\0215\0215\0246\0127\0122\0043\0304\0075\0173\0366\0160\0063\0237\0106\0226\0137\0014\0061\0256\0262\0265\0022\0113\0327\0365\0143\0307\0216\0341\0313\0202\0301\0240\0246\0151\0142\0214\0224\0045\0157\0150\0144\0365\0352\0325\0126\0247\0110\0267\0225\0317\0347\0237\0076\0175\0052\0304\0042\0151\0222\0254\0106\0310\0165\0315\0024\0224\0053\0174\0366\0354\0031\0177\0163\0000\0344\0021\0313\0323\0066\0212\0362\0362\0162\0362\0160\0162\0162\0222\0265\0071\0346\0310\0042\0226\0161\0111\0262\0115\0114\0160\0362\0344\0111\0362\0120\0330\0010\0121\0026\0261\0214\0330\0104\0233\0124\0246\0107\0330\0010\0121\0026\0261\0274\0356\0146\0242\0062\0075\0142\0106\0210\0262\0210\0365\0375\0373\0167\0117\0327\0123\0356\0137\0314\0240\0107\0026\0261\0360\0076\0152\0214\0375\0070\0246\0243\0243\0243\0245\0245\0005\0037\0212\0131\0333\0046\0213\0130\0140\0310\0131\0070\0066\0226\0144\0062\0211\0365\0272\0171\0363\0046\0047\0253\0110\0044\0022\0253\0200\0115\0230\0130\0057\0061\0231\0036\0211\0304\0242\0334\0226\0313\0351\0004\0254\0227\0210\0114\0217\0230\0121\0225\0113\0226\0055\0133\0206\0015\0363\0264\0217\0272\0273\0273\0373\0341\0303\0207\0334\0354\0372\0037\0271\0304\0242\0266\0215\0211\0137\0333\0147\0217\0104\0335\0020\0014\0357\0104\0067\0273\0021\0105\0042\0227\0130\0360\0367\0146\0225\0333\0267\0157\0373\0150\0211\0011\0176\0067\0155\0023\0012\0330\0164\0056\0006\0351\0132\0026\0374\0335\0270\0344\0352\0211\0176\0377\0265\0314\0301\0211\0173\0117\0357\0104\0336\0110\0052\0226\0116\0154\0020\0226\0247\0047\0312\0330\0015\0021\0223\0223\0223\0150\0304\0343\0376\0267\0105\0170\0043\0257\0130\0000\0020\0213\0305\0300\0343\0017\0327\0360\0305\0357\0246\0355\0000\0032\0312\0124\0125\0125\0371\0155\0210\0256\0313\0354\0263\0060\0110\0257\0372\0372\0172\0277\0015\0231\0015\0142\0351\0063\0172\0025\0366\0343\0235\0014\0231\0035\0142\0351\0063\0172\0371\0373\0146\0224\0142\0357\0216\0033\0222\0311\0144\0155\0155\0255\0233\0237\0264\0343\0107\0100\0057\0375\0143\0065\0327\0110\0035\0072\0310\0106\0111\0054\0017\0224\0304\0362\0100\0111\0054\0017\0224\0304\0362\0100\0111\0054\0017\0374\0007\0045\0367\0037\0310\0075\0064\0164\0315\0000\0000\0000\0000\0111\0105\0116\0104\0256\0102\0140\0202
-_FACE
-
+    OBJ_PATH="$home/.face"
     __bin_write;
 }
 
 _featherpad_conf() {
-    FILE_PATH \
-<<FP_CONF
-$home/.config/featherpad/fp.conf
-FP_CONF
-
-    FILE \
-<<'FP_CONF'
-[text]
+    OBJ=\
+'[text]
 appendEmptyLine=true
 autoBracket=false
 autoReplace=false
@@ -1900,8 +1382,9 @@ startSize=@Size(700 500)
 sysIcons=false
 tabPosition=0
 tabWrapAround=false
-FP_CONF
+'
 
+    OBJ_PATH="$home/.config/featherpad/fp.conf"
     __file_write;
 }
 
@@ -1910,47 +1393,21 @@ _firefox_conf() {
         "$home/1-GIT/firefox-profile" \
         'https://github.com/mscalindt/firefox-profile'
 
-    FILE_PATH \
-<<MSCALINDT
-$tmpd/firefox-profile/src/mscalindt
-MSCALINDT
-
-    FILE_PATH_TARGET \
-<<MSCALINDT
-$home/.mozilla/firefox/mscalindt
-MSCALINDT
-
+    OBJ="$tmpd/firefox-profile/src/mscalindt"
+    OBJ_PATH="$home/.mozilla/firefox/mscalindt"
     __dir_target_write;
 
-    FILE_PATH \
-<<PROFILES_INI
-$tmpd/firefox-profile/src/profiles.ini
-PROFILES_INI
-
-    FILE_PATH_TARGET \
-<<PROFILES_INI
-$home/.mozilla/firefox/profiles.ini
-PROFILES_INI
-
+    OBJ="$tmpd/firefox-profile/src/profiles.ini"
+    OBJ_PATH="$home/.mozilla/firefox/profiles.ini"
     __file_write_overwrite;
 
-    FILE_PATH \
-<<INSTALLS_INI
-$home/.mozilla/firefox/installs.ini
-INSTALLS_INI
-
+    OBJ_PATH="$home/.mozilla/firefox/installs.ini"
     __loc_delete;
 }
 
 _fontconfig_conf() {
-    FILE_PATH \
-<<01_FONT_CONF
-$home/.config/fontconfig/conf.d/01-font.conf
-01_FONT_CONF
-
-    FILE \
-<<'01_FONT_CONF'
-<?xml version="1.0" encoding="UTF-8"?>
+    OBJ=\
+'<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
 <fontconfig>
   <alias>
@@ -1992,52 +1449,38 @@ $home/.config/fontconfig/conf.d/01-font.conf
     </default>
   </alias>
 </fontconfig>
-01_FONT_CONF
+'
 
+    OBJ_PATH="$home/.config/fontconfig/conf.d/01-font.conf"
     __file_write;
 }
 
 _fuse_conf() {
-    FILE_PATH \
-<<'FUSE_CONF'
-/etc/fuse.conf
-FUSE_CONF
+    OBJ=\
+'user_allow_other
+'
 
-    FILE \
-<<'FUSE_CONF'
-user_allow_other
-FUSE_CONF
-
+    OBJ_PATH='/etc/fuse.conf'
     __file_write_overwrite;
 }
 
 _gai_conf() {
-    FILE_PATH \
-<<'GAI_CONF'
-/etc/gai.conf
-GAI_CONF
+    OBJ=\
+'precedence ::ffff:0:0/96  100
+'
 
-    if [ "$ipv6" = 1 ]; then
+    [ "$ipv6" ] && {
+        OBJ_PATH='/etc/gai.conf'
         __loc_delete;
-    else
-        FILE \
-<<'GAI_CONF'
-precedence ::ffff:0:0/96  100
-GAI_CONF
-
+    } || {
+        OBJ_PATH='/etc/gai.conf'
         __file_write_overwrite;
-    fi
+    }
 }
 
 _git_conf() {
-    FILE_PATH \
-<<_GITCONFIG
-$home/.gitconfig
-_GITCONFIG
-
-    FILE \
-<<'_GITCONFIG'
-[core]
+    OBJ=\
+'[core]
 	editor = nano
 [credential]
 	helper = cache --timeout=86400
@@ -2061,39 +1504,30 @@ _GITCONFIG
 [color "diff"]
 	old = red
 	new = yellow
-_GITCONFIG
+'
 
+    OBJ_PATH="$home/.gitconfig"
     __file_write;
 }
 
 _gov_performance() {
     for core in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
-        FILE_PATH \
-<<SCALING_GOVERNOR
-$core
-SCALING_GOVERNOR
+        OBJ=\
+'performance
+'
 
-        FILE \
-<<'SCALING_GOVERNOR'
-performance
-SCALING_GOVERNOR
-
+        OBJ_PATH="$core"
         __file_write_overwrite_soft;
     done
 }
 
 _gov_schedutil() {
     for core in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
-        FILE_PATH \
-<<SCALING_GOVERNOR
-$core
-SCALING_GOVERNOR
+        OBJ=\
+'schedutil
+'
 
-        FILE \
-<<'SCALING_GOVERNOR'
-schedutil
-SCALING_GOVERNOR
-
+        OBJ_PATH="$core"
         __file_write_overwrite_soft;
     done
 }
@@ -2123,14 +1557,8 @@ _grub() {
 _grub_conf() {
     is_uefi || EERROR 'Not in UEFI mode.'
 
-    FILE_PATH \
-<<'GRUB'
-/etc/default/grub
-GRUB
-
-    FILE \
-<<'GRUB'
-GRUB_PRELOAD_MODULES="part_gpt"
+    OBJ=\
+'GRUB_PRELOAD_MODULES="part_gpt"
 GRUB_TIMEOUT_STYLE=menu
 GRUB_TERMINAL_INPUT=console
 GRUB_GFXMODE=auto
@@ -2142,41 +1570,29 @@ GRUB_TIMEOUT=5
 GRUB_CMDLINE_LINUX="\
 loglevel=3 nowatchdog mitigations=off processor.ignore_ppc=1 \
 usbhid.mousepoll=1 tsc=unstable \
-GRUB
+'
 
-    if [ "$ipv6" != 1 ]; then
-        FILE \
-<<'GRUB'
-ipv6.disable=1 \
-GRUB
-    fi
+    [ "$ipv6" ] || OBJ="$OBJ"\
+'ipv6.disable=1 \
+'
 
-    FILE \
-<<'GRUB'
-"
-GRUB
+    OBJ="$OBJ"\
+'"
+'
 
-    if [ "$arch_linux" = 1 ]; then
-        FILE \
-<<'GRUB'
-GRUB_DISTRIBUTOR="Arch"
-GRUB
-    fi
+    [ ! "$arch_linux" ] || OBJ="$OBJ"\
+'GRUB_DISTRIBUTOR="Arch"
+'
 
+    OBJ_PATH='/etc/default/grub'
     __file_write_overwrite;
 
     __cmd grub-mkconfig -o "$efi_mnt"/EFI/BOOT/grub/grub.cfg
 }
 
 _gtk_conf() {
-    FILE_PATH \
-<<_GTKRC_2_0
-$home/.gtkrc-2.0
-_GTKRC_2_0
-
-    FILE \
-<<'_GTKRC_2_0'
-gtk-cursor-theme-name="Breeze"
+    OBJ=\
+'gtk-cursor-theme-name="Breeze"
 gtk-font-name="Cantarell 12"
 #gtk-document-font-name="DejaVu Serif 12"
 #gtk-monospace-font-name="Cantarell 12"
@@ -2193,18 +1609,13 @@ gtk-xft-antialias=1
 gtk-xft-hinting=1
 gtk-xft-hintstyle=hintfull
 gtk-xft-rgba=rgb
-_GTKRC_2_0
+'
 
+    OBJ_PATH="$home/.gtkrc-2.0"
     __file_write;
 
-    FILE_PATH \
-<<GTK_CSS
-$home/.config/gtk-3.0/gtk.css
-GTK_CSS
-
-    FILE \
-<<'GTK_CSS'
-.titlebar,
+    OBJ=\
+'.titlebar,
 window {
 	border-radius: 0;
 	box-shadow: none;
@@ -2217,18 +1628,13 @@ decoration {
 decoration:backdrop {
 	box-shadow: none;
 }
-GTK_CSS
+'
 
+    OBJ_PATH="$home/.config/gtk-3.0/gtk.css"
     __file_write;
 
-    FILE_PATH \
-<<SETTINGS_INI
-$home/.config/gtk-3.0/settings.ini
-SETTINGS_INI
-
-    FILE \
-<<'SETTINGS_INI'
-[Settings]
+    OBJ=\
+'[Settings]
 gtk-cursor-theme-name="Breeze"
 gtk-font-name="Cantarell 12"
 #gtk-document-font-name="DejaVu Serif 12"
@@ -2246,137 +1652,99 @@ gtk-xft-antialias=1
 gtk-xft-hinting=1
 gtk-xft-hintstyle=hintfull
 gtk-xft-rgba=rgb
-SETTINGS_INI
+'
 
+    OBJ_PATH="$home/.config/gtk-3.0/settings.ini"
     __file_write;
 }
 
 _hostname() {
-    FILE_PATH \
-<<'HOSTNAME'
-/etc/hostname
-HOSTNAME
+    OBJ=\
+"$hostname
+"
 
-    FILE \
-<<HOSTNAME
-$hostname
-HOSTNAME
-
+    OBJ_PATH='/etc/hostname'
     __file_write;
 }
 
 _hosts() {
-    FILE_PATH \
-<<'HOSTS'
-/etc/hosts
-HOSTS
-
-    if [ "$ipv6" = 1 ]; then
-        FILE \
-<<'HOSTS'
-::1              localhost
+    OBJ=\
+'127.0.0.1        localhost
+'
+    [ ! "$ipv6" ] || OBJ=\
+'::1              localhost
 127.0.0.1        localhost
-HOSTS
-    else
-        FILE \
-<<'HOSTS'
-127.0.0.1        localhost
-HOSTS
-    fi
+'
 
-    FILE \
-<<HOSTS
-127.0.1.1        $hostname
-HOSTS
+    OBJ="$OBJ"\
+"127.0.1.1        $hostname
+"
 
+    OBJ_PATH='/etc/hosts'
     __file_write;
 }
 
 _initramfs_conf() {
-    if [ "$arch_linux" != 1 ]; then
+    [ "$arch_linux" ] || {
         _info -white - 'Nothing to be done.'
 
         return 0
-    fi
+    }
 
-    FILE_PATH \
-<<'MKINITCPIO_CONF'
-/etc/mkinitcpio.conf
-MKINITCPIO_CONF
+    OBJ=\
+'MODULES=()
+'
+    [ ! "$m533ia" ] || OBJ=\
+'MODULES=(amdgpu pinctrl-amd)
+'
 
-    if [ "$m533ia" = 1 ]; then
-        FILE \
-<<'MKINITCPIO_CONF'
-MODULES=(amdgpu pinctrl-amd)
-MKINITCPIO_CONF
-    else
-        FILE \
-<<'MKINITCPIO_CONF'
-MODULES=()
-MKINITCPIO_CONF
-    fi
-
-    FILE \
-<<'MKINITCPIO_CONF'
-BINARIES=()
+    OBJ="$OBJ"\
+'BINARIES=()
 FILES=()
 HOOKS=(base udev autodetect microcode modconf keyboard block filesystems fsck)
 MODULES_DECOMPRESS="yes"
-MKINITCPIO_CONF
+'
 
+    OBJ_PATH='/etc/mkinitcpio.conf'
     __file_write_overwrite;
 
     __cmd mkinitcpio -P
 }
 
 _iwd_conf() {
-    FILE_PATH \
-<<'MAIN_CONF'
-/etc/iwd/main.conf
-MAIN_CONF
-
-    FILE \
-<<'MAIN_CONF'
-[General]
+    OBJ=\
+'[General]
 EnableNetworkConfiguration=true
 AddressRandomization=network
 AddressRandomizationRange=nic
 
 [Network]
-MAIN_CONF
+'
 
-    if [ "$ipv6" = 1 ]; then
-        FILE \
-<<'MAIN_CONF'
-EnableIPv6=true
-MAIN_CONF
-    else
-        FILE \
-<<'MAIN_CONF'
-EnableIPv6=false
-MAIN_CONF
-    fi
+    [ "$ipv6" ] && {
+        OBJ="$OBJ"\
+'EnableIPv6=true
+'
+    } || {
+        OBJ="$OBJ"\
+'EnableIPv6=false
+'
+    }
 
-    FILE \
-<<'MAIN_CONF'
-NameResolvingService=none
+    OBJ="$OBJ"\
+'NameResolvingService=none
 
 [Scan]
 DisablePeriodicScan=true
-MAIN_CONF
+'
 
+    OBJ_PATH='/etc/iwd/main.conf'
     __file_write;
 }
 
 _kitty_conf() {
-    FILE_PATH \
-<<KITTY_CONF
-$home/.config/kitty/kitty.conf
-KITTY_CONF
-
-    FILE \
-<<'KITTY_CONF'
-font_family Source Code Pro
+    OBJ=\
+'font_family Source Code Pro
 font_size 10.0
 cursor_text_color background
 cursor_shape beam
@@ -2411,33 +1779,23 @@ map kitty_mod+a scroll_page_up
 map kitty_mod+s scroll_page_down
 map kitty_mod+z scroll_home
 map kitty_mod+x scroll_end
-KITTY_CONF
+'
 
+    OBJ_PATH="$home/.config/kitty/kitty.conf"
     __file_write;
 }
 
 _kvantum_conf() {
-    FILE_PATH \
-<<KVANTUM_KVCONFIG
-$home/.config/Kvantum/kvantum.kvconfig
-KVANTUM_KVCONFIG
-
-    FILE \
-<<'KVANTUM_KVCONFIG'
-[General]
+    OBJ=\
+'[General]
 theme=KvArcDark#
-KVANTUM_KVCONFIG
+'
 
+    OBJ_PATH="$home/.config/Kvantum/kvantum.kvconfig"
     __file_write;
 
-    FILE_PATH \
-<<KVARCDARK__KVCONFIG
-$home/.config/Kvantum/KvArcDark#/KvArcDark#.kvconfig
-KVARCDARK__KVCONFIG
-
-    FILE \
-<<'KVARCDARK__KVCONFIG'
-[%General]
+    OBJ=\
+'[%General]
 author=Tsu Jan
 comment=A minimalistic dark theme inspired by the Arc GTK theme
 x11drag=menubar_and_primary_toolbar
@@ -2921,53 +2279,40 @@ interior=false
 [Window]
 interior=true
 interior.element=window
-KVARCDARK__KVCONFIG
+'
 
+    OBJ_PATH="$home/.config/Kvantum/KvArcDark#/KvArcDark#.kvconfig"
     __file_write;
 }
 
 # English locale config
 _locale() {
-    FILE_PATH \
-<<'LOCALE_CONF'
-/etc/locale.conf
-LOCALE_CONF
+    OBJ=\
+'LANG=en_US.UTF-8
+'
 
-    FILE \
-<<'LOCALE_CONF'
-LANG=en_US.UTF-8
-LOCALE_CONF
-
+    OBJ_PATH='/etc/locale.conf'
     __file_write;
 
-    FILE_PATH \
-<<'LOCALE_GEN'
-/etc/locale.gen
-LOCALE_GEN
-
-    FILE \
-<<'LOCALE_GEN'
-bg_BG.UTF-8 UTF-8
+    OBJ=\
+'bg_BG.UTF-8 UTF-8
 en_US.UTF-8 UTF-8
-LOCALE_GEN
+'
 
+    OBJ_PATH='/etc/locale.gen'
     __file_write;
 
     __cmd locale-gen
 }
 
 _makepkg_conf() {
-    if [ "$arch_linux" != 1 ]; then
+    [ "$arch_linux" ] || {
         _info -white - 'Nothing to be done.'
 
         return 0
-    fi
+    }
 
-    FILE_PATH \
-<<'MAKEPKG_CONF'
-/etc/makepkg.conf
-MAKEPKG_CONF
-
+    OBJ_PATH='/etc/makepkg.conf'
     __fed '' "$logf" \
         -m p -s \
         'CFLAGS="-march=x86-64 -mtune=' \
@@ -2976,48 +2321,33 @@ MAKEPKG_CONF
         'MAKEFLAGS="-j' \
         'MAKEFLAGS="-j6"'
 
+    OBJ_PATH='/etc/makepkg.conf'
     __file_write_overwrite;
 }
 
 _moc_conf() {
-    FILE_PATH \
-<<CONFIG
-$home/.moc/config
-CONFIG
-
-    FILE \
-<<'CONFIG'
-SoundDriver = ALSA
+    OBJ=\
+'SoundDriver = ALSA
 Theme = transparent-background
-CONFIG
+'
 
+    OBJ_PATH="$home/.moc/config"
     __file_write;
 }
 
 # Fix pop on idle resume
 _modprobe_conf() {
-    FILE_PATH \
-<<'99_SND_POWERSAVE_CONF'
-/etc/modprobe.d/99-snd_powersave.conf
-99_SND_POWERSAVE_CONF
+    OBJ=\
+'options snd_hda_intel power_save=0 power_save_controller=N
+'
 
-    FILE \
-<<'99_SND_POWERSAVE_CONF'
-options snd_hda_intel power_save=0 power_save_controller=N
-99_SND_POWERSAVE_CONF
-
+    OBJ_PATH='/etc/modprobe.d/99-snd_powersave.conf'
     __file_write;
 }
 
 _mpv_conf() {
-    FILE_PATH \
-<<MPV_CONF
-$home/.config/mpv/mpv.conf
-MPV_CONF
-
-    FILE \
-<<'MPV_CONF'
-# UI & Appearance (non‑GPU)
+    OBJ=\
+'# UI & Appearance (non‑GPU)
 fullscreen
 border=no               # no window border
 msg-color=yes           # colored terminal output
@@ -3053,18 +2383,13 @@ video-sync=audio  # Let compositor handle any pacing mismatch / "judder"
 hdr-peak-percentile=99.995  # gpu-hq/high-quality default
 hdr-contrast-recovery=0.30  # gpu-hq/high-quality default
 scale=ewa_lanczossharp  # gpu-hq/high-quality default
-MPV_CONF
+'
 
+    OBJ_PATH="$home/.config/mpv/mpv.conf"
     __file_write;
 
-    FILE_PATH \
-<<AUTOPROFILE_LUA
-$home/.config/mpv/scripts/autoprofile.lua
-AUTOPROFILE_LUA
-
-    FILE \
-<<'AUTOPROFILE_LUA'
--- Apply 4K or FHD profiles once on file-load, then never reapply on seek.
+    OBJ=\
+'-- Apply 4K or FHD profiles once on file-load, then never reapply on seek.
 
 local applied = false
 
@@ -3085,20 +2410,15 @@ mp.observe_property("video-params/w", "number", function(_, w)
         applied = true
     end
 end)
-AUTOPROFILE_LUA
+'
 
+    OBJ_PATH="$home/.config/mpv/scripts/autoprofile.lua"
     __file_write;
 }
 
 _mutt_conf() {
-    FILE_PATH \
-<<MUTTRC
-$home/.mutt/muttrc
-MUTTRC
-
-    FILE \
-<<'MUTTRC'
-# Personal
+    OBJ=\
+'# Personal
 set realname = "Dimitar Yurukov"
 set from = "mscalindt@gmail.com"
 
@@ -3122,36 +2442,27 @@ unset use_domain
 
 # Keybindings
 bind index "^" imap-fetch-mail
-MUTTRC
+'
 
+    OBJ_PATH="$home/.mutt/muttrc"
     __file_write;
 
-    FILE_PATH \
-<<MUTTSIG
-$home/.mutt/muttsig
-MUTTSIG
-
-    FILE \
-<<'MUTTSIG'
-PGP: https://github.com/mscalindt.gpg
+    OBJ=\
+'PGP: https://github.com/mscalindt.gpg
 Email: mscalindt@gmail.com
-MUTTSIG
+'
 
+    OBJ_PATH="$home/.mutt/muttsig"
     __file_write;
 }
 
 _nano_conf() {
-    FILE_PATH \
-<<_NANORC
-$home/.nanorc
-_NANORC
-
-    FILE \
-<<'_NANORC'
-set fill 72
+    OBJ=\
+'set fill 72
 set breaklonglines
-_NANORC
+'
 
+    OBJ_PATH="$home/.nanorc"
     __file_write;
 }
 
@@ -3161,56 +2472,48 @@ _nvram_clr() {
 
     set -- '/sys/firmware/efi/efivars'/Boot0*
 
-    if ! exist "$1"; then
+    exist "$1" || {
         _info -white - 'No valid entries have been found.'
+
         return 0
-    fi
+    }
 
     set -- \
         '/sys/firmware/efi/efivars'/BootOrder* \
         '/sys/firmware/efi/efivars'/Boot0*
 
-    if cmd 'chattr'; then
+    { ! cmd chattr; } || {
         __cmd chattr -ia "$@"
-    fi
+    }
 
     __cmd rm -f "$@"
 
     set -- '/sys/firmware/efi/efivars'/Boot0*
 
-    if exist "$1"; then
+    { ! exist "$1"; } || {
         EERROR 'Entry removal failed.'
-    fi
+    }
 
     _info -white - 'The entries were removed; firmware will attempt recovery.'
 }
 
 _openal_conf() {
-    FILE_PATH \
-<<'ALSOFT_CONF'
-/etc/openal/alsoft.conf
-ALSOFT_CONF
+    OBJ=\
+'frequency = 48000
+'
 
-    FILE \
-<<'ALSOFT_CONF'
-frequency = 48000
-ALSOFT_CONF
-
+    OBJ_PATH='/etc/openal/alsoft.conf'
     __file_write;
 }
 
 _pacman_conf() {
-    if [ "$arch_linux" != 1 ]; then
+    [ "$arch_linux" ] || {
         _info -white - 'Nothing to be done.'
 
         return 0
-    fi
+    }
 
-    FILE_PATH \
-<<'PACMAN_CONF'
-/etc/pacman.conf
-PACMAN_CONF
-
+    OBJ_PATH='/etc/pacman.conf'
     __fed '' "$logf" \
         -m s -s \
         'Color' \
@@ -3225,6 +2528,7 @@ PACMAN_CONF
         'NoExtract' \
         'NoExtract = etc/xdg/autostart/*.desktop'
 
+    OBJ="$OBJ"
     # 2066821928 CRC32:
     # `'-s' '92' '[multilib]'` \
     # `'-s' '93' 'Include = /etc/pacman.d/mirrorlist'`
@@ -3236,43 +2540,32 @@ PACMAN_CONF
         '' \
         "Include = $arch_mirlist"
 
+    OBJ_PATH='/etc/pacman.conf'
     __file_write_overwrite;
 }
 
 _pam_conf() {
-    FILE_PATH \
-<<'FAILLOCK_CONF'
-/etc/security/faillock.conf
-FAILLOCK_CONF
-
-    FILE \
-<<'FAILLOCK_CONF'
-deny=7
+    OBJ=\
+'deny=7
 even_deny_root
 nodelay
 root_unlock_time=8400
 unlock_time=600
-FAILLOCK_CONF
+'
 
+    OBJ_PATH='/etc/security/faillock.conf'
     __file_write_overwrite;
 
-    FILE_PATH \
-<<'LOGIN_DEFS'
-/etc/login.defs
-LOGIN_DEFS
-
+    OBJ_PATH='/etc/login.defs'
     __fed '' "$logf" \
         -m p -s \
         'FAIL_DELAY' \
         'FAIL_DELAY 0'
 
+    OBJ_PATH='/etc/login.defs'
     __file_write_overwrite;
 
-    FILE_PATH \
-<<'SU'
-/etc/pam.d/su
-SU
-
+    OBJ_PATH='/etc/pam.d/su'
     # 3615679525 CRC32:
     # `'-s' '7' 'auth            required        pam_unix.so nodelay'`
     __fed 3615679525 "$logf" \
@@ -3280,13 +2573,10 @@ SU
         '' \
         'auth            required        pam_unix.so nodelay'
 
+    OBJ_PATH='/etc/pam.d/su'
     __file_write_overwrite;
 
-    FILE_PATH \
-<<'SYSTEM_AUTH'
-/etc/pam.d/system-auth
-SYSTEM_AUTH
-
+    OBJ_PATH='/etc/pam.d/system-auth'
     # 1797369364 CRC32:
     # `'-s' '7' 'auth       [success=1 default=bad]     ` \
     # `pam_unix.so          try_first_pass nullok nodelay'`
@@ -3299,14 +2589,8 @@ SYSTEM_AUTH
 }
 
 _pipewire_conf() {
-    FILE_PATH \
-<<'CLIENT_CONF'
-/etc/pipewire/client.conf.d/client.conf
-CLIENT_CONF
-
-    FILE \
-<<'CLIENT_CONF'
-context.properties = {
+    OBJ=\
+'context.properties = {
     module.rt = false  # disable rtkit module
 
     mem.allow-mlock = false  # swap is not used -> mlock is useless overhead
@@ -3320,54 +2604,42 @@ filter.properties = {
 
 stream.properties = {
     node.latency = 1024/44100  # 44.1k with ~23.2ms
-CLIENT_CONF
+'
 
-    if [ "$audio_hq_resamp" = 1 ]; then
-        FILE \
-<<'CLIENT_CONF'
-    resample.quality = 15
-CLIENT_CONF
-    else
-        FILE \
-<<'CLIENT_CONF'
-    resample.quality = 9
-CLIENT_CONF
-    fi
+    [ "$audio_hq_resamp" ] && {
+        OBJ="$OBJ"\
+'    resample.quality = 15
+'
+    } || {
+        OBJ="$OBJ"\
+'    resample.quality = 9
+'
+    }
 
-    FILE \
-<<'CLIENT_CONF'
-}
+    OBJ="$OBJ"\
+'}
 
 alsa.properties = {
     alsa.rate = 44100  # 44.100 kHz
 }
-CLIENT_CONF
+'
 
+    OBJ_PATH='/etc/pipewire/client.conf.d/client.conf'
     __file_write;
 
-    FILE_PATH \
-<<'PIPEWIRE_CONF'
-/etc/pipewire/pipewire.conf.d/pipewire.conf
-PIPEWIRE_CONF
-
-    FILE \
-<<'PIPEWIRE_CONF'
-context.properties = {
+    OBJ=\
+'context.properties = {
     module.rt = false  # disable rtkit module
     module.x11.bell = false  # disable x11 bell module
-PIPEWIRE_CONF
+'
 
-    if [ "$portal" != 1 ]; then
-        FILE \
-<<'PIPEWIRE_CONF'
-
+    [ "$portal" ] || OBJ="$OBJ"\
+'
     module.portal = false  # disable portal module
-PIPEWIRE_CONF
-    fi
+'
 
-    FILE \
-<<'PIPEWIRE_CONF'
-
+    OBJ="$OBJ"\
+'
     mem.allow-mlock = false  # swap is not used -> mlock is useless overhead
 
     loop.rt-prio = 0  # disable module-rt prio
@@ -3381,18 +2653,13 @@ PIPEWIRE_CONF
     default.clock.quantum-limit = 8192
     default.clock.quantum-floor = 4
 }
-PIPEWIRE_CONF
+'
 
+    OBJ_PATH='/etc/pipewire/pipewire.conf.d/pipewire.conf'
     __file_write;
 
-    FILE_PATH \
-<<'PIPEWIRE_PULSE_CONF'
-/etc/pipewire/pipewire-pulse.conf.d/pipewire-pulse.conf
-PIPEWIRE_PULSE_CONF
-
-    FILE \
-<<'PIPEWIRE_PULSE_CONF'
-context.properties = {
+    OBJ=\
+'context.properties = {
     mem.allow-mlock = false  # swap is not used -> mlock is useless overhead
 
     default.clock.quantum-limit = 8192
@@ -3412,37 +2679,29 @@ pulse.properties = {
 
 stream.properties = {
     node.latency = 1024/44100  # 44.1k with ~23.2ms
-PIPEWIRE_PULSE_CONF
+'
 
-    if [ "$audio_hq_resamp" = 1 ]; then
-        FILE \
-<<'PIPEWIRE_PULSE_CONF'
-    resample.quality = 15
-PIPEWIRE_PULSE_CONF
-    else
-        FILE \
-<<'PIPEWIRE_PULSE_CONF'
-    resample.quality = 9
-PIPEWIRE_PULSE_CONF
-    fi
+    [ "$audio_hq_resamp" ] && {
+        OBJ="$OBJ"\
+'    resample.quality = 15
+'
+    } || {
+        OBJ="$OBJ"\
+'    resample.quality = 9
+'
+    }
 
-    FILE \
-<<'PIPEWIRE_PULSE_CONF'
-}
-PIPEWIRE_PULSE_CONF
+    OBJ="$OBJ"\
+'}
+'
 
+    OBJ_PATH='/etc/pipewire/pipewire-pulse.conf.d/pipewire-pulse.conf'
     __file_write;
 }
 
 _pipewire_media_session_conf() {
-    FILE_PATH \
-<<'MEDIA_SESSION_CONF'
-/etc/pipewire/media-session.d/media-session.conf
-MEDIA_SESSION_CONF
-
-    FILE \
-<<'MEDIA_SESSION_CONF'
-context.properties = {
+    OBJ=\
+'context.properties = {
     support.dbus = true
     default-profile.restore-bluetooth = true
 }
@@ -3475,40 +2734,27 @@ session.modules = {
         restore-stream
         streams-follow-default
         v4l2
-MEDIA_SESSION_CONF
+'
 
-    if [ "$bluetooth" = 1 ]; then
-        FILE \
-<<'MEDIA_SESSION_CONF'
-        bluez5
+    [ ! "$bluetooth" ] || OBJ="$OBJ"\
+'        bluez5
         bluez5-autoswitch
-MEDIA_SESSION_CONF
-    fi
+'
 
-    if [ "$portal" = 1 ]; then
-        FILE \
-<<'MEDIA_SESSION_CONF'
-        portal
-MEDIA_SESSION_CONF
-    fi
+    [ ! "$bluetooth" ] || OBJ="$OBJ"\
+'        portal
+'
 
-    FILE \
-<<'MEDIA_SESSION_CONF'
-    ]
+    OBJ="$OBJ"\
+'    ]
 }
-MEDIA_SESSION_CONF
+'
 
+    OBJ_PATH='/etc/pipewire/media-session.d/media-session.conf'
     __file_write;
 
-    if [ "$bluetooth" = 1 ]; then
-        FILE_PATH \
-<<'BLUEZ_MONITOR_CONF'
-/etc/pipewire/media-session.d/bluez-monitor.conf
-BLUEZ_MONITOR_CONF
-
-        FILE \
-<<'BLUEZ_MONITOR_CONF'
-properties = {
+    OBJ=\
+'properties = {
     bluez5.enable-sbc-xq = false
     bluez5.enable-msbc = false
     bluez5.enable-hw-volume = true
@@ -3547,43 +2793,36 @@ rules = [
         actions = {
             update-props = {
                 node.pause-on-idle = false
-BLUEZ_MONITOR_CONF
+'
 
-        if [ "$audio_hq_resamp" = 1 ]; then
-            FILE \
-<<'BLUEZ_MONITOR_CONF'
-                resample.quality = 15
-BLUEZ_MONITOR_CONF
-        else
-            FILE \
-<<'BLUEZ_MONITOR_CONF'
-                resample.quality = 9
-BLUEZ_MONITOR_CONF
-        fi
+    [ "$audio_hq_resamp" ] && {
+        OBJ="$OBJ"\
+'                resample.quality = 15
+'
+    } || {
+        OBJ="$OBJ"\
+'                resample.quality = 9
+'
+    }
 
-        FILE \
-<<'BLUEZ_MONITOR_CONF'
-                session.suspend-timeout-seconds = 0
+    OBJ="$OBJ"\
+'                session.suspend-timeout-seconds = 0
                 bluez5.media-source-role = playback
             }
         }
     }
 ]
-BLUEZ_MONITOR_CONF
+'
 
+    [ ! "$bluetooth" ] || {
+        OBJ_PATH='/etc/pipewire/media-session.d/bluez-monitor.conf'
         __file_write;
-    fi
+    }
 }
 
 _ranger_conf() {
-    FILE_PATH \
-<<RC_CONF
-$home/.config/ranger/rc.conf
-RC_CONF
-
-    FILE \
-<<'RC_CONF'
-map D console delete
+    OBJ=\
+'map D console delete
 copymap J <C-z>
 copymap K <C-x>
 copymap S <C-s>
@@ -3597,18 +2836,13 @@ set max_console_history_size 100
 set mouse_enabled false
 set preview_images_method kitty
 set tilde_in_titlebar true
-RC_CONF
+'
 
+    OBJ_PATH="$home/.config/ranger/rc.conf"
     __file_write;
 
-    FILE_PATH \
-<<RIFLE_CONF
-$home/.config/ranger/rifle.conf
-RIFLE_CONF
-
-    FILE \
-<<'RIFLE_CONF'
-# Video
+    OBJ=\
+'# Video
 mime ^video, has mpv,       X,  flag f = mpv -- "$@"
 mime ^video, has parole,    X,  flag f = parole -- "$@"
 mime ^video, has vlc,       X,  flag f = vlc -- "$@"
@@ -3691,25 +2925,21 @@ mime ^ranger/x-terminal-emulator, has kitty = kitty -- "$@"
 label open,   has xdg-open = xdg-open "$@"
 label editor, !mime ^text, = "${VISUAL:-$EDITOR}" -- "$@"
 label pager,  !mime ^text, = "$PAGER" -- "$@"
-RIFLE_CONF
+'
 
+    OBJ_PATH="$home/.config/ranger/rifle.conf"
     __file_write;
 }
 
 _reflector() {
-    if [ "$arch_linux" != 1 ]; then
+    [ "$arch_linux" ] || {
         _info -white - 'Nothing to be done.'
 
         return 0
-    fi
+    }
 
-    FILE_PATH \
-<<MIRRORLIST
-$arch_mirlist
-MIRRORLIST
-
-    if [ "$bg" = 1 ]; then
-        __FILE_cmd -e reflector \
+    [ "$bg" ] && {
+        __OBJ_cmd -e reflector \
             --country Bulgaria \
             --connection-timeout 1 \
             --download-timeout 20 \
@@ -3719,8 +2949,8 @@ MIRRORLIST
             --threads 8 \
             --latest 10 \
             --number 3
-    elif [ "$de" = 1 ]; then
-        __FILE_cmd -e reflector \
+    } || [ "$de" ] && {
+        __OBJ_cmd -e reflector \
             --country Germany \
             --connection-timeout 1 \
             --download-timeout 60 \
@@ -3730,11 +2960,11 @@ MIRRORLIST
             --threads 8 \
             --latest 15 \
             --number 3
-    else
+    } || {
         _info -white - 'Nothing to be done.'
 
         return 0
-    fi
+    }
 
     __fed '' '' \
         -m mof -m p -s \
@@ -3743,65 +2973,43 @@ MIRRORLIST
         -r '' \
         - ''
 
+    OBJ_PATH="$arch_mirlist"
     __file_write_overwrite;
 }
 
 _resolv_conf() {
-    FILE_PATH \
-<<'RESOLV_CONF'
-/etc/resolv.conf
-RESOLV_CONF
-
-    if [ "$dns" = localhost ]; then
-        if [ "$ipv6" = 1 ]; then
-            FILE \
-<<'RESOLV_CONF'
-nameserver ::1
+    [ "$dns" ] && {
+        OBJ=\
+'nameserver 127.0.0.1
+'
+        [ ! "$ipv6" ] || OBJ=\
+'nameserver ::1
 nameserver 127.0.0.1
-RESOLV_CONF
-        else
-            FILE \
-<<'RESOLV_CONF'
-nameserver 127.0.0.1
-RESOLV_CONF
-        fi
+'
 
-        if [ "$dns0" = dnsmasq ]; then
-            FILE \
-<<'RESOLV_CONF'
-options trust-ad
-RESOLV_CONF
-        fi
+        [ ! "$dns0" = dnsmasq ] || OBJ="$OBJ"\
+'options trust-ad
+'
 
+        OBJ_PATH='/etc/resolv.conf'
         __file_write;
+
+        OBJ_PATH='/etc/resolv.conf'
         __loc_chattr 'i'
-    elif [ "$dns" = none ] || [ ! "$dns" ]; then
+    } || {
+        OBJ_PATH='/etc/resolv.conf'
         __loc_delete;
-    fi
+    }
 }
 
 _sh() {
-    FILE_PATH \
-<<'DASH'
-/usr/bin/dash
-DASH
-
-    FILE_PATH_TARGET \
-<<'SH'
-/usr/bin/sh
-SH
-
+    OBJ='/usr/bin/dash'
+    OBJ_PATH='/usr/bin/sh'
     __loc_target_link_overwrite;
 
-    if [ "$arch_linux" = 1 ]; then
-        FILE_PATH \
-<<'DASHBINSH_HOOK'
-/usr/share/libalpm/hooks/dashbinsh.hook
-DASHBINSH_HOOK
-
-        FILE \
-<<'DASHBINSH_HOOK'
-[Trigger]
+    [ "$arch_linux" ] && {
+        OBJ=\
+'[Trigger]
 Type = Package
 Operation = Install
 Operation = Upgrade
@@ -3812,43 +3020,31 @@ Description = Updating /bin/sh symlink to dash...
 When = PostTransaction
 Exec = /usr/bin/ln -sf /usr/bin/dash /usr/bin/sh
 Depends = dash
-DASHBINSH_HOOK
+'
 
+        OBJ_PATH='/usr/share/libalpm/hooks/dashbinsh.hook'
         __file_write;
-    else
-        FILE_PATH \
-<<'DASHBINSH_HOOK'
-/usr/share/libalpm/hooks/dashbinsh.hook
-DASHBINSH_HOOK
-
+    } || {
+        OBJ_PATH='/usr/share/libalpm/hooks/dashbinsh.hook'
         __loc_delete;
-    fi
+    }
 }
 
 _sudo_conf() {
-    FILE_PATH \
-<<'WHEEL'
-/etc/sudoers.d/wheel
-WHEEL
+    OBJ=\
+'%wheel ALL=(ALL:ALL) ALL
+'
 
-    FILE \
-<<'WHEEL'
-%wheel ALL=(ALL:ALL) ALL
-WHEEL
-
+    OBJ_PATH='/etc/sudoers.d/wheel'
     __file_write;
+
+    OBJ_PATH='/etc/sudoers.d/wheel'
     __loc_chmod '0440'
 }
 
 _sway_conf() {
-    FILE_PATH \
-<<CONFIG
-$home/.config/sway/config
-CONFIG
-
-    FILE \
-<<'CONFIG'
-output * adaptive_sync off
+    OBJ=\
+'output * adaptive_sync off
 output * allow_tearing yes
 output * max_render_time off
 
@@ -3863,7 +3059,7 @@ focus_follows_mouse always
 
 # Prevent annoying apps from disrupting active focus by pinning them to a
 # certain workplace, in our case `7`, used as a last resort workspace or "bag".
-# Steam's "launcher"
+# Steam'\''s "launcher"
 assign [title="Steam"] 7
 # Steam
 assign [class="steam"] 7
@@ -3933,17 +3129,17 @@ input * {
     bindsym $mod+x exec pamixer -i5
     bindsym $mod+c exec brightnessctl s 5%-
     bindsym $mod+v exec brightnessctl s 5%+
-    bindsym print exec grim -l 9 $(date +'SS_%Y%m%d_%H%M%S.png')
+    bindsym print exec grim -l 9 $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
     bindsym $mod+p exec grim -l 9 -g "$(slurp)" \
-                            $(date +'SS_%Y%m%d_%H%M%S.png')
+                            $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
     bindsym $mod+Shift+p exec grim -l 9 -g "$(slurp; sleep 2.5)" \
-                                  $(date +'SS_%Y%m%d_%H%M%S.png')
+                                  $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
 
     # Extended functions
     # get hex color of a pixel
     bindsym $mod+h exec grim -g "$(slurp -p)" -t ppm - | \
-                        convert - -format '%[pixel:p{0,0}]' txt:- | \
-                        tail -n 1 | cut -d ' ' -f 4 | wl-copy -n
+                        convert - -format '\''%[pixel:p{0,0}]'\'' txt:- | \
+                        tail -n 1 | cut -d '\'' '\'' -f 4 | wl-copy -n
     # toggle audio playback
     bindsym $mod+Space exec /home/$USER/.config/sway/music_toggle
 
@@ -3984,142 +3180,110 @@ bar {
     }
 }
 
-CONFIG
+'
 
-    if [ "$arch_linux" = 1 ]; then
-        FILE \
-<<'CONFIG'
-exec /home/$USER/.config/sway/systemd-handler
-CONFIG
-    fi
+    [ ! "$arch_linux" ] || OBJ="$OBJ"\
+'exec /home/$USER/.config/sway/systemd-handler
+'
 
-    FILE \
-<<'CONFIG'
-exec_always sh -c 'rm -f "${TMPDIR:-/tmp}"/nettotal'
-CONFIG
+    OBJ="$OBJ"\
+'exec_always sh -c '\''rm -f "${TMPDIR:-/tmp}"/nettotal'\''
+'
 
+    OBJ_PATH="$home/.config/sway/config"
     __file_write;
 
-    if [ "$arch_linux" = 1 ]; then
-        FILE_PATH \
-<<SYSTEMD_HANDLER
-$home/.config/sway/systemd-handler
-SYSTEMD_HANDLER
-
-        FILE \
-<<'SYSTEMD_HANDLER'
-#!/bin/sh
-
-systemctl --user import-environment \
-    DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP \
-    DESKTOP_SESSION
-dbus-update-activation-environment --systemd \
-    DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP \
-    DESKTOP_SESSION
-SYSTEMD_HANDLER
-
-        if [ "$portal" = 1 ]; then
-            FILE \
-<<'SYSTEMD_HANDLER'
-
-systemctl --user start \
-    xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr \
-    xdg-document-portal xdg-permission-store
-SYSTEMD_HANDLER
-        fi
-
-        FILE \
-<<'SYSTEMD_HANDLER'
-
-if [ -f /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 ]; then
-    exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-fi
-SYSTEMD_HANDLER
-
-        __file_write;
-        __file_executable;
-    else
-        FILE_PATH \
-<<SYSTEMD_HANDLER
-$home/.config/sway/systemd-handler
-SYSTEMD_HANDLER
-
-        __loc_delete;
-    fi
-
-    FILE_PATH \
-<<FKILL
-$home/.config/sway/fkill
-FKILL
-
-    FILE \
-<<'FKILL'
-#!/bin/sh
+    OBJ=\
+'#!/bin/sh
 
 PID=$(
     swaymsg -t get_tree | \
-    jq '.. | select(.type?) | select(.focused==true).pid'
+    jq '\''.. | select(.type?) | select(.focused==true).pid'\''
 )
 
 kill -9 "$PID"
-FKILL
+'
 
+    OBJ_PATH="$home/.config/sway/fkill"
     __file_write;
+
+    OBJ_PATH="$home/.config/sway/fkill"
     __file_executable;
 
-    FILE_PATH \
-<<IMPORT_GSETTINGS
-$home/.config/sway/import-gsettings
-IMPORT_GSETTINGS
-
-    FILE \
-<<'IMPORT_GSETTINGS'
-#!/bin/sh
+    OBJ=\
+'#!/bin/sh
 
 cfg="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-3.0/settings.ini"
 
 [ -f "$cfg" ] || return 1
 
-gnome_schema='org.gnome.desktop.interface'
+gnome_schema='\''org.gnome.desktop.interface'\''
 
 while read -r LINE; do
     case "$LINE" in
-        'gtk-theme-name='*)
+        '\''gtk-theme-name='\''*)
             gsettings set "$gnome_schema" gtk-theme "${LINE#*=}"
         ;;
-        'gtk-icon-theme-name='*)
+        '\''gtk-icon-theme-name='\''*)
             gsettings set "$gnome_schema" icon-theme "${LINE#*=}"
         ;;
-        'gtk-cursor-theme-name='*)
+        '\''gtk-cursor-theme-name='\''*)
             gsettings set "$gnome_schema" cursor-theme "${LINE#*=}"
         ;;
-        'gtk-font-name='*)
+        '\''gtk-font-name='\''*)
             gsettings set "$gnome_schema" font-name "${LINE#*=}"
         ;;
-        '#gtk-document-font-name='*)
+        '\''#gtk-document-font-name='\''*)
             gsettings set "$gnome_schema" document-font-name "${LINE#*=}"
         ;;
-        '#gtk-monospace-font-name='*)
+        '\''#gtk-monospace-font-name='\''*)
             gsettings set "$gnome_schema" monospace-font-name "${LINE#*=}"
         ;;
-        'gtk-application-prefer-dark-theme='*true*)
+        '\''gtk-application-prefer-dark-theme='\''*true*)
             gsettings set "$gnome_schema" color-scheme prefer-dark
         ;;
     esac
 done < "$cfg"
-IMPORT_GSETTINGS
+'
 
+    OBJ_PATH="$home/.config/sway/import-gsettings"
     __file_write;
+
+    OBJ_PATH="$home/.config/sway/import-gsettings"
     __file_executable;
 
-    FILE_PATH \
-<<STATUS
-$home/.config/sway/status
-STATUS
+    OBJ=\
+'#!/bin/sh
 
-    FILE \
-<<'STATUS'
-#!/bin/sh
+MOCP_STATE=$(mocp -Q %state)
+MOCP_PAUSE_FILE="${TMPDIR:-/tmp}"/music_toggle_mocp
+
+if [ -f "$MOCP_PAUSE_FILE" ]; then
+    if playerctl status 2> /dev/null | grep -q '\''Playing'\''; then
+        playerctl play-pause
+    elif [ "$MOCP_STATE" = '\''PAUSE'\'' ]; then
+        mocp -U
+    fi
+
+    rm -f "$MOCP_PAUSE_FILE"
+    exit 0
+elif [ "$MOCP_STATE" = '\''PLAY'\'' ]; then
+    mocp -P
+    : > "$MOCP_PAUSE_FILE"
+    exit 0
+fi
+
+playerctl play-pause > /dev/null 2>&1
+'
+
+    OBJ_PATH="$home/.config/sway/music_toggle"
+    __file_write;
+
+    OBJ_PATH="$home/.config/sway/music_toggle"
+    __file_executable;
+
+    OBJ=\
+'#!/bin/sh
 
 NET_INTERFACE=wlan0
 
@@ -4140,20 +3304,20 @@ replchars() {
     }
 
     _old_IFS="$IFS" 2> /dev/null
-    ${IFS+':'} unset _old_IFS 2> /dev/null
+    ${IFS+'\'':'\''} unset _old_IFS 2> /dev/null
 
     replchar "$1" "$2" "$3"
 
     IFS="$_old_IFS" 2> /dev/null
-    ${_old_IFS+':'} unset IFS 2> /dev/null
+    ${_old_IFS+'\'':'\''} unset IFS 2> /dev/null
 }
 
 TITLE=$(
     swaymsg -t get_tree | \
-    jq -r '.. | select(.type?) | select(.focused==true).name' 2> /dev/null
+    jq -r '\''.. | select(.type?) | select(.focused==true).name'\'' 2> /dev/null
 )
 if [ "$TITLE" ]; then
-    replchars '&' '&amp;' "$TITLE"; TITLE="$_str";
+    replchars '\''&'\'' '\''&amp;'\'' "$TITLE"; TITLE="$_str";
 fi
 
 MEMHOG=$(ps aux 2> /dev/null)
@@ -4165,7 +3329,7 @@ while IFS= read -r LINE; do
     set -- $LINE
 
     case "$4" in
-        '%MEM') continue ;;
+        '\''%MEM'\'') continue ;;
     esac
 
     f_perc="${4%.*}"
@@ -4204,7 +3368,7 @@ MEMHOG=$(
     printf "%s" "${1##*/} /"  # cmd
 
     MEMHOG_BYTES=$((MEMTOTAL_BYTES * $CUR_F_PERC$CUR_S_PERC / 1000))  # base 2
-    awk -v 'bytes_memhog'="$MEMHOG_BYTES" '
+    awk -v '\''bytes_memhog'\''="$MEMHOG_BYTES" '\''
 	function hsize(x, base) {
 		basesuf = (base == "1024") ? "iB" : "B"
 
@@ -4224,7 +3388,7 @@ MEMHOG=$(
 	BEGIN {
 		printf hsize(bytes_memhog, 1000)
 	}
-    '  # mem_usage
+    '\''  # mem_usage
 )
 } 2> /dev/null
 
@@ -4270,8 +3434,8 @@ if [ -h /sys/class/net/"$NET_INTERFACE" ]; then
     printf "%s\n" "$RX" > "${TMPDIR:-/tmp}"/netprevrx
     printf "%s\n" "$TOTAL" > "${TMPDIR:-/tmp}"/nettotal
 
-    NET_USAGE=$(awk -v 'bytes_tx'="$CUR_TX" -v 'bytes_rx'="$CUR_RX" \
-                    -v 'bytes_total'="$TOTAL" '
+    NET_USAGE=$(awk -v '\''bytes_tx'\''="$CUR_TX" -v '\''bytes_rx'\''="$CUR_RX" \
+                    -v '\''bytes_total'\''="$TOTAL" '\''
 	function hsize(x, base) {
 		basesuf = (base == "1024") ? "iB" : "B"
 
@@ -4297,7 +3461,7 @@ if [ -h /sys/class/net/"$NET_INTERFACE" ]; then
 		printf " /"
 		printf hsize(bytes_total, 1000)
 	}
-    ' 2> /dev/null)
+    '\'' 2> /dev/null)
 fi
 break; done
 
@@ -4368,7 +3532,7 @@ CPU=$(((1000 * (DIFF_TOTAL - DIFF_IDLE) / DIFF_TOTAL + 5) / 10))
 
 { while read -r LINE; do
     case "$LINE" in
-        'MemAvailable:'*)
+        '\''MemAvailable:'\''*)
             PFIX="${LINE%%[0123456789]*}"
             SFIX="${LINE#*[0123456789]}"
             case "$SFIX" in
@@ -4381,7 +3545,7 @@ CPU=$(((1000 * (DIFF_TOTAL - DIFF_IDLE) / DIFF_TOTAL + 5) / 10))
             MEMORY="${MEMORY%"$SFIX"}"
             MEMORY=$((MEMORY * 1024))
 
-            MEMORY=$(awk -v 'bytes'="$MEMORY" '
+            MEMORY=$(awk -v '\''bytes'\''="$MEMORY" '\''
 function hsize(x, base) {
 	basesuf = (base == "1024") ? "iB" : "B"
 
@@ -4401,7 +3565,7 @@ function hsize(x, base) {
 BEGIN {
 	printf hsize(bytes, 1000)
 }
-            ' 2> /dev/null)
+            '\'' 2> /dev/null)
         ;;
     esac
 done < /proc/meminfo; } 2> /dev/null
@@ -4415,11 +3579,11 @@ AUDIO_SINK=$(pactl list sinks 2> /dev/null)
 _STATE=; _NAME=
 while IFS= read -r LINE; do
     case "$LINE" in
-        *'State: RUNNING'*) _STATE=1 ;;
+        *'\''State: RUNNING'\''*) _STATE=1 ;;
     esac
 
     case "$LINE" in
-        *'Name: '*)
+        *'\''Name: '\''*)
             if [ "$_STATE" = 1 ]; then
                 _NAME="${LINE#*Name: }"; break
             fi
@@ -4433,29 +3597,29 @@ EOF
 AUDIO_SINK="$_NAME"
 } 2> /dev/null
 case "$AUDIO_SINK" in
-    'alsa_output'*) AUDIO_SINK=ALSA ;;
-    'bluez_output'*) AUDIO_SINK=BLUEZ ;;
+    '\''alsa_output'\''*) AUDIO_SINK=ALSA ;;
+    '\''bluez_output'\''*) AUDIO_SINK=BLUEZ ;;
 esac
 
 KB_LAYOUT=$(
     swaymsg -t get_inputs | \
-    jq 'map(select(has("xkb_active_layout_name")))[0].xkb_active_layout_name'
+    jq '\''map(select(has("xkb_active_layout_name")))[0].xkb_active_layout_name'\''
 )
 case "$KB_LAYOUT" in
-    *'English'*)
+    *'\''English'\''*)
         KB_LAYOUT=EN
     ;;
-    *'Bulgarian'*)
+    *'\''Bulgarian'\''*)
         KB_LAYOUT=BG
     ;;
 esac
 
 DATE=$(date "+%A%_d,%_I:%M %p" 2> /dev/null)
 while :; do case "$DATE" in
-    *[0123456789]','[0123456789]*)
+    *[0123456789]'\'','\''[0123456789]*)
         DATE="${DATE%\,*}, ${DATE#*\,}"
     ;;
-    *'day'[0123456789]*)
+    *'\''day'\''[0123456789]*)
         DATE="${DATE%day*}day ${DATE#*day}"
     ;;
     *)
@@ -4479,84 +3643,75 @@ fi
 STATUS="$STATUS | $KB_LAYOUT | $DATE |"
 
 printf "%s" "$STATUS"
-STATUS
+'
 
+    OBJ_PATH="$home/.config/sway/status"
     __file_write;
+
+    OBJ_PATH="$home/.config/sway/status"
     __file_executable;
 
-    FILE_PATH \
-<<MUSIC_TOGGLE
-$home/.config/sway/music_toggle
-MUSIC_TOGGLE
+    [ "$arch_linux" ] && {
+        OBJ=\
+'#!/bin/sh
 
-    FILE \
-<<'MUSIC_TOGGLE'
-#!/bin/sh
+systemctl --user import-environment \
+    DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP \
+    DESKTOP_SESSION
+dbus-update-activation-environment --systemd \
+    DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP \
+    DESKTOP_SESSION
+'
 
-MOCP_STATE=$(mocp -Q %state)
-MOCP_PAUSE_FILE="${TMPDIR:-/tmp}"/music_toggle_mocp
+        [ ! "$portal" ] || OBJ="$OBJ"\
+'
+systemctl --user start \
+    xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr \
+    xdg-document-portal xdg-permission-store
+'
 
-if [ -f "$MOCP_PAUSE_FILE" ]; then
-    if playerctl status 2> /dev/null | grep -q 'Playing'; then
-        playerctl play-pause
-    elif [ "$MOCP_STATE" = 'PAUSE' ]; then
-        mocp -U
-    fi
-
-    rm -f "$MOCP_PAUSE_FILE"
-    exit 0
-elif [ "$MOCP_STATE" = 'PLAY' ]; then
-    mocp -P
-    : > "$MOCP_PAUSE_FILE"
-    exit 0
+        OBJ="$OBJ"\
+'
+if [ -f /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 ]; then
+    exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 fi
+'
 
-playerctl play-pause > /dev/null 2>&1
-MUSIC_TOGGLE
+        OBJ_PATH="$home/.config/sway/systemd-handler"
+        __file_write;
 
-    __file_write;
-    __file_executable;
+        OBJ_PATH="$home/.config/sway/systemd-handler"
+        __file_executable;
+    } || {
+        OBJ_PATH="$home/.config/sway/systemd-handler"
+        __loc_delete;
+    }
 
-    FILE_PATH \
-<<WP_HANDLER
-$home/.config/sway/wp-handler
-WP_HANDLER
+    OBJ=\
+'#!/bin/sh
 
-    FILE \
-<<'WP_HANDLER'
-#!/bin/sh
-
-WP_HANDLER
-
-    FILE \
-<<WP_HANDLER
-WP=$home/.config/sway/wp
-WP_HANDLER
-
-    FILE \
-<<'WP_HANDLER'
-WP_NEW="${TMPDIR:-/tmp}"/wp
+'\
+"WP=$home/.config/sway/wp
+"\
+'WP_NEW="${TMPDIR:-/tmp}"/wp
 
 if [ -f "$WP_NEW" ]; then
-    swaymsg output '*' bg "$WP_NEW" fill
+    swaymsg output '\''*'\'' bg "$WP_NEW" fill
 elif [ -f "$WP" ]; then
-    swaymsg output '*' bg "$WP" fill
+    swaymsg output '\''*'\'' bg "$WP" fill
 fi
-WP_HANDLER
+'
 
+    OBJ_PATH="$home/.config/sway/wp-handler"
     __file_write;
+
+    OBJ_PATH="$home/.config/sway/wp-handler"
     __file_executable;
 }
 
 _sway_conf_gaming() {
-    FILE_PATH \
-<<CONFIG
-$home/.config/sway/config
-CONFIG
-
-    FILE \
-<<'CONFIG'
-output * adaptive_sync off
+    OBJ=\
+'output * adaptive_sync off
 output * allow_tearing yes
 output * max_render_time off
 
@@ -4571,7 +3726,7 @@ focus_follows_mouse always
 
 # Prevent annoying apps from disrupting active focus by pinning them to a
 # certain workplace, in our case `7`, used as a last resort workspace or "bag".
-# Steam's "launcher"
+# Steam'\''s "launcher"
 assign [title="Steam"] 7
 # Steam
 assign [class="steam"] 7
@@ -4641,17 +3796,17 @@ input * {
     bindsym $mod+x exec pamixer -i5
     bindsym $mod+c exec brightnessctl s 5%-
     bindsym $mod+v exec brightnessctl s 5%+
-    bindsym print exec grim -l 9 $(date +'SS_%Y%m%d_%H%M%S.png')
+    bindsym print exec grim -l 9 $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
     bindsym $mod+p exec grim -l 9 -g "$(slurp)" \
-                            $(date +'SS_%Y%m%d_%H%M%S.png')
+                            $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
     bindsym $mod+Shift+p exec grim -l 9 -g "$(slurp; sleep 2.5)" \
-                                  $(date +'SS_%Y%m%d_%H%M%S.png')
+                                  $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
 
     # Extended functions
     # get hex color of a pixel
     bindsym $mod+h exec grim -g "$(slurp -p)" -t ppm - | \
-                        convert - -format '%[pixel:p{0,0}]' txt:- | \
-                        tail -n 1 | cut -d ' ' -f 4 | wl-copy -n
+                        convert - -format '\''%[pixel:p{0,0}]'\'' txt:- | \
+                        tail -n 1 | cut -d '\'' '\'' -f 4 | wl-copy -n
     # toggle audio playback
     bindsym $mod+Space exec /home/$USER/.config/sway/music_toggle
 
@@ -4691,97 +3846,69 @@ bar {
     }
 }
 
-CONFIG
+'
 
-    if [ "$arch_linux" = 1 ]; then
-        FILE \
-<<'CONFIG'
-exec /home/$USER/.config/sway/systemd-handler
-CONFIG
-    fi
+    [ ! "$arch_linux" ] || OBJ="$OBJ"\
+'exec /home/$USER/.config/sway/systemd-handler
+'
 
-    FILE \
-<<'CONFIG'
-exec_always sh -c 'rm -f "${TMPDIR:-/tmp}"/nettotal'
-CONFIG
+    OBJ="$OBJ"\
+'exec_always sh -c '\''rm -f "${TMPDIR:-/tmp}"/nettotal'\''
+'
 
+    OBJ_PATH="$home/.config/sway/config"
     __file_write_overwrite;
 }
 
 _swaylock_conf() {
-    FILE_PATH \
-<<CONFIG
-$home/.swaylock/config
-CONFIG
-
-    FILE \
-<<'CONFIG'
-color=2b2e37
+    OBJ=\
+'color=2b2e37
 indicator-idle-visible
 inside-color=2b2e37
 ring-color=0A75AD
 layout-bg-color=2b2e37
 layout-border-color=2b2e37
-CONFIG
+'
 
+    OBJ_PATH="$home/.swaylock/config"
     __file_write;
 }
 
 _sysctl_conf() {
-    FILE_PATH \
-<<'99_SYSCTL_CONF'
-/etc/sysctl.d/99-sysctl.conf
-99_SYSCTL_CONF
+    OBJ=\
+'kernel.sysrq = 1
+'
 
-    FILE \
-<<'99_SYSCTL_CONF'
-kernel.sysrq = 1
-99_SYSCTL_CONF
-
+    OBJ_PATH='/etc/sysctl.d/99-sysctl.conf'
     __file_write;
 }
 
 _tz() {
-    if [ "$bg" = 1 ]; then
-        FILE_PATH \
-<<'SOFIA'
-/usr/share/zoneinfo/Europe/Sofia
-SOFIA
-    elif [ "$de" = 1 ]; then
-        FILE_PATH \
-<<'BERLIN'
-/usr/share/zoneinfo/Europe/Berlin
-BERLIN
-    else
+    [ "$bg" ] && {
+        OBJ='/usr/share/zoneinfo/Europe/Sofia'
+        OBJ_PATH='/etc/localtime'
+        __loc_target_link_overwrite;
+    } || [ "$de" ] && {
+        OBJ='/usr/share/zoneinfo/Europe/Berlin'
+        OBJ_PATH='/etc/localtime'
+        __loc_target_link_overwrite;
+    } || {
         _info -white - 'Nothing to be done.'
 
         return 0
-    fi
-
-    FILE_PATH_TARGET \
-<<'LOCALTIME'
-/etc/localtime
-LOCALTIME
-
-    __loc_target_link_overwrite;
+    }
 
     __cmd hwclock -w
 }
 
 _xdg_conf() {
-    FILE_PATH \
-<<MIMEAPPS_LIST
-$home/.config/mimeapps.list
-MIMEAPPS_LIST
-
-    FILE \
-<<'MIMEAPPS_LIST'
-# Programs that support:
+    OBJ=\
+'# Programs that support:
 [Added Associations]
 application/json=featherpad.desktop
 application/javascript=firefox.desktop
 
-# Programs that don't support:
+# Programs that don'\''t support:
 [Removed Associations]
 
 # Programs that will be used to open by default:
@@ -4800,79 +3927,71 @@ text/x-diff=featherpad.desktop
 text/x-shellscript=featherpad.desktop
 text/x-c=featherpad.desktop
 application/javascript=featherpad.desktop
-MIMEAPPS_LIST
+'
 
+    OBJ_PATH="$home/.config/mimeapps.list"
     __file_write;
 
-    FILE_PATH_TARGET \
-<<MIMEAPPS_LIST
-$home/.local/share/applications/mimeapps.list
-MIMEAPPS_LIST
-
+    OBJ="$home/.config/mimeapps.list"
+    OBJ_PATH="$home/.local/share/applications/mimeapps.list"
     __loc_target_link_overwrite;
 
-    FILE_PATH \
-<<INDEX_THEME
-$home/.icons/default/index.theme
-INDEX_THEME
-
-    FILE \
-<<'INDEX_THEME'
-[icon theme]
+    OBJ=\
+'[icon theme]
 Inherits=Breeze
-INDEX_THEME
+'
 
+    OBJ_PATH="$home/.icons/default/index.theme"
     __file_write;
 }
 
 main() {
     # Device switches
     # ASUS VivoBook S15 X521IA-M533IA (AMD):
-    m533ia=1
+    m533ia=y
 
     # OS switches
     # Arch Linux system:
-    arch_linux=1
+    arch_linux=y
 
     # Software switches
     # Configure highest audio resampling quality possible when resampling:
-    audio_hq_resamp=0
+    audio_hq_resamp=
     # Bluetooth support (D-Bus dependent)
-    bluetooth=1
+    bluetooth=y
+    # DNS support:
+    dns=y
     # Configure and prefer IPv6 over IPv4:
-    ipv6=0
+    ipv6=
     # XDG portals support (D-Bus dependent protocols)
-    portal=1
+    portal=y
 
     # Location switches
     # Bulgaria:
-    bg=0
+    bg=
     # Germany:
-    de=1
+    de=y
 
     # Software
-    # Audio player daemon; currently supported: moc, none
+    # Audio player daemon; currently supported: moc
     audio_playerd='moc'
-    # Audio server; currently supported: pipewire, none
+    # Audio server; currently supported: pipewire
     audio_server='pipewire'
-    # Web browser; currently supported: firefox, none
+    # Web browser; currently supported: firefox
     browser='firefox'
-    # Display server; currently supported: wayland, none
+    # Display server; currently supported: wayland
     display_server='wayland'
-    # DNS; currently supported: localhost, none
-    dns='localhost'
-    # Dedicated DNS (stub) resolver (localhost); currently supported: dnsmasq,
-    # none
+    # Dedicated DNS (stub) resolver; currently supported: dnsmasq
     dns0='dnsmasq'
-    # Init system; currently supported: systemd, none
+    # Init system; currently supported: systemd
     init='systemd'
-    # Pipewire manager; currently supported: pipewire, none
+    # Pipewire manager; currently supported: pipewire
     pipewire_manager='pipewire'
-    # QT theme engine; currently supported: kvantum, none
+    # QT theme engine; currently supported: kvantum
     qt_theme='kvantum'
-    # WLAN daemon; currently supported: iwd, none
+    # WLAN daemon; currently supported: iwd
     wland='iwd'
-    # Window manager / desktop environment; currently supported: sway, none
+    # Window manager / desktop environment; currently supported: sway
     wm='sway'
 
     # Data
