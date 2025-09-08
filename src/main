@@ -1399,7 +1399,7 @@ _firefox_conf() {
 
     OBJ="$tmpd/firefox-profile/src/profiles.ini"
     OBJ_PATH="$home/.mozilla/firefox/profiles.ini"
-    __file_write_overwrite;
+    __file_write_target_overwrite;
 
     OBJ_PATH="$home/.mozilla/firefox/installs.ini"
     __loc_delete;
