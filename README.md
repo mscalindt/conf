@@ -19,8 +19,6 @@ Source code releases follow the `YYYYMMDD` format.
 
 To list the available releases, check out the available tags or use `git tag`.
 
-For updates on recent changes, see the [NEWS](NEWS) file.
-
 ## License
 
 [KEYCLA 1.0 License](LICENSE)
