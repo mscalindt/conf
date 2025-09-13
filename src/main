@@ -2319,7 +2319,10 @@ _makepkg_conf() {
         'CFLAGS="-march=x86-64 -mtune=native -O2 -pipe -fno-plt -fexceptions \' \
         -s \
         'MAKEFLAGS="-j' \
-        'MAKEFLAGS="-j6"'
+        'MAKEFLAGS="-j6"' \
+        -m p -s \
+        'OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge ' \
+        'OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge !debug lto)'
 
     OBJ_PATH='/etc/makepkg.conf'
     __file_write_overwrite;
