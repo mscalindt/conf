@@ -2499,7 +2499,7 @@ _nvram_clr() {
 
 _openal_conf() {
     OBJ=\
-'frequency = 48000
+'frequency = 44100
 '
 
     OBJ_PATH='/etc/openal/alsoft.conf'
