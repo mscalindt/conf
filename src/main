@@ -1173,7 +1173,7 @@ _doas_conf() {
 }
 
 _env() {
-    ____BASH_PROFILE() {
+    ___BASH_PROFILE() {
         OBJ=\
 'set -a; for file in "$HOME"/.syscfg_env/*; do
     . "$file"
@@ -1292,14 +1292,14 @@ DESKTOP_SESSION=sway
     ___ENV;
 
     [ "$display_server" = wayland ] && {
-        ____BASH_PROFILE;
+        ___BASH_PROFILE;
         ___BROWSER;
         ___PORTAL;
         ___QT_THEME;
         ___SWAY_LOG;
         ___WM;
     } || {
-        ____BASH_PROFILE ''
+        ___BASH_PROFILE ''
         ___BROWSER ''
         ___PORTAL ''
         ___QT_THEME ''
