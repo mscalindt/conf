@@ -2588,6 +2588,7 @@ unlock_time=600
         'try_first_pass nullok' \
         'try_first_pass nullok nodelay'
 
+    OBJ_PATH='/etc/pam.d/system-auth'
     __file_write_overwrite;
 }
 
