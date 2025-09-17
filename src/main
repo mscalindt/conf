@@ -26,7 +26,7 @@ defaults.ctl.card 1
 '
 
     OBJ_PATH='/etc/asound.conf'
-    __file_write;
+    __file_write_ow_soft;
 }
 
 # "WantedBy", default.target, ensures systemd will try to start the service on
@@ -67,20 +67,22 @@ _autostart() {
     ___AT_SPI_DBUS_BUS_SERVICE() {
         [ ! "${1:-$arch_linux}" ] && {
             OBJ_PATH="$home/.config/systemd/user/at-spi-dbus-bus.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ='/dev/null'
             OBJ_PATH="$home/.config/systemd/user/at-spi-dbus-bus.service"
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___BLUETOOTH_SERVICE() {
         [ ! "${1:-$bluetooth}" ] && {
             OBJ_PATH='/etc/systemd/system/bluetooth.service'
-            __loc_delete;
+            __action -del
 
             OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluetooth.service'
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -99,20 +101,20 @@ WantedBy=multi-user.target
 '
 
             OBJ_PATH='/etc/systemd/system/bluetooth.service'
-            __file_write;
+            __file_write_ow_soft;
 
             OBJ='/etc/systemd/system/bluetooth.service'
             OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluetooth.service'
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft;
         }
     }
     ___DNSMASQ_SERVICE() {
         [ ! "${1:-$dns0}" = dnsmasq ] && {
             OBJ_PATH='/etc/systemd/system/dnsmasq.service'
-            __loc_delete;
+            __action -del
 
             OBJ_PATH='/etc/systemd/system/multi-user.target.wants/dnsmasq.service'
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -129,20 +131,20 @@ WantedBy=multi-user.target
 '
 
             OBJ_PATH='/etc/systemd/system/dnsmasq.service'
-            __file_write;
+            __file_write_ow_soft;
 
             OBJ='/etc/systemd/system/dnsmasq.service'
             OBJ_PATH='/etc/systemd/system/multi-user.target.wants/dnsmasq.service'
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft;
         }
     }
     ___EVTEST_GRAB_SERVICE() {
         [ ! "${1:-$m533ia}" ] && {
             OBJ_PATH='/etc/systemd/system/evtest-grab.service'
-            __loc_delete;
+            __action -del
 
             OBJ_PATH='/etc/systemd/system/multi-user.target.wants/evtest-grab.service'
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -168,20 +170,20 @@ WantedBy=multi-user.target
 '
 
             OBJ_PATH='/etc/systemd/system/evtest-grab.service'
-            __file_write;
+            __file_write_ow_soft;
 
             OBJ='/etc/systemd/system/evtest-grab.service'
             OBJ_PATH='/etc/systemd/system/multi-user.target.wants/evtest-grab.service'
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft;
         }
     }
     ___IWD_SERVICE() {
         [ ! "${1:-$wland}" = iwd ] && {
             OBJ_PATH='/etc/systemd/system/iwd.service'
-            __loc_delete;
+            __action -del
 
             OBJ_PATH='/etc/systemd/system/multi-user.target.wants/iwd.service'
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -195,20 +197,20 @@ WantedBy=multi-user.target
 '
 
             OBJ_PATH='/etc/systemd/system/iwd.service'
-            __file_write;
+            __file_write_ow_soft;
 
             OBJ='/etc/systemd/system/iwd.service'
             OBJ_PATH='/etc/systemd/system/multi-user.target.wants/iwd.service'
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft;
         }
     }
     ___MOC_SERVICE() {
         [ ! "${1:-$audio_playerd}" = moc ] && {
             OBJ_PATH="$home/.config/systemd/user/moc.service"
-            __loc_delete;
+            __action -del
 
             OBJ_PATH="$home/.config/systemd/user/default.target.wants/moc.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -225,17 +227,21 @@ WantedBy=default.target
 '
 
             OBJ_PATH="$home/.config/systemd/user/moc.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
 
             OBJ="$home/.config/systemd/user/moc.service"
             OBJ_PATH="$home/.config/systemd/user/default.target.wants/moc.service"
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE() {
         [ ! "${1:-$arch_linux}" ] && {
             OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[D-BUS Service]
@@ -244,13 +250,15 @@ Exec=/usr/bin/true
 '
 
             OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE() {
         [ ! "${1:-$arch_linux}" ] && {
             OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[D-BUS Service]
@@ -259,13 +267,15 @@ Exec=/usr/bin/true
 '
 
             OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE() {
         [ ! "${1:-$arch_linux}" ] && {
             OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.PermissionStore.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[D-BUS Service]
@@ -274,13 +284,15 @@ Exec=/usr/bin/true
 '
 
             OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.PermissionStore.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE() {
         [ ! "${1:-$arch_linux}" ] && {
             OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[D-BUS Service]
@@ -289,13 +301,15 @@ Exec=/usr/bin/true
 '
 
             OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE() {
         [ ! "${1:-$arch_linux}" ] && {
             OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Documents.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[D-BUS Service]
@@ -304,16 +318,18 @@ Exec=/usr/bin/true
 '
 
             OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Documents.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___PIPEWIRE_SERVICE() {
         [ ! "${1:-$audio_server}" = pipewire ] && {
             OBJ_PATH="$home/.config/systemd/user/pipewire.service"
-            __loc_delete;
+            __action -del
 
             OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -327,20 +343,24 @@ WantedBy=default.target
 '
 
             OBJ_PATH="$home/.config/systemd/user/pipewire.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
 
             OBJ="$home/.config/systemd/user/pipewire.service"
             OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire.service"
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___PIPEWIRE_MEDIA_SESSION_SERVICE() {
         [ ! "${1:-$pipewire_manager}" = pipewire ] && {
             OBJ_PATH="$home/.config/systemd/user/pipewire-media-session.service"
-            __loc_delete;
+            __action -del
 
             OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-media-session.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -357,20 +377,24 @@ WantedBy=pipewire.service
 '
 
             OBJ_PATH="$home/.config/systemd/user/pipewire-media-session.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
 
             OBJ="$home/.config/systemd/user/pipewire-media-session.service"
             OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-media-session.service"
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___PIPEWIRE_PULSE_SERVICE() {
         [ ! "${1:-$audio_server}" = pipewire ] && {
             OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.service"
-            __loc_delete;
+            __action -del
 
             OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-pulse.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -386,47 +410,55 @@ WantedBy=pipewire.service
 '
 
             OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
 
             OBJ="$home/.config/systemd/user/pipewire-pulse.service"
             OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-pulse.service"
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___PIPEWIRE_SOCKET() {
         [ ! "${1:-$audio_server}" = pipewire ] && {
             OBJ_PATH="$home/.config/systemd/user/pipewire.socket"
-            __loc_delete;
+            __action -del
         } || {
             OBJ='/dev/null'
             OBJ_PATH="$home/.config/systemd/user/pipewire.socket"
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___PIPEWIRE_PULSE_SOCKET() {
         [ ! "${1:-$audio_server}" = pipewire ] && {
             OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.socket"
-            __loc_delete;
+            __action -del
         } || {
             OBJ='/dev/null'
             OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.socket"
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___RTKIT_DAEMON_SERVICE() {
         [ ! "${1:-$arch_linux}" ] && {
             OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
-            __loc_delete;
+            __action -del
         } || {
             OBJ='/dev/null'
             OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
-            __loc_target_link_overwrite;
+            __obj_link_ow_soft;
         }
     }
     ___XDG_DESKTOP_PORTAL_SERVICE() {
         [ ! "${1:-$portal}" ] && {
             OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -441,13 +473,15 @@ Slice=session.slice
 '
 
             OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___XDG_DESKTOP_PORTAL_GTK_SERVICE() {
         [ ! "${1:-$portal}" ] && {
             OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-gtk.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -462,13 +496,15 @@ Slice=session.slice
 '
 
             OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-gtk.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___XDG_DESKTOP_PORTAL_WLR_SERVICE() {
         [ ! "${1:-$portal}" ] && {
             OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-wlr.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -483,13 +519,15 @@ Slice=session.slice
 '
 
             OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-wlr.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___XDG_DOCUMENT_PORTAL_SERVICE() {
         [ ! "${1:-$portal}" ] && {
             OBJ_PATH="$home/.config/systemd/user/xdg-document-portal.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -504,13 +542,15 @@ Slice=session.slice
 '
 
             OBJ_PATH="$home/.config/systemd/user/xdg-document-portal.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___XDG_PERMISSION_STORE_SERVICE() {
         [ ! "${1:-$portal}" ] && {
             OBJ_PATH="$home/.config/systemd/user/xdg-permission-store.service"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 '[Unit]
@@ -525,7 +565,9 @@ Slice=session.slice
 '
 
             OBJ_PATH="$home/.config/systemd/user/xdg-permission-store.service"
-            __file_write;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
 
@@ -801,7 +843,9 @@ ipv6enable() { su -c '\''sysctl -w net.ipv6.conf.all.disable_ipv6=0; sysctl -w n
 '
 
     OBJ_PATH="$home/.bash_functions"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ=\
 '# Don'\''t parse .bashrc if not running interactively
@@ -838,7 +882,9 @@ stty -ixon susp undef
 '
 
     OBJ_PATH="$home/.bashrc"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _bluez_conf() {
@@ -855,7 +901,7 @@ ReconnectIntervals=2,8,16
 '
 
     OBJ_PATH='/etc/bluetooth/main.conf'
-    __file_write_overwrite;
+    __file_write_ow_soft;
 }
 
 # RTC clock sync using the closest NTP server (pool.ntp.org)
@@ -864,17 +910,7 @@ _clk_sync() {
     __cmd hwclock -w
 }
 
-# Software configuration - stage 1
-#
-# State-of-the-art config:
-# > never overwrites or overwritten.
-#
-# Run stage 1 at any time of -- initial -- system configuration with:
-# > the full filesystem mounted and user dir provided ($home; $user).
-#
-# The following functions shall -- only -- be defined in _conf_4() if they
-# are influenced by utility switches; never to be defined in any other _conf_*()
-# functions.
+# Software configuration - stage 1 - initial system configuration
 _conf_1() {
     _alsa_conf;
     _bash_conf;
@@ -903,22 +939,7 @@ _conf_1() {
     _xdg_conf;
 }
 
-# Software configuration - stage 2
-#
-# Config might:
-# > overwrite or be overwritten.
-# > depend on installed software.
-#
-# Function might:
-# > require $force_write
-#
-# Run stage 2 at any time of -- desired -- system configuration with:
-# > the full filesystem mounted and user dir provided ($home; $user).
-# > the output parsed to understand what is not yet being configured.
-#
-# The following functions shall -- only -- be defined in _conf_4() if they
-# are influenced by utility switches; never to be defined in any other _conf_*()
-# functions.
+# Software configuration - stage 2 - desired system configuration
 _conf_2() {
     _autostart;
     _env;
@@ -933,19 +954,19 @@ _conf_2() {
     { file '/etc/dhcpcd.conf'; } && {
         _dhcpcd_conf;
     } || {
-        _info -yellow - 'Skipped _dhcpcd_conf()'
+        __info -yellow - 'Skipped _dhcpcd_conf()'
     }
 
     { file '/etc/dnsmasq.conf'; } && {
         _dnsmasq_conf;
     } || {
-        _info -yellow - 'Skipped _dnsmasq_conf()'
+        __info -yellow - 'Skipped _dnsmasq_conf()'
     }
 
     { file '/etc/gai.conf'; } && {
         _gai_conf;
     } || {
-        _info -yellow - 'Skipped _gai_conf()'
+        __info -yellow - 'Skipped _gai_conf()'
     }
 
     { cmd 'grub-install' && cmd 'grub-mkconfig'; } && {
@@ -954,92 +975,65 @@ _conf_2() {
         { file '/etc/default/grub'; } && {
             _grub_conf;
         } || {
-            _info -yellow - 'Skipped _grub_conf()'
+            __info -yellow - 'Skipped _grub_conf()'
         }
     } || {
-        _info -yellow - 'Skipped _grub()'
-        _info -yellow - 'Skipped _grub_conf()'
+        __info -yellow - 'Skipped _grub()'
+        __info -yellow - 'Skipped _grub_conf()'
     }
 
     { file '/etc/mkinitcpio.conf'; } && {
         _initramfs_conf;
     } || {
-        _info -yellow - 'Skipped _initramfs_conf()'
+        __info -yellow - 'Skipped _initramfs_conf()'
     }
 
     { file '/etc/makepkg.conf'; } && {
         _makepkg_conf;
     } || {
-        _info -yellow - 'Skipped _makepkg_conf()'
+        __info -yellow - 'Skipped _makepkg_conf()'
     }
 
     { file '/etc/pacman.conf'; } && {
         _pacman_conf;
     } || {
-        _info -yellow - 'Skipped _pacman_conf()'
+        __info -yellow - 'Skipped _pacman_conf()'
     }
 
     { file '/etc/security/faillock.conf' && file '/etc/login.defs' && \
         file '/etc/pam.d/su' && file '/etc/pam.d/system-auth'; } && {
         _pam_conf;
     } || {
-        _info -yellow - 'Skipped _pam_conf()'
+        __info -yellow - 'Skipped _pam_conf()'
     }
 }
 
-# Software configuration - stage 3
-#
-# Config might:
-# > overwrite or be overwritten.
-# > depend on specific installed software.
-# > depend on ever-executed software.
-#
-# Function might:
-# > require $force_write
-#
-# Run stage 3 at any time of -- desired -- system configuration with:
-# > the full filesystem mounted and user dir provided ($home; $user).
-# > the output parsed to understand what is not yet being configured.
-#
-# The following functions shall -- only -- be defined in _conf_4() if they
-# are influenced by utility switches; never to be defined in any other _conf_*()
-# functions.
+# Software configuration - stage 3 - desired dependable system configuration
 _conf_3() {
     { file '/etc/bluetooth/main.conf'; } && {
         _bluez_conf;
     } || {
-        _info -yellow - 'Skipped _bluez_conf()'
+        __info -yellow - 'Skipped _bluez_conf()'
     }
 
     { file "$home/.mozilla/firefox/profiles.ini"; } && {
         _firefox_conf;
     } || {
-        _info -yellow - 'Skipped _firefox_conf()'
+        __info -yellow - 'Skipped _firefox_conf()'
     }
 
     { file '/etc/fuse.conf'; } && {
         _fuse_conf;
     } || {
-        _info -yellow - 'Skipped _fuse_conf()'
+        __info -yellow - 'Skipped _fuse_conf()'
     }
 }
 
-# Software configuration - stage 4
+# Software configuration - stage 4 - desired system configuration
 #
-# Config is:
-# > influenced by utility switches.
-#
-# Config might:
-# > overwrite or be overwritten.
-# > depend on specific installed software.
-# > depend on ever-executed software.
-#
-# Function might:
-# > require $force_write
-#
-# Run stage 4 at any time of -- desired -- system configuration with:
-# > the full filesystem mounted and user dir provided ($home; $user).
-# > the intent of reproducing the currently declared configuration.
+# Run stage 4 at any time of desired system configuration with the intent
+# of reproducing the currently declared configuration; configuration is
+# affected by our values/switches/variables.
 _conf_4() {
     _alsa_conf;
     _autostart;
@@ -1101,7 +1095,7 @@ noipv4ll
 '
 
     OBJ_PATH='/etc/dhcpcd.conf'
-    __file_write_overwrite;
+    __file_write_ow_soft;
 }
 
 # DNS stub resolver configuration
@@ -1157,7 +1151,7 @@ server=149.112.112.112
     }
 
     OBJ_PATH='/etc/dnsmasq.conf'
-    __file_write_overwrite;
+    __file_write_ow_soft;
 }
 
 _doas_conf() {
@@ -1166,10 +1160,7 @@ _doas_conf() {
 '
 
     OBJ_PATH='/etc/doas.conf'
-    __file_write;
-
-    OBJ_PATH='/etc/doas.conf'
-    __loc_chmod '0400'
+    __file_write_ow_soft -mode 0400
 }
 
 _env() {
@@ -1190,25 +1181,29 @@ fi
 '
 
         OBJ_PATH="$home/.bash_profile"
-        __file_write;
+        __file_write_ow_soft \
+            -uid "$uid" -gid "$gid" \
+            -user "$user" -group "$group"
     }
     ___BROWSER() {
         [ ! "${1:-$browser}" = firefox ] && {
             OBJ_PATH="$home/.syscfg_env/browser"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 'MOZ_ENABLE_WAYLAND=1
 '
 
             OBJ_PATH="$home/.syscfg_env/browser"
-            __file_write_overwrite;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___DISPLAY_SERVER() {
         [ ! "$display_server" = wayland ] && {
             OBJ_PATH="$home/.syscfg_env/display_server"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 'GTK_A11Y=none
@@ -1219,7 +1214,9 @@ SDL_VIDEODRIVER=wayland
 '
 
             OBJ_PATH="$home/.syscfg_env/display_server"
-            __file_write_overwrite;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___ENV() {
@@ -1229,53 +1226,56 @@ PATH="${PATH}:$HOME/.local/bin:$HOME/scripts"
 '
 
         OBJ_PATH="$home/.syscfg_env/env"
-        __file_write_overwrite;
+        __file_write_ow_soft \
+            -uid "$uid" -gid "$gid" \
+            -user "$user" -group "$group"
     }
     ___PORTAL() {
         [ ! "${1:-$portal}" ] && {
             OBJ_PATH="$home/.syscfg_env/portal"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 'GTK_USE_PORTAL=1
 '
 
             OBJ_PATH="$home/.syscfg_env/portal"
-            __file_write_overwrite;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___QT_THEME() {
         [ ! "${1:-$qt_theme}" = kvantum ] && {
             OBJ_PATH="$home/.syscfg_env/qt_theme"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 'QT_STYLE_OVERRIDE=kvantum
 '
 
             OBJ_PATH="$home/.syscfg_env/qt_theme"
-            __file_write_overwrite;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
     ___SWAY_LOG() {
         [ ! "${1:-$wm}" = sway ] && {
             OBJ_PATH='/var/log/sway.log'
-            __loc_delete;
+            __action -del
         } || {
             OBJ_PATH='/var/log/sway.log'
-            __loc_empty;
+            __action -trunc
 
-            OBJ_PATH='/var/log/sway.log'
-            __loc_chmod '0644'
-
-            OBJ_PATH='/var/log/sway.log'
-            __loc_chown "$user"
+            __cmd chmod 0644 '/var/log/sway.log'
+            __cmd chown "$uid":"$gid" '/var/log/sway.log'
         }
     }
     ___WM() {
         [ ! "${1:-$wm}" = sway ] && {
             OBJ_PATH="$home/.syscfg_env/wm"
-            __loc_delete;
+            __action -del
         } || {
             OBJ=\
 'XDG_CURRENT_DESKTOP=sway
@@ -1284,7 +1284,9 @@ DESKTOP_SESSION=sway
 '
 
             OBJ_PATH="$home/.syscfg_env/wm"
-            __file_write_overwrite;
+            __file_write_ow_soft \
+                -uid "$uid" -gid "$gid" \
+                -user "$user" -group "$group"
         }
     }
 
@@ -1314,7 +1316,9 @@ _face_bin() {
 '\0211\0120\0116\0107\0015\0012\0032\0012\0000\0000\0000\0015\0111\0110\0104\0122\0000\0000\0000\0144\0000\0000\0000\0144\0010\0002\0000\0000\0000\0377\0200\0002\0003\0000\0000\0000\0003\0163\0102\0111\0124\0010\0010\0010\0333\0341\0117\0340\0000\0000\0010\0010\0111\0104\0101\0124\0170\0234\0355\0235\0117\0150\0023\0117\0024\0307\0137\0252\0325\0370\0277\0326\0077\0304\0077\0075\0010\0125\0243\0124\0232\0050\0005\0251\0010\0332\0136\0104\0004\0053\0036\0104\0301\0322\0256\0005\0017\0005\0351\0101\0017\0036\0212\0207\0212\0050\0071\0064\0170\0116\0215\0030\0355\0105\0321\0252\0330\0253\0101\0244\0212\0042\0046\0324\0103\0113\0212\0177\0132\0264\0242\0025\0135\0250\0156\0252\0326\0375\0035\0346\0327\0141\0234\0375\0237\0314\0314\0116\0045\0237\0123\0166\0166\0063\0373\0366\0333\0231\0267\0157\0346\0315\0244\0001\0135\0327\0241\0204\0073\0312\0374\0066\0140\0066\0121\0022\0313\0003\0045\0261\0074\0120\0022\0313\0003\0045\0261\0074\0060\0013\0304\0112\0247\0323\0175\0175\0175\0176\0133\0001\0060\0053\0304\0112\0245\0122\0207\0016\0035\0272\0172\0365\0252\0337\0206\0000\0350\0162\0323\0335\0335\0215\0115\0115\0046\0223\0376\0032\0043\0173\0313\0032\0031\0031\0301\0237\0133\0133\0133\0375\0155\0137\0054\0305\0312\0144\0062\0055\0055\0055\0147\0317\0236\0145\0130\0047\0205\0317\0172\0261\0155\0250\0065\0065\0065\0000\0120\0133\0133\0313\0252\0302\0366\0366\0166\0243\0315\0167\0356\0334\0141\0125\0277\0047\0030\0167\0303\0301\0301\0301\0171\0363\0346\0145\0263\0331\0160\0070\0314\0266\0146\0222\0267\0157\0337\0362\0253\0334\0006\0366\0076\0353\0324\0251\0123\0000\0060\0074\0074\0314\0111\0057\0105\0121\0072\0072\0072\0170\0324\0354\0010\0173\0261\0142\0261\0130\0165\0165\0065\0160\0323\0153\0303\0206\0015\0314\0353\0164\0111\0121\0142\0145\0062\0031\0323\0160\0061\0227\0313\0141\0275\0366\0356\0335\0133\0314\0055\0244\0242\0050\0261\0042\0221\0110\0062\0231\0104\0375\0216\0042\0227\0313\0125\0124\0124\0000\0100\0072\0235\0276\0161\0343\0106\0061\0167\0261\0047\0036\0217\0007\0002\0001\0176\0365\0223\0024\0333\0015\0357\0336\0275\0333\0327\0327\0267\0151\0323\0046\0143\0304\0360\0365\0353\0327\0271\0163\0347\0002\0000\0127\0027\0063\0070\0070\0310\0257\0162\0012\0006\0076\0153\0164\0164\0364\0335\0273\0167\0027\0057\0136\0154\0153\0153\0243\0116\0041\0231\0046\0046\0046\0166\0355\0332\0125\0374\0215\0214\0234\0077\0177\0376\0312\0225\0053\0074\0152\0066\0207\0131\0014\0122\0126\0006\0146\0021\0026\0352\0214\0000\0160\0374\0370\0361\0002\0252\0065\0306\0131\0135\0135\0135\0350\0124\0127\0127\0027\0363\0247\0260\0207\0331\0333\0160\0172\0172\0072\0020\0010\0144\0263\0331\0225\0053\0127\0222\0345\0270\0063\0246\0122\0051\0206\0316\0053\0036\0217\0167\0166\0166\0262\0252\0315\0045\0054\0103\0207\0077\0177\0376\0000\0300\0227\0057\0137\0202\0301\0040\0131\0216\0175\0126\0001\0043\0041\0112\0172\0104\0042\0221\0270\0166\0355\0132\0101\0066\0026\0005\0343\0070\0113\0327\0165\0000\0230\0232\0232\0042\0365\0212\0305\0142\0353\0326\0255\0003\0200\0261\0261\0061\0257\0221\0304\0304\0304\0204\0261\0060\0223\0311\0274\0174\0371\0262\0070\0113\0013\0201\0175\0120\0212\0365\0132\0270\0160\0041\0056\0074\0172\0364\0050\0372\0120\0174\0044\0061\0060\0060\0060\0060\0060\0120\0114\0015\0205\0303\0311\0027\0242\0312\0053\0052\0052\0160\0011\0152\0134\0000\0260\0177\0377\0176\0367\0365\0234\0076\0175\0332\0307\0247\0240\0340\0170\0033\0024\0053\0256\0130\0261\0002\0035\0222\0217\0175\0375\0372\0165\0367\0365\0140\0225\0377\0145\0261\0364\0031\0275\0252\0253\0253\0321\0141\0141\0215\0313\0164\0226\0306\0027\0261\0370\0316\0224\0176\0370\0360\0001\0000\0106\0106\0106\0220\0137\0157\0152\0152\0102\0345\0375\0375\0375\0356\0075\0227\0351\0013\0321\0027\0370\0212\0025\0012\0205\0132\0133\0133\0001\0040\0235\0116\0267\0265\0265\0055\0130\0260\0000\0237\0352\0355\0355\0165\0131\0211\0351\0013\0221\0244\0256\0256\0256\0140\0013\0275\0041\0240\0365\0342\0111\0225\0023\0047\0116\0220\0016\0310\0245\0347\0262\0357\0206\0212\0242\0360\0266\0037\0043\0042\0141\0361\0372\0365\0353\0245\0113\0227\0002\0100\0117\0117\0317\0326\0255\0133\0161\0271\0313\0306\0225\0315\0146\0155\0316\0212\0234\0336\0022\0224\0335\0121\0125\0025\0015\0036\0037\0075\0172\0204\0013\0135\0172\0256\0071\0163\0346\0330\0234\0135\0274\0170\0161\0361\0346\0271\0144\0256\0260\0073\0115\0117\0117\0227\0225\0225\0115\0115\0115\0221\0205\0157\0336\0274\0161\0374\0242\0225\0317\0332\0261\0143\0307\0341\0303\0207\0205\0116\0061\0013\0353\0360\0272\0131\0204\0351\0030\0103\0220\0111\0126\0222\0140\0060\0070\0076\0076\0056\0306\0154\0214\0350\0214\0364\0242\0105\0213\0250\0307\0266\0167\0363\0212\0242\0230\0212\0325\0331\0331\0051\0314\0146\0214\0150\0261\0352\0353\0353\0251\0307\0306\0363\0123\0106\0056\0135\0272\0144\0252\0324\0366\0355\0333\0105\0332\0214\0021\0235\0276\0067\0212\0145\0105\0076\0237\0267\0352\0203\0113\0226\0054\0141\0147\0221\0007\0104\0213\0025\0213\0305\0052\0053\0053\0335\0134\0171\0341\0302\0205\0217\0037\0077\0232\0236\0232\0077\0177\0076\0123\0243\0334\0342\0303\0302\0020\0074\0135\0143\0317\0373\0367\0357\0255\0116\0215\0216\0216\0262\0063\0307\0003\0376\0257\0242\0061\0215\0071\0343\0361\0270\0115\0046\0142\0150\0150\0150\0150\0150\0210\0247\0121\0346\0370\0057\0326\0203\0007\0017\0214\0205\0337\0276\0175\0263\0377\0326\0275\0173\0367\0370\0230\0143\0207\0377\0142\0151\0232\0266\0173\0367\0156\0257\0337\0372\0371\0363\0047\0017\0143\0354\0361\0137\0054\0000\0170\0374\0370\0061\0065\0356\0031\0033\0033\0363\0313\0030\0033\0244\0020\0013\0376\0036\0124\0333\0073\0054\0304\0357\0337\0277\0071\0133\0144\0202\0017\0142\0151\0232\0146\0054\0044\0007\0325\0246\0316\0073\0032\0215\0222\0207\0317\0237\0077\0347\0141\0233\0003\0202\0203\0140\0253\0070\0023\0146\0306\0211\0232\0246\0205\0102\0041\0343\0131\0343\0014\0237\0247\0211\0174\0046\0210\0233\0165\0100\0220\0013\0152\0051\0120\0343\0032\0036\0036\0066\0215\0105\0311\0304\0032\0042\0227\0313\0061\0066\0316\0011\0321\0142\0331\0323\0333\0333\0153\0332\0254\0140\0046\0035\0111\0202\0126\0005\0210\0104\0012\0261\0312\0313\0313\0177\0375\0372\0005\0000\0375\0375\0375\0246\0027\0050\0212\0162\0346\0314\0231\0055\0133\0266\0210\0265\0213\0106\0264\0203\0067\0365\0356\0015\0015\0015\0366\0337\0332\0274\0171\0163\0070\0034\0246\0026\0135\0212\0177\0041\0012\0025\0313\0064\0046\0120\0024\0005\0255\0251\0264\0042\0030\0014\0066\0067\0067\0003\0000\0025\0273\0212\0357\0206\0102\0305\0062\0365\0356\0216\0031\0207\0366\0366\0166\0344\0310\0326\0256\0135\0113\0226\0377\0343\0055\0313\0264\0017\0002\0000\0231\0117\0064\0262\0176\0375\0172\0364\0101\0125\0125\0262\0034\0255\0160\0022\0212\0260\0040\0305\0052\0302\0102\0063\0245\0126\0013\0032\0310\0264\0340\0370\0370\0070\0231\0351\0011\0207\0303\0302\0214\0107\0210\0153\0131\0126\0021\0026\0312\0145\0341\0314\0076\0005\0331\0111\0103\0241\0320\0221\0043\0107\0360\0241\0370\0211\0032\0101\0142\0045\0022\0011\0323\0105\0125\0216\0333\0045\0250\0264\0340\0306\0215\0033\0311\0103\0301\0023\0065\0202\0304\0262\0132\0253\0207\0033\0216\0351\0024\0240\0243\0224\0077\0176\0374\0140\0142\0236\0113\0104\0210\0145\0325\0254\0200\0150\0070\0224\0363\0106\0124\0125\0125\0121\0045\0124\0302\0125\0260\0217\0027\0041\0326\0223\0047\0117\0114\0233\0225\0143\0303\0061\0106\0122\0324\0362\0243\0313\0227\0057\0347\0363\0371\0342\0055\0164\0011\0307\0315\0231\0211\0104\0142\0337\0276\0175\0015\0015\0015\0126\0223\0123\0216\0021\0226\0061\0222\0242\0032\0240\0252\0252\0075\0075\0075\0205\0332\0353\0031\0226\0101\0160\0044\0022\0171\0361\0342\0305\0253\0127\0257\0122\0251\0124\0115\0115\0315\0247\0117\0237\0154\0326\0024\0107\0243\0321\0110\0044\0142\0137\0041\0336\0160\0200\0071\0170\0360\0140\0074\0036\0047\0113\0076\0177\0376\0134\0260\0301\0236\0141\0036\0214\0240\0325\0105\0216\0120\0211\0350\0155\0333\0266\0121\0027\0230\0246\0235\0065\0115\0243\0026\0331\0237\0073\0167\0216\0371\0043\0130\0301\0336\0147\0251\0252\0352\0250\0027\0325\0254\0022\0211\0204\0261\0201\0054\0137\0276\0334\0370\0305\0140\0060\0270\0163\0347\0116\0262\0104\0344\0010\0221\0213\0203\0167\0324\0253\0271\0271\0371\0300\0201\0003\0350\0163\0046\0223\0271\0165\0353\0226\0125\0362\0331\0010\0025\0152\0211\0034\0041\0362\0372\0263\0250\0252\0272\0152\0325\0052\0352\0115\0037\0215\0106\0053\0053\0053\0033\0033\0033\0311\0227\0140\0044\0022\0131\0263\0146\0215\0373\0232\0251\0165\0070\0102\0243\0007\0256\0235\0274\0251\0251\0251\0256\0256\0256\0161\0206\0373\0367\0357\0133\0135\0151\0164\0366\0215\0215\0215\0246\0127\0122\0043\0304\0075\0173\0366\0160\0063\0237\0106\0226\0137\0014\0061\0256\0262\0265\0022\0113\0327\0365\0143\0307\0216\0341\0313\0202\0301\0240\0246\0151\0142\0214\0224\0045\0157\0150\0144\0365\0352\0325\0126\0247\0110\0267\0225\0317\0347\0237\0076\0175\0052\0304\0042\0151\0222\0254\0106\0310\0165\0315\0024\0224\0053\0174\0366\0354\0031\0177\0163\0000\0344\0021\0313\0323\0066\0212\0362\0362\0162\0362\0160\0162\0162\0222\0265\0071\0346\0310\0042\0226\0161\0111\0262\0115\0114\0160\0362\0344\0111\0362\0120\0330\0010\0121\0026\0261\0214\0330\0104\0233\0124\0246\0107\0330\0010\0121\0026\0261\0274\0356\0146\0242\0062\0075\0142\0106\0210\0262\0210\0365\0375\0373\0167\0117\0327\0123\0356\0137\0314\0240\0107\0026\0261\0360\0076\0152\0214\0375\0070\0246\0243\0243\0243\0245\0245\0005\0037\0212\0131\0333\0046\0213\0130\0140\0310\0131\0070\0066\0226\0144\0062\0211\0365\0272\0171\0363\0046\0047\0253\0110\0044\0022\0253\0200\0115\0230\0130\0057\0061\0231\0036\0211\0304\0242\0334\0226\0313\0351\0004\0254\0227\0210\0114\0217\0230\0121\0225\0113\0226\0055\0133\0206\0015\0363\0264\0217\0272\0273\0273\0373\0341\0303\0207\0334\0354\0372\0037\0271\0304\0242\0266\0215\0211\0137\0333\0147\0217\0104\0335\0020\0014\0357\0104\0067\0273\0021\0105\0042\0227\0130\0360\0367\0146\0225\0333\0267\0157\0373\0150\0211\0011\0176\0067\0155\0023\0012\0330\0164\0056\0006\0351\0132\0026\0374\0335\0270\0344\0352\0211\0176\0377\0265\0314\0301\0211\0173\0117\0357\0104\0336\0110\0052\0226\0116\0154\0020\0226\0247\0047\0312\0330\0015\0021\0223\0223\0223\0150\0304\0343\0376\0267\0105\0170\0043\0257\0130\0000\0020\0213\0305\0300\0343\0017\0327\0360\0305\0357\0246\0355\0000\0032\0312\0124\0125\0125\0371\0155\0210\0256\0313\0354\0263\0060\0110\0257\0372\0372\0172\0277\0015\0231\0015\0142\0351\0063\0172\0025\0366\0343\0235\0014\0231\0035\0142\0351\0063\0172\0371\0373\0146\0224\0142\0357\0216\0033\0222\0311\0144\0155\0155\0255\0233\0237\0264\0343\0107\0100\0057\0375\0143\0065\0327\0110\0035\0072\0310\0106\0111\0054\0017\0224\0304\0362\0100\0111\0054\0017\0224\0304\0362\0100\0111\0054\0017\0374\0007\0045\0367\0037\0310\0075\0064\0164\0315\0000\0000\0000\0000\0111\0105\0116\0104\0256\0102\0140\0202'
 
     OBJ_PATH="$home/.face"
-    __bin_write;
+    __bin_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _featherpad_conf() {
@@ -1385,24 +1389,34 @@ tabWrapAround=false
 '
 
     OBJ_PATH="$home/.config/featherpad/fp.conf"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _firefox_conf() {
-    __git_get \
-        "$home/1-GIT/firefox-profile" \
-        'https://github.com/mscalindt/firefox-profile'
+    __cmd git clone \
+        --depth 1 \
+        'https://github.com/mscalindt/firefox-profile' \
+        "$tmpd"/firefox-profile
 
     OBJ="$tmpd/firefox-profile/src/mscalindt"
     OBJ_PATH="$home/.mozilla/firefox/mscalindt"
-    __dir_target_write;
+    __obj_write \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group" \
+        -no-avoid
+
+    __cmd chown -Rh "$uid":"$gid" -- "$home/.mozilla/firefox/mscalindt"
 
     OBJ="$tmpd/firefox-profile/src/profiles.ini"
     OBJ_PATH="$home/.mozilla/firefox/profiles.ini"
-    __file_write_target_overwrite;
+    __obj_write \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ_PATH="$home/.mozilla/firefox/installs.ini"
-    __loc_delete;
+    __action -del
 }
 
 _fontconfig_conf() {
@@ -1452,7 +1466,9 @@ _fontconfig_conf() {
 '
 
     OBJ_PATH="$home/.config/fontconfig/conf.d/01-font.conf"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _fuse_conf() {
@@ -1461,7 +1477,7 @@ _fuse_conf() {
 '
 
     OBJ_PATH='/etc/fuse.conf'
-    __file_write_overwrite;
+    __file_write_ow_soft;
 }
 
 _gai_conf() {
@@ -1471,10 +1487,10 @@ _gai_conf() {
 
     [ "$ipv6" ] && {
         OBJ_PATH='/etc/gai.conf'
-        __loc_delete;
+        __action -del
     } || {
         OBJ_PATH='/etc/gai.conf'
-        __file_write_overwrite;
+        __file_write_ow_soft;
     }
 }
 
@@ -1507,35 +1523,33 @@ _git_conf() {
 '
 
     OBJ_PATH="$home/.gitconfig"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _gov_performance() {
-    for core in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+    for OBJ_PATH in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
         OBJ=\
 'performance
 '
 
-        OBJ_PATH="$core"
-        __file_write_overwrite_soft;
+        __file_write_ow_soft;
     done
 }
 
 _gov_schedutil() {
-    for core in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+    for OBJ_PATH in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
         OBJ=\
 'schedutil
 '
 
-        OBJ_PATH="$core"
-        __file_write_overwrite_soft;
+        __file_write_ow_soft;
     done
 }
 
 # "Removable" GRUB UEFI installation (NVRAM-less... when no NVRAM entries)
 _grub() {
-    is_uefi || EERROR 'Not in UEFI mode.'
-
     __cmd grub-install \
         --target=x86_64-efi \
         --efi-directory="$efi_mnt" \
@@ -1555,8 +1569,6 @@ _grub() {
 # example, the configuration of rEFInd. rEFInd should be considered as a
 # replacement.
 _grub_conf() {
-    is_uefi || EERROR 'Not in UEFI mode.'
-
     OBJ=\
 'GRUB_PRELOAD_MODULES="part_gpt"
 GRUB_TIMEOUT_STYLE=menu
@@ -1585,7 +1597,7 @@ usbhid.mousepoll=1 tsc=unstable \
 '
 
     OBJ_PATH='/etc/default/grub'
-    __file_write_overwrite;
+    __file_write_ow_soft;
 
     __cmd grub-mkconfig -o "$efi_mnt"/EFI/BOOT/grub/grub.cfg
 }
@@ -1612,7 +1624,9 @@ gtk-xft-rgba=rgb
 '
 
     OBJ_PATH="$home/.gtkrc-2.0"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ=\
 '.titlebar,
@@ -1631,7 +1645,9 @@ decoration:backdrop {
 '
 
     OBJ_PATH="$home/.config/gtk-3.0/gtk.css"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ=\
 '[Settings]
@@ -1655,7 +1671,9 @@ gtk-xft-rgba=rgb
 '
 
     OBJ_PATH="$home/.config/gtk-3.0/settings.ini"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _hostname() {
@@ -1664,7 +1682,7 @@ _hostname() {
 "
 
     OBJ_PATH='/etc/hostname'
-    __file_write;
+    __file_write_ow_soft;
 }
 
 _hosts() {
@@ -1681,12 +1699,12 @@ _hosts() {
 "
 
     OBJ_PATH='/etc/hosts'
-    __file_write;
+    __file_write_ow_soft;
 }
 
 _initramfs_conf() {
     [ "$arch_linux" ] || {
-        _info -white - 'Nothing to be done.'
+        __info -white - 'Nothing to be done.'
 
         return 0
     }
@@ -1706,7 +1724,7 @@ MODULES_DECOMPRESS="yes"
 '
 
     OBJ_PATH='/etc/mkinitcpio.conf'
-    __file_write_overwrite;
+    __file_write_ow_soft;
 
     __cmd mkinitcpio -P
 }
@@ -1739,7 +1757,7 @@ DisablePeriodicScan=true
 '
 
     OBJ_PATH='/etc/iwd/main.conf'
-    __file_write;
+    __file_write_ow_soft;
 }
 
 _kitty_conf() {
@@ -1782,7 +1800,9 @@ map kitty_mod+x scroll_end
 '
 
     OBJ_PATH="$home/.config/kitty/kitty.conf"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _kvantum_conf() {
@@ -1792,7 +1812,9 @@ theme=KvArcDark#
 '
 
     OBJ_PATH="$home/.config/Kvantum/kvantum.kvconfig"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ=\
 '[%General]
@@ -2282,7 +2304,9 @@ interior.element=window
 '
 
     OBJ_PATH="$home/.config/Kvantum/KvArcDark#/KvArcDark#.kvconfig"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 # English locale config
@@ -2292,7 +2316,7 @@ _locale() {
 '
 
     OBJ_PATH='/etc/locale.conf'
-    __file_write;
+    __file_write_ow_soft;
 
     OBJ=\
 'bg_BG.UTF-8 UTF-8
@@ -2300,18 +2324,19 @@ en_US.UTF-8 UTF-8
 '
 
     OBJ_PATH='/etc/locale.gen'
-    __file_write;
+    __file_write_ow_soft;
 
     __cmd locale-gen
 }
 
 _makepkg_conf() {
     [ "$arch_linux" ] || {
-        _info -white - 'Nothing to be done.'
+        __info -white - 'Nothing to be done.'
 
         return 0
     }
 
+    OBJ=
     OBJ_PATH='/etc/makepkg.conf'
     __fed '' "$logf" \
         -m p -s \
@@ -2324,8 +2349,9 @@ _makepkg_conf() {
         'OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge ' \
         'OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge !debug lto)'
 
+    OBJ="$OBJ"
     OBJ_PATH='/etc/makepkg.conf'
-    __file_write_overwrite;
+    __file_write_ow_soft -log-fed "$logf" -clear-log "$logf"
 }
 
 _moc_conf() {
@@ -2335,7 +2361,9 @@ Theme = transparent-background
 '
 
     OBJ_PATH="$home/.moc/config"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 # Fix pop on idle resume
@@ -2345,7 +2373,7 @@ _modprobe_conf() {
 '
 
     OBJ_PATH='/etc/modprobe.d/99-snd_powersave.conf'
-    __file_write;
+    __file_write_ow_soft;
 }
 
 _mpv_conf() {
@@ -2389,7 +2417,9 @@ scale=ewa_lanczossharp  # gpu-hq/high-quality default
 '
 
     OBJ_PATH="$home/.config/mpv/mpv.conf"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ=\
 '-- Apply 4K or FHD profiles once on file-load, then never reapply on seek.
@@ -2416,7 +2446,9 @@ end)
 '
 
     OBJ_PATH="$home/.config/mpv/scripts/autoprofile.lua"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _mutt_conf() {
@@ -2448,7 +2480,9 @@ bind index "^" imap-fetch-mail
 '
 
     OBJ_PATH="$home/.mutt/muttrc"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ=\
 'PGP: https://github.com/mscalindt.gpg
@@ -2456,7 +2490,9 @@ Email: mscalindt@gmail.com
 '
 
     OBJ_PATH="$home/.mutt/muttsig"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _nano_conf() {
@@ -2466,17 +2502,17 @@ set breaklonglines
 '
 
     OBJ_PATH="$home/.nanorc"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 # Delete all boot entries (UEFI)
 _nvram_clr() {
-    is_uefi || EERROR 'Not in UEFI mode.'
-
     set -- '/sys/firmware/efi/efivars'/Boot0*
 
-    exist "$1" || {
-        _info -white - 'No valid entries have been found.'
+    [ -e "$1" ] || {
+        __info -white - 'No valid entries have been found.'
 
         return 0
     }
@@ -2491,13 +2527,7 @@ _nvram_clr() {
 
     __cmd rm -f "$@"
 
-    set -- '/sys/firmware/efi/efivars'/Boot0*
-
-    { ! exist "$1"; } || {
-        EERROR 'Entry removal failed.'
-    }
-
-    _info -white - 'The entries were removed; firmware will attempt recovery.'
+    __info -white - 'The entries were removed; firmware will attempt recovery.'
 }
 
 _openal_conf() {
@@ -2506,16 +2536,17 @@ _openal_conf() {
 '
 
     OBJ_PATH='/etc/openal/alsoft.conf'
-    __file_write;
+    __file_write_ow_soft;
 }
 
 _pacman_conf() {
     [ "$arch_linux" ] || {
-        _info -white - 'Nothing to be done.'
+        __info -white - 'Nothing to be done.'
 
         return 0
     }
 
+    OBJ=
     OBJ_PATH='/etc/pacman.conf'
     __fed '' "$logf" \
         -m s -s \
@@ -2543,8 +2574,9 @@ _pacman_conf() {
         '' \
         "Include = $arch_mirlist"
 
+    OBJ="$OBJ"
     OBJ_PATH='/etc/pacman.conf'
-    __file_write_overwrite;
+    __file_write_ow_soft -log-fed "$logf" -clear-log "$logf"
 }
 
 _pam_conf() {
@@ -2557,17 +2589,20 @@ unlock_time=600
 '
 
     OBJ_PATH='/etc/security/faillock.conf'
-    __file_write_overwrite;
+    __file_write_ow_soft;
 
+    OBJ=
     OBJ_PATH='/etc/login.defs'
     __fed '' "$logf" \
         -m p -s \
         'FAIL_DELAY' \
         'FAIL_DELAY 0'
 
+    OBJ="$OBJ"
     OBJ_PATH='/etc/login.defs'
-    __file_write_overwrite;
+    __file_write_ow_soft -log-fed "$logf" -clear-log "$logf"
 
+    OBJ=
     OBJ_PATH='/etc/pam.d/su'
     # 3615679525 CRC32:
     # `'-s' '7' 'auth            required        pam_unix.so nodelay'`
@@ -2576,9 +2611,11 @@ unlock_time=600
         '' \
         'auth            required        pam_unix.so nodelay'
 
+    OBJ="$OBJ"
     OBJ_PATH='/etc/pam.d/su'
-    __file_write_overwrite;
+    __file_write_ow_soft -log-fed "$logf" -clear-log "$logf"
 
+    OBJ=
     OBJ_PATH='/etc/pam.d/system-auth'
     # 1797369364 CRC32:
     # `'-s' '7' 'auth       [success=1 default=bad]     ` \
@@ -2588,8 +2625,9 @@ unlock_time=600
         'try_first_pass nullok' \
         'try_first_pass nullok nodelay'
 
+    OBJ="$OBJ"
     OBJ_PATH='/etc/pam.d/system-auth'
-    __file_write_overwrite;
+    __file_write_ow_soft -log-fed "$logf" -clear-log "$logf"
 }
 
 _pipewire_conf() {
@@ -2629,7 +2667,7 @@ alsa.properties = {
 '
 
     OBJ_PATH='/etc/pipewire/client.conf.d/client.conf'
-    __file_write;
+    __file_write_ow_soft;
 
     OBJ=\
 'context.properties = {
@@ -2660,7 +2698,7 @@ alsa.properties = {
 '
 
     OBJ_PATH='/etc/pipewire/pipewire.conf.d/pipewire.conf'
-    __file_write;
+    __file_write_ow_soft;
 
     OBJ=\
 'context.properties = {
@@ -2700,7 +2738,7 @@ stream.properties = {
 '
 
     OBJ_PATH='/etc/pipewire/pipewire-pulse.conf.d/pipewire-pulse.conf'
-    __file_write;
+    __file_write_ow_soft;
 }
 
 _pipewire_media_session_conf() {
@@ -2755,7 +2793,7 @@ session.modules = {
 '
 
     OBJ_PATH='/etc/pipewire/media-session.d/media-session.conf'
-    __file_write;
+    __file_write_ow_soft;
 
     OBJ=\
 'properties = {
@@ -2820,7 +2858,7 @@ rules = [
 
     [ ! "$bluetooth" ] || {
         OBJ_PATH='/etc/pipewire/media-session.d/bluez-monitor.conf'
-        __file_write;
+        __file_write_ow_soft;
     }
 }
 
@@ -2843,7 +2881,9 @@ set tilde_in_titlebar true
 '
 
     OBJ_PATH="$home/.config/ranger/rc.conf"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ=\
 '# Video
@@ -2932,18 +2972,20 @@ label pager,  !mime ^text, = "$PAGER" -- "$@"
 '
 
     OBJ_PATH="$home/.config/ranger/rifle.conf"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _reflector() {
     [ "$arch_linux" ] || {
-        _info -white - 'Nothing to be done.'
+        __info -white - 'Nothing to be done.'
 
         return 0
     }
 
     [ "$bg" ] && {
-        __OBJ_cmd -e reflector \
+        __cmd_OBJ -e reflector \
             --country Bulgaria \
             --connection-timeout 1 \
             --download-timeout 20 \
@@ -2954,7 +2996,7 @@ _reflector() {
             --latest 10 \
             --number 3
     } || [ "$de" ] && {
-        __OBJ_cmd -e reflector \
+        __cmd_OBJ -e reflector \
             --country Germany \
             --connection-timeout 1 \
             --download-timeout 60 \
@@ -2965,11 +3007,12 @@ _reflector() {
             --latest 15 \
             --number 3
     } || {
-        _info -white - 'Nothing to be done.'
+        __info -white - 'Nothing to be done.'
 
         return 0
     }
 
+    OBJ="$OBJ"
     __fed '' '' \
         -m mof -m p -s \
         'Server =' \
@@ -2977,8 +3020,9 @@ _reflector() {
         -r '' \
         - ''
 
+    OBJ="$OBJ"
     OBJ_PATH="$arch_mirlist"
-    __file_write_overwrite;
+    __file_write_ow_soft;
 }
 
 _resolv_conf() {
@@ -2996,20 +3040,21 @@ nameserver 127.0.0.1
 '
 
         OBJ_PATH='/etc/resolv.conf'
-        __file_write;
+        __file_write_ow_soft;
 
-        OBJ_PATH='/etc/resolv.conf'
-        __loc_chattr 'i'
+        { ! cmd chattr; } || {
+            __cmd chattr +i '/etc/resolv.conf'
+        }
     } || {
         OBJ_PATH='/etc/resolv.conf'
-        __loc_delete;
+        __action -del
     }
 }
 
 _sh() {
     OBJ='/usr/bin/dash'
     OBJ_PATH='/usr/bin/sh'
-    __loc_target_link_overwrite;
+    __obj_link_ow_soft;
 
     [ "$arch_linux" ] && {
         OBJ=\
@@ -3027,10 +3072,10 @@ Depends = dash
 '
 
         OBJ_PATH='/usr/share/libalpm/hooks/dashbinsh.hook'
-        __file_write;
+        __file_write_ow_soft;
     } || {
         OBJ_PATH='/usr/share/libalpm/hooks/dashbinsh.hook'
-        __loc_delete;
+        __action -del
     }
 }
 
@@ -3040,10 +3085,7 @@ _sudo_conf() {
 '
 
     OBJ_PATH='/etc/sudoers.d/wheel'
-    __file_write;
-
-    OBJ_PATH='/etc/sudoers.d/wheel'
-    __loc_chmod '0440'
+    __file_write_ow_soft -mode 0440
 }
 
 _sway_conf() {
@@ -3195,7 +3237,9 @@ bar {
 '
 
     OBJ_PATH="$home/.config/sway/config"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ=\
 '#!/bin/sh
@@ -3209,10 +3253,10 @@ kill -9 "$PID"
 '
 
     OBJ_PATH="$home/.config/sway/fkill"
-    __file_write;
-
-    OBJ_PATH="$home/.config/sway/fkill"
-    __file_executable;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group" \
+        -mode 0755
 
     OBJ=\
 '#!/bin/sh
@@ -3251,10 +3295,10 @@ done < "$cfg"
 '
 
     OBJ_PATH="$home/.config/sway/import-gsettings"
-    __file_write;
-
-    OBJ_PATH="$home/.config/sway/import-gsettings"
-    __file_executable;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group" \
+        -mode 0755
 
     OBJ=\
 '#!/bin/sh
@@ -3281,10 +3325,10 @@ playerctl play-pause > /dev/null 2>&1
 '
 
     OBJ_PATH="$home/.config/sway/music_toggle"
-    __file_write;
-
-    OBJ_PATH="$home/.config/sway/music_toggle"
-    __file_executable;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group" \
+        -mode 0755
 
     OBJ=\
 '#!/bin/sh
@@ -3650,10 +3694,10 @@ printf "%s" "$STATUS"
 '
 
     OBJ_PATH="$home/.config/sway/status"
-    __file_write;
-
-    OBJ_PATH="$home/.config/sway/status"
-    __file_executable;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group" \
+        -mode 0755
 
     [ "$arch_linux" ] && {
         OBJ=\
@@ -3682,13 +3726,13 @@ fi
 '
 
         OBJ_PATH="$home/.config/sway/systemd-handler"
-        __file_write;
-
-        OBJ_PATH="$home/.config/sway/systemd-handler"
-        __file_executable;
+        __file_write_ow_soft \
+            -uid "$uid" -gid "$gid" \
+            -user "$user" -group "$group" \
+            -mode 0755
     } || {
         OBJ_PATH="$home/.config/sway/systemd-handler"
-        __loc_delete;
+        __action -del
     }
 
     OBJ=\
@@ -3707,10 +3751,10 @@ fi
 '
 
     OBJ_PATH="$home/.config/sway/wp-handler"
-    __file_write;
-
-    OBJ_PATH="$home/.config/sway/wp-handler"
-    __file_executable;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group" \
+        -mode 0755
 }
 
 _sway_conf_gaming() {
@@ -3861,7 +3905,9 @@ bar {
 '
 
     OBJ_PATH="$home/.config/sway/config"
-    __file_write_overwrite;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _swaylock_conf() {
@@ -3875,7 +3921,9 @@ layout-border-color=2b2e37
 '
 
     OBJ_PATH="$home/.swaylock/config"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 _sysctl_conf() {
@@ -3884,20 +3932,20 @@ _sysctl_conf() {
 '
 
     OBJ_PATH='/etc/sysctl.d/99-sysctl.conf'
-    __file_write;
+    __file_write_ow_soft;
 }
 
 _tz() {
     [ "$bg" ] && {
         OBJ='/usr/share/zoneinfo/Europe/Sofia'
         OBJ_PATH='/etc/localtime'
-        __loc_target_link_overwrite;
+        __obj_link_ow_soft;
     } || [ "$de" ] && {
         OBJ='/usr/share/zoneinfo/Europe/Berlin'
         OBJ_PATH='/etc/localtime'
-        __loc_target_link_overwrite;
+        __obj_link_ow_soft;
     } || {
-        _info -white - 'Nothing to be done.'
+        __info -white - 'Nothing to be done.'
 
         return 0
     }
@@ -3934,11 +3982,15 @@ application/javascript=featherpad.desktop
 '
 
     OBJ_PATH="$home/.config/mimeapps.list"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ="$home/.config/mimeapps.list"
     OBJ_PATH="$home/.local/share/applications/mimeapps.list"
-    __loc_target_link_overwrite;
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 
     OBJ=\
 '[icon theme]
@@ -3946,7 +3998,9 @@ Inherits=Breeze
 '
 
     OBJ_PATH="$home/.icons/default/index.theme"
-    __file_write;
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 main() {
