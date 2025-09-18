@@ -743,28 +743,6 @@ upF() (
     eval "su -c '\''pacman ${ARGS}'\''"
 )
 
-# Other management
-ramfs_c() (
-    su -c "
-        [ ! -e /mnt/ramdisk ] || {
-            echo '\''fail: /mnt/ramdisk already exists'\''; exit 0
-        }
-        mkdir /mnt/ramdisk 2> /dev/null
-        mount -t ramfs ramfs /mnt/ramdisk && \
-        chown $USER:$USER /mnt/ramdisk && \
-        chmod 700 /mnt/ramdisk
-    "
-)
-ramfs_d() (
-    su -c "
-        [ -e /mnt/ramdisk ] || {
-            echo '\''fail: /mnt/ramdisk does not exist'\''; exit 0
-        }
-        umount /mnt/ramdisk && \
-        rm -rf /mnt/ramdisk
-    "
-)
-
 # gpg
 gpg_d() {
     gpg -o "${1%.gpg}" -d "$1"
