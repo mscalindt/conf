@@ -3365,7 +3365,9 @@ TITLE=$(
     jq -r '\''.. | select(.type?) | select(.focused==true).name'\'' 2> /dev/null
 )
 if [ "$TITLE" ]; then
-    replchars '\''&'\'' '\''&amp;'\'' "$TITLE"; TITLE="$_str";
+    replchars '\''&'\'' '\''&amp;'\'' "$TITLE"; TITLE="$_str"
+    replchars '\''<'\'' '\''&lt;'\'' "$TITLE"; TITLE="$_str"
+    replchars '\''>'\'' '\''&gt;'\'' "$TITLE"; TITLE="$_str"
 fi
 
 MEMHOG=$(ps aux 2> /dev/null)
