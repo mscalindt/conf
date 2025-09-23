@@ -884,8 +884,8 @@ ReconnectIntervals=2,8,16
 
 # RTC clock sync using the closest NTP server (pool.ntp.org)
 _clk_sync() {
-    __cmd ntpd -gGLnq pool.ntp.org
-    __cmd hwclock -w
+    __cmd -- ntpd -gGLnq pool.ntp.org
+    __cmd -- hwclock -w
 }
 
 # Software configuration - stage 1 - initial system configuration
@@ -929,28 +929,28 @@ _conf_2() {
     _sh;
     _tz;
 
-    { file '/etc/dhcpcd.conf'; } && {
+    { [ -e '/etc/dhcpcd.conf' ]; } && {
         _dhcpcd_conf;
     } || {
         __info -yellow - 'Skipped _dhcpcd_conf()'
     }
 
-    { file '/etc/dnsmasq.conf'; } && {
+    { [ -e '/etc/dnsmasq.conf' ]; } && {
         _dnsmasq_conf;
     } || {
         __info -yellow - 'Skipped _dnsmasq_conf()'
     }
 
-    { file '/etc/gai.conf'; } && {
+    { [ -e '/etc/gai.conf' ]; } && {
         _gai_conf;
     } || {
         __info -yellow - 'Skipped _gai_conf()'
     }
 
-    { cmd 'grub-install' && cmd 'grub-mkconfig'; } && {
+    { command -v 'grub-install' && command -v 'grub-mkconfig'; } && {
         _grub;
 
-        { file '/etc/default/grub'; } && {
+        { [ -e '/etc/default/grub' ]; } && {
             _grub_conf;
         } || {
             __info -yellow - 'Skipped _grub_conf()'
@@ -960,26 +960,26 @@ _conf_2() {
         __info -yellow - 'Skipped _grub_conf()'
     }
 
-    { file '/etc/mkinitcpio.conf'; } && {
+    { [ -e '/etc/mkinitcpio.conf' ]; } && {
         _initramfs_conf;
     } || {
         __info -yellow - 'Skipped _initramfs_conf()'
     }
 
-    { file '/etc/makepkg.conf'; } && {
+    { [ -e '/etc/makepkg.conf' ]; } && {
         _makepkg_conf;
     } || {
         __info -yellow - 'Skipped _makepkg_conf()'
     }
 
-    { file '/etc/pacman.conf'; } && {
+    { [ -e '/etc/pacman.conf' ]; } && {
         _pacman_conf;
     } || {
         __info -yellow - 'Skipped _pacman_conf()'
     }
 
-    { file '/etc/security/faillock.conf' && file '/etc/login.defs' && \
-        file '/etc/pam.d/su' && file '/etc/pam.d/system-auth'; } && {
+    { [ -e '/etc/security/faillock.conf' ] && [ -e '/etc/login.defs' ] && \
+        [ -e '/etc/pam.d/su' ] && [ -e '/etc/pam.d/system-auth' ]; } && {
         _pam_conf;
     } || {
         __info -yellow - 'Skipped _pam_conf()'
@@ -988,19 +988,19 @@ _conf_2() {
 
 # Software configuration - stage 3 - desired dependable system configuration
 _conf_3() {
-    { file '/etc/bluetooth/main.conf'; } && {
+    { [ -e '/etc/bluetooth/main.conf' ]; } && {
         _bluez_conf;
     } || {
         __info -yellow - 'Skipped _bluez_conf()'
     }
 
-    { file "$home/.mozilla/firefox/profiles.ini"; } && {
+    { [ -e "$home/.mozilla/firefox/profiles.ini" ]; } && {
         _firefox_conf;
     } || {
         __info -yellow - 'Skipped _firefox_conf()'
     }
 
-    { file '/etc/fuse.conf'; } && {
+    { [ -e '/etc/fuse.conf' ]; } && {
         _fuse_conf;
     } || {
         __info -yellow - 'Skipped _fuse_conf()'
@@ -1027,23 +1027,23 @@ _conf_4() {
     _sway_conf;
     _tz;
 
-    { ! file '/etc/dhcpcd.conf'; } || {
+    { [ ! -e '/etc/dhcpcd.conf' ]; } || {
         _dhcpcd_conf;
     }
 
-    { ! file '/etc/dnsmasq.conf'; } || {
+    { [ ! -e '/etc/dnsmasq.conf' ]; } || {
         _dnsmasq_conf;
     }
 
-    { ! file '/etc/gai.conf'; } || {
+    { [ ! -e '/etc/gai.conf' ]; } || {
         _gai_conf;
     }
 
-    { ! file '/etc/default/grub' || ! cmd 'grub-mkconfig'; } || {
+    { [ ! -e '/etc/default/grub' ] || ! command -v 'grub-mkconfig'; } || {
         _grub_conf;
     }
 
-    { ! file '/etc/mkinitcpio.conf'; } || {
+    { [ ! -e '/etc/mkinitcpio.conf' ]; } || {
         _initramfs_conf;
     }
 }
@@ -1246,8 +1246,8 @@ PATH="${PATH}:$HOME/.local/bin:$HOME/scripts"
             OBJ_PATH='/var/log/sway.log'
             __action -trunc
 
-            __cmd chmod 0644 '/var/log/sway.log'
-            __cmd chown "$uid":"$gid" '/var/log/sway.log'
+            __cmd -- chmod 0644 '/var/log/sway.log'
+            __cmd -- chown "$uid":"$gid" '/var/log/sway.log'
         }
     }
     ___WM() {
@@ -1373,7 +1373,8 @@ tabWrapAround=false
 }
 
 _firefox_conf() {
-    __cmd git clone \
+    __cmd -- \
+        git clone \
         --depth 1 \
         'https://github.com/mscalindt/firefox-profile' \
         "$tmpd"/firefox-profile
@@ -1385,7 +1386,7 @@ _firefox_conf() {
         -user "$user" -group "$group" \
         -no-avoid
 
-    __cmd chown -Rh "$uid":"$gid" -- "$home/.mozilla/firefox/mscalindt"
+    __cmd -- chown -Rh "$uid":"$gid" -- "$home/.mozilla/firefox/mscalindt"
 
     OBJ="$tmpd/firefox-profile/src/profiles.ini"
     OBJ_PATH="$home/.mozilla/firefox/profiles.ini"
@@ -1528,14 +1529,15 @@ _gov_schedutil() {
 
 # "Removable" GRUB UEFI installation (NVRAM-less... when no NVRAM entries)
 _grub() {
-    __cmd grub-install \
+    __cmd -- \
+        grub-install \
         --target=x86_64-efi \
         --efi-directory="$efi_mnt" \
         --boot-directory="$efi_mnt"/EFI/BOOT \
         --removable \
         --no-nvram
 
-    __cmd grub-mkconfig -o "$efi_mnt"/EFI/BOOT/grub/grub.cfg
+    __cmd -- grub-mkconfig -o "$efi_mnt"/EFI/BOOT/grub/grub.cfg
 }
 
 # To simulate a config file, we drop-in our replacement of /etc/default/grub,
@@ -1577,7 +1579,7 @@ usbhid.mousepoll=1 tsc=unstable \
     OBJ_PATH='/etc/default/grub'
     __file_write_ow_soft;
 
-    __cmd grub-mkconfig -o "$efi_mnt"/EFI/BOOT/grub/grub.cfg
+    __cmd -- grub-mkconfig -o "$efi_mnt"/EFI/BOOT/grub/grub.cfg
 }
 
 _gtk_conf() {
@@ -1704,7 +1706,7 @@ MODULES_DECOMPRESS="yes"
     OBJ_PATH='/etc/mkinitcpio.conf'
     __file_write_ow_soft;
 
-    __cmd mkinitcpio -P
+    __cmd -- mkinitcpio -P
 }
 
 _iwd_conf() {
@@ -2304,7 +2306,7 @@ en_US.UTF-8 UTF-8
     OBJ_PATH='/etc/locale.gen'
     __file_write_ow_soft;
 
-    __cmd locale-gen
+    __cmd -- locale-gen
 }
 
 _makepkg_conf() {
@@ -2499,11 +2501,11 @@ _nvram_clr() {
         '/sys/firmware/efi/efivars'/BootOrder* \
         '/sys/firmware/efi/efivars'/Boot0*
 
-    { ! cmd chattr; } || {
-        __cmd chattr -ia "$@"
+    { ! command -v chattr; } || {
+        __cmd -- chattr -ia "$@"
     }
 
-    __cmd rm -f "$@"
+    __cmd -- rm -f "$@"
 
     __info -white - 'The entries were removed; firmware will attempt recovery.'
 }
@@ -2963,7 +2965,8 @@ _reflector() {
     }
 
     [ "$bg" ] && {
-        __cmd_OBJ -e reflector \
+        __cmd -out-req -out-save OBJ -- \
+            reflector \
             --country Bulgaria \
             --connection-timeout 1 \
             --download-timeout 20 \
@@ -2974,7 +2977,8 @@ _reflector() {
             --latest 10 \
             --number 3
     } || [ "$de" ] && {
-        __cmd_OBJ -e reflector \
+        __cmd -out-req -out-save OBJ -- \
+            reflector \
             --country Germany \
             --connection-timeout 1 \
             --download-timeout 60 \
@@ -3020,8 +3024,8 @@ nameserver 127.0.0.1
         OBJ_PATH='/etc/resolv.conf'
         __file_write_ow_soft;
 
-        { ! cmd chattr; } || {
-            __cmd chattr +i '/etc/resolv.conf'
+        { ! command -v chattr; } || {
+            __cmd -- chattr +i '/etc/resolv.conf'
         }
     } || {
         OBJ_PATH='/etc/resolv.conf'
@@ -3930,7 +3934,7 @@ _tz() {
         return 0
     }
 
-    __cmd hwclock -w
+    __cmd -- hwclock -w
 }
 
 _xdg_conf() {
