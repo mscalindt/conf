@@ -2318,7 +2318,7 @@ _makepkg_conf() {
 
     OBJ=
     OBJ_PATH='/etc/makepkg.conf'
-    __fed '' "$logf" \
+    __ed -log "$logf" -- \
         -m p -s \
         'CFLAGS="-march=x86-64 -mtune=' \
         'CFLAGS="-march=x86-64 -mtune=native -O2 -pipe -fno-plt -fexceptions \' \
@@ -2528,7 +2528,7 @@ _pacman_conf() {
 
     OBJ=
     OBJ_PATH='/etc/pacman.conf'
-    __fed '' "$logf" \
+    __ed -log "$logf" -- \
         -m s -s \
         'Color' \
         'Color' \
@@ -2543,10 +2543,7 @@ _pacman_conf() {
         'NoExtract = etc/xdg/autostart/*.desktop'
 
     OBJ="$OBJ"
-    # 2066821928 CRC32:
-    # `'-s' '92' '[multilib]'` \
-    # `'-s' '93' 'Include = /etc/pacman.d/mirrorlist'`
-    __fed 2066821928 "$logf" \
+    __ed -crc 2066821928 -log "$logf" -- \
         -m s -s \
         '[multilib]' \
         '[multilib]' \
@@ -2573,7 +2570,7 @@ unlock_time=600
 
     OBJ=
     OBJ_PATH='/etc/login.defs'
-    __fed '' "$logf" \
+    __ed -log "$logf" -- \
         -m p -s \
         'FAIL_DELAY' \
         'FAIL_DELAY 0'
@@ -2584,9 +2581,7 @@ unlock_time=600
 
     OBJ=
     OBJ_PATH='/etc/pam.d/su'
-    # 3615679525 CRC32:
-    # `'-s' '7' 'auth            required        pam_unix.so nodelay'`
-    __fed 3615679525 "$logf" \
+    __ed -crc 3615679525 -log "$logf" -- \
         -m 7 -s \
         '' \
         'auth            required        pam_unix.so nodelay'
@@ -2597,10 +2592,7 @@ unlock_time=600
 
     OBJ=
     OBJ_PATH='/etc/pam.d/system-auth'
-    # 1797369364 CRC32:
-    # `'-s' '7' 'auth       [success=1 default=bad]     ` \
-    # `pam_unix.so          try_first_pass nullok nodelay'`
-    __fed 1797369364 "$logf" \
+    __ed -crc 1797369364 -log "$logf" -- \
         -m mof -m s -s \
         'try_first_pass nullok' \
         'try_first_pass nullok nodelay'
@@ -2995,7 +2987,7 @@ _reflector() {
     }
 
     OBJ="$OBJ"
-    __fed '' '' \
+    __ed -- \
         -m mof -m p -s \
         'Server =' \
         'Server =' \
