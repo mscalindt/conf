@@ -1377,9 +1377,9 @@ _firefox_conf() {
         git clone \
         --depth 1 \
         'https://github.com/mscalindt/firefox-profile' \
-        "$tmpd"/firefox-profile
+        "${TMPDIR:-/tmp}"/firefox-profile
 
-    OBJ="$tmpd/firefox-profile/src/mscalindt"
+    OBJ="${TMPDIR:-/tmp}/firefox-profile/src/mscalindt"
     OBJ_PATH="$home/.mozilla/firefox/mscalindt"
     __obj_write \
         -uid "$uid" -gid "$gid" \
@@ -1388,13 +1388,16 @@ _firefox_conf() {
 
     __cmd -- chown -Rh "$uid":"$gid" -- "$home/.mozilla/firefox/mscalindt"
 
-    OBJ="$tmpd/firefox-profile/src/profiles.ini"
+    OBJ="${TMPDIR:-/tmp}/firefox-profile/src/profiles.ini"
     OBJ_PATH="$home/.mozilla/firefox/profiles.ini"
     __obj_write \
         -uid "$uid" -gid "$gid" \
         -user "$user" -group "$group"
 
     OBJ_PATH="$home/.mozilla/firefox/installs.ini"
+    __action -del
+
+    OBJ_PATH="${TMPDIR:-/tmp}"/firefox-profile
     __action -del
 }
 
@@ -2318,7 +2321,7 @@ _makepkg_conf() {
 
     OBJ=
     OBJ_PATH='/etc/makepkg.conf'
-    __ed -log "$logf" -- \
+    __ed -log "${TMPDIR:-/tmp}/_makepkg_conf" -- \
         -m p -s \
         'CFLAGS="-march=x86-64 -mtune=' \
         'CFLAGS="-march=x86-64 -mtune=native -O2 -pipe -fno-plt -fexceptions \' \
@@ -2331,7 +2334,8 @@ _makepkg_conf() {
 
     OBJ="$OBJ"
     OBJ_PATH='/etc/makepkg.conf'
-    __file_write_ow_soft -log-fed "$logf" -clear-log "$logf"
+    __file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_makepkg_conf" -sanit \
+        -trunc
 }
 
 _moc_conf() {
@@ -2528,7 +2532,7 @@ _pacman_conf() {
 
     OBJ=
     OBJ_PATH='/etc/pacman.conf'
-    __ed -log "$logf" -- \
+    __ed -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
         -m s -s \
         'Color' \
         'Color' \
@@ -2543,7 +2547,7 @@ _pacman_conf() {
         'NoExtract = etc/xdg/autostart/*.desktop'
 
     OBJ="$OBJ"
-    __ed -crc 2066821928 -log "$logf" -- \
+    __ed -crc 2066821928 -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
         -m s -s \
         '[multilib]' \
         '[multilib]' \
@@ -2553,7 +2557,8 @@ _pacman_conf() {
 
     OBJ="$OBJ"
     OBJ_PATH='/etc/pacman.conf'
-    __file_write_ow_soft -log-fed "$logf" -clear-log "$logf"
+    __file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_pacman_conf" -sanit \
+        -trunc
 }
 
 _pam_conf() {
@@ -2570,36 +2575,36 @@ unlock_time=600
 
     OBJ=
     OBJ_PATH='/etc/login.defs'
-    __ed -log "$logf" -- \
+    __ed -log "${TMPDIR:-/tmp}/_pam_conf" -- \
         -m p -s \
         'FAIL_DELAY' \
         'FAIL_DELAY 0'
 
     OBJ="$OBJ"
     OBJ_PATH='/etc/login.defs'
-    __file_write_ow_soft -log-fed "$logf" -clear-log "$logf"
+    __file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_pam_conf" -sanit -trunc
 
     OBJ=
     OBJ_PATH='/etc/pam.d/su'
-    __ed -crc 3615679525 -log "$logf" -- \
+    __ed -crc 3615679525 -log "${TMPDIR:-/tmp}/_pam_conf" -- \
         -m 7 -s \
         '' \
         'auth            required        pam_unix.so nodelay'
 
     OBJ="$OBJ"
     OBJ_PATH='/etc/pam.d/su'
-    __file_write_ow_soft -log-fed "$logf" -clear-log "$logf"
+    __file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_pam_conf" -sanit -trunc
 
     OBJ=
     OBJ_PATH='/etc/pam.d/system-auth'
-    __ed -crc 1797369364 -log "$logf" -- \
+    __ed -crc 1797369364 -log "${TMPDIR:-/tmp}/_pam_conf" -- \
         -m mof -m s -s \
         'try_first_pass nullok' \
         'try_first_pass nullok nodelay'
 
     OBJ="$OBJ"
     OBJ_PATH='/etc/pam.d/system-auth'
-    __file_write_ow_soft -log-fed "$logf" -clear-log "$logf"
+    __file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_pam_conf" -sanit -trunc
 }
 
 _pipewire_conf() {
@@ -2957,7 +2962,7 @@ _reflector() {
     }
 
     [ "$bg" ] && {
-        __cmd -out-req -out-save OBJ -- \
+        __cmd -req-out -out-save OBJ -- \
             reflector \
             --country Bulgaria \
             --connection-timeout 1 \
@@ -2969,7 +2974,7 @@ _reflector() {
             --latest 10 \
             --number 3
     } || [ "$de" ] && {
-        __cmd -out-req -out-save OBJ -- \
+        __cmd -req-out -out-save OBJ -- \
             reflector \
             --country Germany \
             --connection-timeout 1 \
