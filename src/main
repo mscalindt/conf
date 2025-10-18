@@ -1144,9 +1144,9 @@ _doas_conf() {
 _env() {
     ___BASH_PROFILE() {
         OBJ=\
-'set -a; for file in "$HOME"/.syscfg_env/*; do
-    . "$file"
-done; set +a
+'for file in "$HOME"/.syscfg_env/*; do
+    set -a; . "$file"; set +a
+done
 '
 
         [ ! "${1:-$wm}" = sway ] || OBJ="$OBJ"\
