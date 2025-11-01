@@ -1502,6 +1502,8 @@ _git_conf() {
 [color "diff"]
 	old = red
 	new = yellow
+[submodule]
+	recurse = true
 '
 
     OBJ_PATH="$home/.gitconfig"
