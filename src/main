@@ -3893,6 +3893,18 @@ bar {
         -user "$user" -group "$group"
 }
 
+_swayimg_conf() {
+    OBJ=\
+'[general]
+overlay = yes
+'
+
+    OBJ_PATH="$home/.config/swayimg/config"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
 _swaylock_conf() {
     OBJ=\
 'color=2b2e37
