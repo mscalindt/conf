@@ -2549,11 +2549,11 @@ _pacman_conf() {
         'NoExtract = etc/xdg/autostart/*.desktop'
 
     OBJ="$OBJ"
-    __ed -crc 2066821928 -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
+    __ed -crc 3803429353 -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
         -m s -s \
         '[multilib]' \
         '[multilib]' \
-        -m 93 -s \
+        -m 94 -s \
         '' \
         "Include = $arch_mirlist"
 
