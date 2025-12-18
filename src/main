@@ -745,10 +745,27 @@ upF() (
 
 # gpg
 gpg_d() {
+    case "$1" in
+        *.gpg) ;;
+        *) echo EINVAL; return 1 ;;
+    esac
+
+    [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
+    [ ! -e "${1%.gpg}" ] && [ ! -h "${1%.gpg}" ] || { echo EEXIST; return 1; }
+
     gpg -o "${1%.gpg}" -d "$1"
+    touch -r "$1" "${1%.gpg}"
 }
 gpg_e() {
+    case "$1" in
+        *.gpg) echo EINVAL; return 1 ;;
+    esac
+
+    [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
+    [ ! -e "$1".gpg ] && [ ! -h "$1".gpg ] || { echo EEXIST; return 1; }
+
     gpg -r 7D1F56FAD6FB86652A60BEE65BC3343816EAB179 --compress-algo none -e "$1"
+    touch -r "$1" "$1".gpg
 }
 
 # steam
@@ -756,15 +773,24 @@ gpg_e() {
 
 # tar
 tar_c() {
-    [ -e "$1" ] || { echo ENOENT; return 1; }
-    [ ! -e "$1".tar ] || { echo EEXIST; return 1; }
+    case "$1" in
+        *.tar) echo EINVAL; return 1 ;;
+    esac
+
+    [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
+    [ ! -e "$1".tar ] && [ ! -h "$1".tar ] || { echo EEXIST; return 1; }
 
     tar --numeric-owner -cvpf "$1".tar "$1"
+    touch -r "$1" "$1".tar
 }
 tar_e() {
-    if [ ! -e "$1" ] && [ -e "$1".tar ]; then
-        set -- "$1".tar
-    fi
+    case "$1" in
+        *.tar) ;;
+        *) echo EINVAL; return 1 ;;
+    esac
+
+    [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
+    [ ! -e "${1%.tar}" ] && [ ! -h "${1%.tar}" ] || { echo EEXIST; return 1; }
 
     tar --numeric-owner -xvpf "$1"
 }
