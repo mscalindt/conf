@@ -3690,7 +3690,7 @@ if [ "$NET_USAGE" ]; then
 fi
 STATUS="$STATUS | ${CPU}% | $MEMORY"
 case "$BATTERY" in
-    100) : ;;
+    100|99) : ;;
     *) STATUS="$STATUS | ~${BATTERY}%" ;;
 esac
 STATUS="$STATUS | ${VOLUME}%"
