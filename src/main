@@ -2444,10 +2444,10 @@ end)
 
 mp.observe_property("video-params/w", "number", function(_, w)
     if not applied and w then
-        if w >= 3840 then
+        if w >= 3840 * 0.99 then
             mp.command("apply-profile performance")
             mp.osd_message("Profile: 4K (performance)", 1.5)
-        elseif w <= 1920 then
+        elseif w <= 1920 * 1.01 then
             mp.command("apply-profile performance")
             mp.command("apply-profile quality")
             mp.osd_message("Profile: 1080p (performance+quality)", 1.5)
