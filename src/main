@@ -2883,6 +2883,7 @@ set max_console_history_size 100
 set mouse_enabled false
 set preview_images_method kitty
 set tilde_in_titlebar true
+set preview_max_size 1010101
 '
 
     OBJ_PATH="$home/.config/ranger/rc.conf"
