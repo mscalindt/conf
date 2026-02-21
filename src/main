@@ -30,7 +30,7 @@ defaults.ctl.card 1
 }
 
 # "WantedBy", default.target, ensures systemd will try to start the service on
-# boot. Since no other services on the system specifies our, moc.service, we
+# boot. Since no other services on the system specifies ours, we
 # essentially tell systemd that default.target "wants us" using WantedBy;
 # default.target is equal to runlevel 5 in sysvinit if it is an alias for
 # graphical.target, otherwise 3-5 if multi-user.target.
@@ -202,40 +202,6 @@ WantedBy=multi-user.target
             OBJ='/etc/systemd/system/iwd.service'
             OBJ_PATH='/etc/systemd/system/multi-user.target.wants/iwd.service'
             __obj_link_ow_soft;
-        }
-    }
-    ___MOC_SERVICE() {
-        [ ! "${1:-$audio_playerd}" = moc ] && {
-            OBJ_PATH="$home/.config/systemd/user/moc.service"
-            __action -del
-
-            OBJ_PATH="$home/.config/systemd/user/default.target.wants/moc.service"
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=MOC server
-
-[Service]
-RemainAfterExit=yes
-ExecStart=/usr/bin/mocp -S
-ExecStop=/usr/bin/mocp -x
-TimeoutStopSec=3
-
-[Install]
-WantedBy=default.target
-'
-
-            OBJ_PATH="$home/.config/systemd/user/moc.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-
-            OBJ="$home/.config/systemd/user/moc.service"
-            OBJ_PATH="$home/.config/systemd/user/default.target.wants/moc.service"
-            __obj_link_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
         }
     }
     ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE() {
@@ -583,7 +549,6 @@ Slice=session.slice
 
         ___EVTEST_GRAB_SERVICE;
         ___IWD_SERVICE;
-        ___MOC_SERVICE;
         ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE;
         ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE;
         ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE;
@@ -618,7 +583,6 @@ Slice=session.slice
         ___DNSMASQ_SERVICE ''
         ___EVTEST_GRAB_SERVICE ''
         ___IWD_SERVICE ''
-        ___MOC_SERVICE ''
         ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE ''
         ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE ''
         ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE ''
@@ -927,7 +891,6 @@ _conf_1() {
     _iwd_conf;
     _kitty_conf;
     _kvantum_conf;
-    _moc_conf;
     _modprobe_conf;
     _mpv_conf;
     _mutt_conf;
@@ -2364,18 +2327,6 @@ _makepkg_conf() {
     OBJ_PATH='/etc/makepkg.conf'
     __file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_makepkg_conf" -sanit \
         -trunc
-}
-
-_moc_conf() {
-    OBJ=\
-'SoundDriver = ALSA
-Theme = transparent-background
-'
-
-    OBJ_PATH="$home/.moc/config"
-    __file_write_ow_soft \
-        -uid "$uid" -gid "$gid" \
-        -user "$user" -group "$group"
 }
 
 # Fix pop on idle resume
@@ -4041,8 +3992,6 @@ main() {
     de=y
 
     # Software
-    # Audio player daemon; currently supported: moc
-    audio_playerd='moc'
     # Audio server; currently supported: pipewire
     audio_server='pipewire'
     # Web browser; currently supported: firefox
@@ -4078,7 +4027,7 @@ main() {
     opd="${1##*/}"
 
     readonly m533ia arch_linux audio_hq_resamp bluetooth ipv6 portal bg de \
-             audio_playerd audio_server browser display_server dns dns0 init \
+             audio_server browser display_server dns dns0 init \
              pipewire_manager qt_theme wland wm gid group hostname uid user \
              home efi_mnt arch_mirlist opd
 
