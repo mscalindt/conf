@@ -3311,25 +3311,13 @@ done < "$cfg"
     OBJ=\
 '#!/bin/sh
 
-MOCP_STATE=$(mocp -Q %state)
-MOCP_PAUSE_FILE="${TMPDIR:-/tmp}"/music_toggle_mocp
+MPV_PID=$(ps -e | awk '\''/[m]pv$/ {print $1}'\'')
 
-if [ -f "$MOCP_PAUSE_FILE" ]; then
-    if playerctl status 2> /dev/null | grep -q '\''Playing'\''; then
-        playerctl play-pause
-    elif [ "$MOCP_STATE" = '\''PAUSE'\'' ]; then
-        mocp -U
-    fi
-
-    rm -f "$MOCP_PAUSE_FILE"
-    exit 0
-elif [ "$MOCP_STATE" = '\''PLAY'\'' ]; then
-    mocp -P
-    : > "$MOCP_PAUSE_FILE"
-    exit 0
+if [ "$MPV_PID" ]; then
+    kill "$MPV_PID" 2> /dev/null
+else
+    playerctl play-pause > /dev/null 2>&1
 fi
-
-playerctl play-pause > /dev/null 2>&1
 '
 
     OBJ_PATH="$home/.config/sway/music_toggle"
