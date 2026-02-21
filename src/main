@@ -2901,7 +2901,7 @@ mime ^video, has mpv,       !X, terminal = mpv -- "$@"
 # Audio
 ext midi?, has wildmidi,    terminal = wildmidi -- "$@"
 mime ^audio, has mocp,      terminal = mocp -l -- "$@"
-mime ^audio, has mpv,       terminal = mpv -- "$@"
+mime ^audio, has mpv,       flag f = mpv -- "$@"
 mime ^audio, has parole,    X, flag f = parole -- "$@"
 mime ^audio, has vlc,       X, flag f = vlc -- "$@"
 
