@@ -3122,6 +3122,7 @@ input * {
     bindsym $mod+5 workspace number 5
     bindsym $mod+6 workspace number 6
     bindsym $mod+7 workspace number 7
+    bindsym $mod+8 workspace number 8
 
     bindsym $mod+Left focus left
     bindsym $mod+Down focus down
@@ -3157,6 +3158,10 @@ input * {
 
     # Fullscreen window
     bindsym $mod+f fullscreen
+
+    # Move window to workspace 8/7 / bag
+    bindsym $mod+w move container to workspace 8
+    bindsym $mod+e move container to workspace 7
 
     # Drag window by holding down $mod + LMB
     # Resize window by holding down $mod + RMB
