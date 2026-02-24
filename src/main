@@ -2346,6 +2346,7 @@ fullscreen
 border=no               # no window border
 msg-color=yes           # colored terminal output
 cursor-autohide=1000    # hide cursor after 1 s of inactivity
+force-window=yes
 
 # Session
 save-position-on-quit=yes
