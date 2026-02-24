@@ -2341,12 +2341,16 @@ _modprobe_conf() {
 
 _mpv_conf() {
     OBJ=\
-'# UI & Appearance (non‑GPU)
+'[audio-cfg]
+force-window=yes
+
+[video-cfg]
 fullscreen
+
+# UI & Appearance (non‑GPU)
 border=no               # no window border
 msg-color=yes           # colored terminal output
 cursor-autohide=1000    # hide cursor after 1 s of inactivity
-force-window=yes
 
 # Session
 save-position-on-quit=yes
