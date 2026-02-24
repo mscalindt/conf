@@ -2849,7 +2849,7 @@ set preview_max_size 1010101
 
     OBJ=\
 '# Video
-mime ^video, has mpv,       X,  flag f = mpv -- "$@"
+mime ^video, has mpv,       X,  flag f = mpv --profile=video-cfg -- "$@"
 mime ^video, has parole,    X,  flag f = parole -- "$@"
 mime ^video, has vlc,       X,  flag f = vlc -- "$@"
 mime ^video, has mpv,       !X, terminal = mpv -- "$@"
@@ -2857,7 +2857,7 @@ mime ^video, has mpv,       !X, terminal = mpv -- "$@"
 # Audio
 ext midi?, has wildmidi,    terminal = wildmidi -- "$@"
 mime ^audio, has mocp,      terminal = mocp -l -- "$@"
-mime ^audio, has mpv,       flag f = mpv -- "$@"
+mime ^audio, has mpv,       flag f = mpv --profile=audio-cfg -- "$@"
 mime ^audio, has parole,    X, flag f = parole -- "$@"
 mime ^audio, has vlc,       X, flag f = vlc -- "$@"
 
