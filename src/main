@@ -1555,7 +1555,7 @@ GRUB_DEFAULT=0
 GRUB_TIMEOUT=5
 GRUB_CMDLINE_LINUX="\
 loglevel=3 nowatchdog mitigations=off processor.ignore_ppc=1 \
-usbhid.mousepoll=1 tsc=unstable pcie_aspm=off \
+usbhid.mousepoll=1 tsc=unstable pcie_aspm=off usbcore.autosuspend=-1 \
 '
 
     [ "$ipv6" ] || OBJ="$OBJ"\
