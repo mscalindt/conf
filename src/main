@@ -870,6 +870,7 @@ _conf_1() {
     _sway_conf;
     _swaylock_conf;
     _sysctl_conf;
+    _systemd_conf;
     _xdg_conf;
 }
 
