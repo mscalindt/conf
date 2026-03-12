@@ -29,39 +29,6 @@ defaults.ctl.card 1
     __file_write_ow_soft;
 }
 
-# "WantedBy", default.target, ensures systemd will try to start the service on
-# boot. Since no other services on the system specifies ours, we
-# essentially tell systemd that default.target "wants us" using WantedBy;
-# default.target is equal to runlevel 5 in sysvinit if it is an alias for
-# graphical.target, otherwise 3-5 if multi-user.target.
-# Symlink is created because the service will not be started if there isn't a
-# symlink under a directory with name composed of the WantedBy string +
-# '.wants' appended.
-#
-# Without a symbolic link, the service will be ready to start, but
-# it will not be started automatically unless manually started or something
-# specifies its start.
-#
-# Sources:
-# https://unix.stackexchange.com/a/506374/431300
-#
-# Hard dependency mark in systemd:
-# Requires=<service>
-#
-# Hard dependency mark + runtime mark in systemd:
-# Requires=<service>
-# After=<service>
-#
-# Soft dependency mark in systemd:
-# Wants=<service>
-#
-# Soft dependency mark + runtime mark in systemd:
-# Wants=<service>
-# After=<service>
-#
-# In respect to dependencies, `WantedBy=` string will still be respected
-# in all cases.
-#
 # An alternative to systemd shall be considered.
 _autostart() {
     ___AT_SPI_DBUS_BUS_SERVICE() {
