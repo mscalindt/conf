@@ -845,164 +845,58 @@ _clk_sync() {
     __cmd -- hwclock -w
 }
 
-# Software configuration - stage 1 - initial system configuration
-_conf_1() {
+# All software configuration.
+#
+# Functions that should not run, shall themselves know and return. Currently,
+# this is not ideal, as many do not, but the goal is clearly set.
+_conf() {
     _alsa_conf;
+    _autostart;
     _bash_conf;
+    _bluez_conf;
+    _dhcpcd_conf;
+    _dnsmasq_conf;
     _doas_conf;
+    _env;
     _face_bin;
+    _featherpad_conf;
+    _firefox_conf;
     _fontconfig_conf;
+    _fuse_conf;
+    _gai_conf;
     _git_conf;
+    _grub;
+    _grub_conf;
     _gtk_conf;
     _hostname;
+    _hosts;
+    _initramfs_conf;
     _iwd_conf;
     _kitty_conf;
     _kvantum_conf;
+    _locale;
+    _makepkg_conf;
     _modprobe_conf;
     _mpv_conf;
     _mutt_conf;
     _nano_conf;
     _openal_conf;
+    _pacman_conf;
+    _pam_conf;
     _pipewire_conf;
     _pipewire_media_session_conf;
     _ranger_conf;
+    _reflector;
+    _resolv_conf;
+    _sh;
     _sudo_conf;
     _sway_conf;
+    _swayimg_conf;
     _swaylock_conf;
     _sysctl_conf;
     _systemd_conf;
+    _tz;
     _xdg_conf;
-}
-
-# Software configuration - stage 2 - desired system configuration
-_conf_2() {
-    _autostart;
-    _env;
-    _featherpad_conf;
-    _hosts;
-    _locale;
-    _reflector;
-    _resolv_conf;
-    _sh;
-    _tz;
-
-    { [ -e '/etc/dhcpcd.conf' ]; } && {
-        _dhcpcd_conf;
-    } || {
-        __info -yellow - 'Skipped _dhcpcd_conf()'
-    }
-
-    { [ -e '/etc/dnsmasq.conf' ]; } && {
-        _dnsmasq_conf;
-    } || {
-        __info -yellow - 'Skipped _dnsmasq_conf()'
-    }
-
-    { [ -e '/etc/gai.conf' ]; } && {
-        _gai_conf;
-    } || {
-        __info -yellow - 'Skipped _gai_conf()'
-    }
-
-    { command -v 'grub-install' && command -v 'grub-mkconfig'; } && {
-        _grub;
-
-        { [ -e '/etc/default/grub' ]; } && {
-            _grub_conf;
-        } || {
-            __info -yellow - 'Skipped _grub_conf()'
-        }
-    } || {
-        __info -yellow - 'Skipped _grub()'
-        __info -yellow - 'Skipped _grub_conf()'
-    }
-
-    { [ -e '/etc/mkinitcpio.conf' ]; } && {
-        _initramfs_conf;
-    } || {
-        __info -yellow - 'Skipped _initramfs_conf()'
-    }
-
-    { [ -e '/etc/makepkg.conf' ]; } && {
-        _makepkg_conf;
-    } || {
-        __info -yellow - 'Skipped _makepkg_conf()'
-    }
-
-    { [ -e '/etc/pacman.conf' ]; } && {
-        _pacman_conf;
-    } || {
-        __info -yellow - 'Skipped _pacman_conf()'
-    }
-
-    { [ -e '/etc/security/faillock.conf' ] && [ -e '/etc/login.defs' ] && \
-        [ -e '/etc/pam.d/su' ] && [ -e '/etc/pam.d/system-auth' ]; } && {
-        _pam_conf;
-    } || {
-        __info -yellow - 'Skipped _pam_conf()'
-    }
-}
-
-# Software configuration - stage 3 - desired dependable system configuration
-_conf_3() {
-    { [ -e '/etc/bluetooth/main.conf' ]; } && {
-        _bluez_conf;
-    } || {
-        __info -yellow - 'Skipped _bluez_conf()'
-    }
-
-    { [ -e "$home/.mozilla/firefox/profiles.ini" ]; } && {
-        _firefox_conf;
-    } || {
-        __info -yellow - 'Skipped _firefox_conf()'
-    }
-
-    { [ -e '/etc/fuse.conf' ]; } && {
-        _fuse_conf;
-    } || {
-        __info -yellow - 'Skipped _fuse_conf()'
-    }
-}
-
-# Software configuration - stage 4 - desired system configuration
-#
-# Run stage 4 at any time of desired system configuration with the intent
-# of reproducing the currently declared configuration; configuration is
-# affected by our values/switches/variables.
-_conf_4() {
-    _alsa_conf;
-    _autostart;
-    _env;
-    _hostname;
-    _hosts;
-    _iwd_conf;
-    _pipewire_conf;
-    _pipewire_media_session_conf;
-    _reflector;
-    _resolv_conf;
-    _sh;
-    _sway_conf;
-    _tz;
-
-    { [ ! -e '/etc/dhcpcd.conf' ]; } || {
-        _dhcpcd_conf;
-    }
-
-    { [ ! -e '/etc/dnsmasq.conf' ]; } || {
-        _dnsmasq_conf;
-    }
-
-    { [ ! -e '/etc/gai.conf' ]; } || {
-        _gai_conf;
-    }
-
-    { [ ! -e '/etc/default/grub' ] || ! command -v 'grub-mkconfig'; } || {
-        _grub_conf;
-    }
-
-    { [ ! -e '/etc/mkinitcpio.conf' ]; } || {
-        _initramfs_conf;
-    }
 }
 
 _dhcpcd_conf() {
