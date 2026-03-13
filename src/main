@@ -2642,7 +2642,7 @@ _resolv_conf() {
 nameserver 127.0.0.1
 '
 
-        [ ! "$dns0" = dnsmasq ] || OBJ="$OBJ"\
+        [ ! "$dnsmasq" ] || OBJ="$OBJ"\
 'options trust-ad
 '
 
@@ -3566,7 +3566,7 @@ _systemd() {
         ___BLUETOOTH_SERVICE;
     fi
 
-    if [ "$dns" ] && [ "$dns0" = dnsmasq ]; then
+    if [ "$dns" ] && [ "$dnsmasq" ]; then
         ___DNSMASQ_SERVICE;
     fi
 
@@ -3574,11 +3574,11 @@ _systemd() {
         ___EVTEST_GRAB_SERVICE;
     fi
 
-    if [ "$wland" = iwd ]; then
+    if [ "$iwd" ]; then
         ___IWD_SERVICE;
     fi
 
-    if [ "$audio_server" = pipewire ]; then
+    if [ "$pipewire" ]; then
         ___PIPEWIRE_SERVICE;
         ___PIPEWIRE_PULSE_SERVICE;
 
@@ -3587,7 +3587,7 @@ _systemd() {
             ___PIPEWIRE_PULSE_SOCKET;
         fi
 
-        if [ "$pipewire_manager" = pipewire ]; then
+        if [ "$pipewire_media_session" ]; then
             ___PIPEWIRE_MEDIA_SESSION_SERVICE;
         fi
     fi
@@ -3705,61 +3705,39 @@ Inherits=Breeze
 }
 
 main() {
+    arch_linux=y
+    audio_hq_resamp=
+    bluetooth=y
+    dns=y
+    dnsmasq=y
     env=y
+    ipv6=
+    iwd=y
     kvantum=y
+    m533ia=y
+    pipewire=y
+    pipewire_media_session=y
+    portal=y
     sway=y
     systemd=y
     wayland=y
 
-    # Device switches
-    # ASUS VivoBook S15 X521IA-M533IA (AMD):
-    m533ia=y
-
-    # OS switches
-    # Arch Linux system:
-    arch_linux=y
-
-    # Software switches
-    # Configure highest audio resampling quality possible when resampling:
-    audio_hq_resamp=
-    # Bluetooth support (D-Bus dependent)
-    bluetooth=y
-    # DNS support:
-    dns=y
-    # Configure and prefer IPv6 over IPv4:
-    ipv6=
-    # XDG portals support (D-Bus dependent protocols)
-    portal=y
-
-    # Software
-    # Audio server; currently supported: pipewire
-    audio_server='pipewire'
-    # Dedicated DNS (stub) resolver; currently supported: dnsmasq
-    dns0='dnsmasq'
-    # Pipewire manager; currently supported: pipewire
-    pipewire_manager='pipewire'
-    # WLAN daemon; currently supported: iwd
-    wland='iwd'
-
-    # Data
+    arch_mirlist='/etc/pacman.d/mirrorlist'
+    efi_mnt='/efi'
     gid='1000'
     group='mscalindt'
+    home='/home/mscalindt'
     hostname='m533ia'
     uid='1000'
     user='mscalindt'
 
-    # Locations
-    home='/home/mscalindt'
-    efi_mnt='/efi'
-    arch_mirlist='/etc/pacman.d/mirrorlist'
-
     opd="${1%"${1##*[!/]}"}"
     opd="${1##*/}"
 
-    readonly m533ia arch_linux audio_hq_resamp bluetooth ipv6 portal \
-             audio_server dns dns0 \
-             pipewire_manager wland gid group hostname uid user \
-             home efi_mnt arch_mirlist opd
+    readonly arch_linux audio_hq_resamp bluetooth dns dnsmasq env ipv6 iwd \
+             kvantum m533ia pipewire pipewire_media_session portal sway \
+             systemd wayland arch_mirlist efi_mnt gid group home hostname uid \
+             user opd
 
     [ "$opd" != main ] || exit 255
 
