@@ -9,6 +9,19 @@ ___AT_SPI_DBUS_BUS_SERVICE() {
         -user "$user" -group "$group"
 }
 
+___BASH_PROFILE() {
+    OBJ=\
+'for file in "$HOME"/.syscfg_env/*; do
+    set -a; . "$file"; set +a
+done
+'
+
+    OBJ_PATH="$home/.bash_profile"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
 ___BLUETOOTH_SERVICE() {
     OBJ=\
 '[Unit]
@@ -34,6 +47,22 @@ WantedBy=multi-user.target
     __obj_link_ow_soft;
 }
 
+___DISPLAY_SERVER_wayland() {
+    OBJ=\
+'GTK_A11Y=none
+GDK_BACKEND=wayland
+MOZ_ENABLE_WAYLAND=1
+QT_QPA_PLATFORM=wayland
+QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+SDL_VIDEODRIVER=wayland
+'
+
+    OBJ_PATH="$home/.syscfg_env/display_server"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
 ___DNSMASQ_SERVICE() {
     OBJ=\
 '[Unit]
@@ -55,6 +84,18 @@ WantedBy=multi-user.target
     OBJ='/etc/systemd/system/dnsmasq.service'
     OBJ_PATH='/etc/systemd/system/multi-user.target.wants/dnsmasq.service'
     __obj_link_ow_soft;
+}
+
+___ENV() {
+    OBJ=\
+'EDITOR=nano
+PATH="${PATH}:$HOME/.local/bin:$HOME/scripts"
+'
+
+    OBJ_PATH="$home/.syscfg_env/env"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 }
 
 ___EVTEST_GRAB_SERVICE() {
@@ -267,6 +308,28 @@ ___PIPEWIRE_PULSE_SOCKET() {
         -user "$user" -group "$group"
 }
 
+___PORTAL() {
+    OBJ=\
+'GTK_USE_PORTAL=1
+'
+
+    OBJ_PATH="$home/.syscfg_env/portal"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___QT_THEME() {
+    OBJ=\
+'QT_STYLE_OVERRIDE=kvantum
+'
+
+    OBJ_PATH="$home/.syscfg_env/qt_theme"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
 ___RTKIT_DAEMON_SERVICE() {
     OBJ='/dev/null'
     OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
@@ -363,6 +426,19 @@ Slice=session.slice
 '
 
     OBJ_PATH="$home/.config/systemd/user/xdg-permission-store.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___WM_sway() {
+    OBJ=\
+'XDG_CURRENT_DESKTOP=sway
+XDG_SESSION_DESKTOP=sway
+DESKTOP_SESSION=sway
+'
+
+    OBJ_PATH="$home/.syscfg_env/wm"
     __file_write_ow_soft \
         -uid "$uid" -gid "$gid" \
         -user "$user" -group "$group"
@@ -819,150 +895,26 @@ _doas_conf() {
 }
 
 _env() {
-    ___BASH_PROFILE() {
-        OBJ=\
-'for file in "$HOME"/.syscfg_env/*; do
-    set -a; . "$file"; set +a
-done
-'
+    [ "$env" ] || return 0
 
-        [ ! "${1:-$wm}" = sway ] || OBJ="$OBJ"\
-'
-if [ -z "$DISPLAY" ] && [ "$(tty)" = '\''/dev/tty1'\'' ]; then
-    if command -v sway > /dev/null 2>&1; then
-        exec sway > /var/log/sway.log 2>&1
-    fi
-fi
-'
-
-        OBJ_PATH="$home/.bash_profile"
-        __file_write_ow_soft \
-            -uid "$uid" -gid "$gid" \
-            -user "$user" -group "$group"
-    }
-    ___BROWSER() {
-        [ ! "${1:-$browser}" = firefox ] && {
-            OBJ_PATH="$home/.syscfg_env/browser"
-            __action -del
-        } || {
-            OBJ=\
-'MOZ_ENABLE_WAYLAND=1
-'
-
-            OBJ_PATH="$home/.syscfg_env/browser"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___DISPLAY_SERVER() {
-        [ ! "$display_server" = wayland ] && {
-            OBJ_PATH="$home/.syscfg_env/display_server"
-            __action -del
-        } || {
-            OBJ=\
-'GTK_A11Y=none
-GDK_BACKEND=wayland
-QT_QPA_PLATFORM=wayland
-QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-SDL_VIDEODRIVER=wayland
-'
-
-            OBJ_PATH="$home/.syscfg_env/display_server"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___ENV() {
-        OBJ=\
-'EDITOR=nano
-PATH="${PATH}:$HOME/.local/bin:$HOME/scripts"
-'
-
-        OBJ_PATH="$home/.syscfg_env/env"
-        __file_write_ow_soft \
-            -uid "$uid" -gid "$gid" \
-            -user "$user" -group "$group"
-    }
-    ___PORTAL() {
-        [ ! "${1:-$portal}" ] && {
-            OBJ_PATH="$home/.syscfg_env/portal"
-            __action -del
-        } || {
-            OBJ=\
-'GTK_USE_PORTAL=1
-'
-
-            OBJ_PATH="$home/.syscfg_env/portal"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___QT_THEME() {
-        [ ! "${1:-$qt_theme}" = kvantum ] && {
-            OBJ_PATH="$home/.syscfg_env/qt_theme"
-            __action -del
-        } || {
-            OBJ=\
-'QT_STYLE_OVERRIDE=kvantum
-'
-
-            OBJ_PATH="$home/.syscfg_env/qt_theme"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___SWAY_LOG() {
-        [ ! "${1:-$wm}" = sway ] && {
-            OBJ_PATH='/var/log/sway.log'
-            __action -del
-        } || {
-            OBJ_PATH='/var/log/sway.log'
-            __action -trunc
-
-            __cmd -- chmod 0644 '/var/log/sway.log'
-            __cmd -- chown "$uid":"$gid" '/var/log/sway.log'
-        }
-    }
-    ___WM() {
-        [ ! "${1:-$wm}" = sway ] && {
-            OBJ_PATH="$home/.syscfg_env/wm"
-            __action -del
-        } || {
-            OBJ=\
-'XDG_CURRENT_DESKTOP=sway
-XDG_SESSION_DESKTOP=sway
-DESKTOP_SESSION=sway
-'
-
-            OBJ_PATH="$home/.syscfg_env/wm"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-
-    ___DISPLAY_SERVER;
+    ___BASH_PROFILE;
     ___ENV;
 
-    [ "$display_server" = wayland ] && {
-        ___BASH_PROFILE;
-        ___BROWSER;
-        ___PORTAL;
+    if [ "$kvantum" ]; then
         ___QT_THEME;
-        ___SWAY_LOG;
-        ___WM;
-    } || {
-        ___BASH_PROFILE ''
-        ___BROWSER ''
-        ___PORTAL ''
-        ___QT_THEME ''
-        ___SWAY_LOG ''
-        ___WM ''
-    }
+    fi
+
+    if [ "$wayland" ]; then
+        ___DISPLAY_SERVER_wayland;
+
+        if [ "$portal" ]; then
+            ___PORTAL;
+        fi
+
+        if [ "$sway" ]; then
+            ___WM_sway;
+        fi
+    fi
 }
 
 # .face png in $home (user $HOME); some applications use this file.
@@ -3753,7 +3705,11 @@ Inherits=Breeze
 }
 
 main() {
+    env=y
+    kvantum=y
+    sway=y
     systemd=y
+    wayland=y
 
     # Device switches
     # ASUS VivoBook S15 X521IA-M533IA (AMD):
@@ -3778,20 +3734,12 @@ main() {
     # Software
     # Audio server; currently supported: pipewire
     audio_server='pipewire'
-    # Web browser; currently supported: firefox
-    browser='firefox'
-    # Display server; currently supported: wayland
-    display_server='wayland'
     # Dedicated DNS (stub) resolver; currently supported: dnsmasq
     dns0='dnsmasq'
     # Pipewire manager; currently supported: pipewire
     pipewire_manager='pipewire'
-    # QT theme engine; currently supported: kvantum
-    qt_theme='kvantum'
     # WLAN daemon; currently supported: iwd
     wland='iwd'
-    # Window manager / desktop environment; currently supported: sway
-    wm='sway'
 
     # Data
     gid='1000'
@@ -3809,8 +3757,8 @@ main() {
     opd="${1##*/}"
 
     readonly m533ia arch_linux audio_hq_resamp bluetooth ipv6 portal \
-             audio_server browser display_server dns dns0 \
-             pipewire_manager qt_theme wland wm gid group hostname uid user \
+             audio_server dns dns0 \
+             pipewire_manager wland gid group hostname uid user \
              home efi_mnt arch_mirlist opd
 
     [ "$opd" != main ] || exit 255
