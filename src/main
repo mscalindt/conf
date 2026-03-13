@@ -412,7 +412,7 @@ Slice=session.slice
         -user "$user" -group "$group"
 }
 
-___XDG_PERMISSION_STORE_SERVICE {
+___XDG_PERMISSION_STORE_SERVICE() {
     OBJ=\
 '[Unit]
 Description=sandboxed app permission store
