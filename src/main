@@ -1,4 +1,372 @@
 #!/bin/sh
+# ___* functions shall not use main() switches/logic.
+
+___AT_SPI_DBUS_BUS_SERVICE() {
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/at-spi-dbus-bus.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___BLUETOOTH_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Bluetooth service
+Requires=dbus.service
+After=dbus.service
+
+[Service]
+Type=dbus
+BusName=org.bluez
+ExecStart=/usr/lib/bluetooth/bluetoothd
+TimeoutStopSec=3
+
+[Install]
+WantedBy=multi-user.target
+'
+
+    OBJ_PATH='/etc/systemd/system/bluetooth.service'
+    __file_write_ow_soft;
+
+    OBJ='/etc/systemd/system/bluetooth.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluetooth.service'
+    __obj_link_ow_soft;
+}
+
+___DNSMASQ_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Caching DNS server
+Wants=dbus.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/dnsmasq -k --user=dnsmasq
+TimeoutStopSec=3
+
+[Install]
+WantedBy=multi-user.target
+'
+
+    OBJ_PATH='/etc/systemd/system/dnsmasq.service'
+    __file_write_ow_soft;
+
+    OBJ='/etc/systemd/system/dnsmasq.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/dnsmasq.service'
+    __obj_link_ow_soft;
+}
+
+___EVTEST_GRAB_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Grab m533ia keyboard at startup
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c '\''\
+device="$(/usr/bin/awk '\''\'\'''\''\
+/AT Translated Set 2 keyboard/ { found=1; next } \
+found && /Handlers=/ { \
+  for (i=1; i<=NF; i++) \
+    if ($i ~ /^event[0-9]+$/) { \
+      print "/dev/input/" $i; exit \
+    } \
+}'\''\'\'''\'' /proc/bus/input/devices)"; \
+exec /usr/bin/evtest --grab "$device"'\''
+User=root
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target
+'
+
+    OBJ_PATH='/etc/systemd/system/evtest-grab.service'
+    __file_write_ow_soft;
+
+    OBJ='/etc/systemd/system/evtest-grab.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/evtest-grab.service'
+    __obj_link_ow_soft;
+}
+
+___IWD_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Wireless service
+
+[Service]
+ExecStart=/usr/lib/iwd/iwd
+
+[Install]
+WantedBy=multi-user.target
+'
+
+    OBJ_PATH='/etc/systemd/system/iwd.service'
+    __file_write_ow_soft;
+
+    OBJ='/etc/systemd/system/iwd.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/iwd.service'
+    __obj_link_ow_soft;
+}
+
+___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE() {
+    OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.impl.portal.desktop.gtk
+Exec=/usr/bin/true
+'
+
+    OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE() {
+    OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.impl.portal.desktop.wlr
+Exec=/usr/bin/true
+'
+
+    OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE() {
+    OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.impl.portal.PermissionStore
+Exec=/usr/bin/true
+'
+
+    OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.PermissionStore.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE() {
+    OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.portal.Desktop
+Exec=/usr/bin/true
+'
+
+    OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE() {
+    OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.portal.Documents
+Exec=/usr/bin/true
+'
+
+    OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Documents.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___PIPEWIRE_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=PipeWire Multimedia Service
+
+[Service]
+ExecStart=/usr/bin/pipewire
+
+[Install]
+WantedBy=default.target
+'
+
+    OBJ_PATH="$home/.config/systemd/user/pipewire.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ="$home/.config/systemd/user/pipewire.service"
+    OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___PIPEWIRE_MEDIA_SESSION_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=PipeWire Media Session Manager
+After=pipewire.service
+BindsTo=pipewire.service
+
+[Service]
+ExecStartPre=/usr/bin/sleep 2
+ExecStart=/usr/bin/pipewire-media-session
+
+[Install]
+WantedBy=pipewire.service
+'
+
+    OBJ_PATH="$home/.config/systemd/user/pipewire-media-session.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ="$home/.config/systemd/user/pipewire-media-session.service"
+    OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-media-session.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___PIPEWIRE_PULSE_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=PipeWire PulseAudio
+After=pipewire.service
+BindsTo=pipewire.service
+
+[Service]
+ExecStart=/usr/bin/pipewire-pulse
+
+[Install]
+WantedBy=pipewire.service
+'
+
+    OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ="$home/.config/systemd/user/pipewire-pulse.service"
+    OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-pulse.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___PIPEWIRE_SOCKET() {
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/pipewire.socket"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___PIPEWIRE_PULSE_SOCKET() {
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.socket"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___RTKIT_DAEMON_SERVICE() {
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
+    __obj_link_ow_soft;
+}
+
+___XDG_DESKTOP_PORTAL_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Portal service
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.portal.Desktop
+ExecStart=/usr/lib/xdg-desktop-portal
+Slice=session.slice
+'
+
+    OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___XDG_DESKTOP_PORTAL_GTK_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Portal service (GTK/GNOME implementation)
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.impl.portal.desktop.gtk
+ExecStart=/usr/lib/xdg-desktop-portal-gtk
+Slice=session.slice
+'
+
+    OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-gtk.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___XDG_DESKTOP_PORTAL_WLR_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Portal service (wlroots implementation)
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.impl.portal.desktop.wlr
+ExecStart=/usr/lib/xdg-desktop-portal-wlr
+Slice=session.slice
+'
+
+    OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-wlr.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___XDG_DOCUMENT_PORTAL_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=flatpak document portal service
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.portal.Documents
+ExecStart=/usr/lib/xdg-document-portal
+Slice=session.slice
+'
+
+    OBJ_PATH="$home/.config/systemd/user/xdg-document-portal.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
+___XDG_PERMISSION_STORE_SERVICE {
+    OBJ=\
+'[Unit]
+Description=sandboxed app permission store
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.impl.portal.PermissionStore
+ExecStart=/usr/lib/xdg-permission-store
+Slice=session.slice
+'
+
+    OBJ_PATH="$home/.config/systemd/user/xdg-permission-store.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
 
 # $m533ia assertion:
 #
@@ -27,546 +395,6 @@ defaults.ctl.card 1
 
     OBJ_PATH='/etc/asound.conf'
     __file_write_ow_soft;
-}
-
-# An alternative to systemd shall be considered.
-_autostart() {
-    ___AT_SPI_DBUS_BUS_SERVICE() {
-        [ ! "${1:-$arch_linux}" ] && {
-            OBJ_PATH="$home/.config/systemd/user/at-spi-dbus-bus.service"
-            __action -del
-        } || {
-            OBJ='/dev/null'
-            OBJ_PATH="$home/.config/systemd/user/at-spi-dbus-bus.service"
-            __obj_link_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___BLUETOOTH_SERVICE() {
-        [ ! "${1:-$bluetooth}" ] && {
-            OBJ_PATH='/etc/systemd/system/bluetooth.service'
-            __action -del
-
-            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluetooth.service'
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=Bluetooth service
-Requires=dbus.service
-After=dbus.service
-
-[Service]
-Type=dbus
-BusName=org.bluez
-ExecStart=/usr/lib/bluetooth/bluetoothd
-TimeoutStopSec=3
-
-[Install]
-WantedBy=multi-user.target
-'
-
-            OBJ_PATH='/etc/systemd/system/bluetooth.service'
-            __file_write_ow_soft;
-
-            OBJ='/etc/systemd/system/bluetooth.service'
-            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluetooth.service'
-            __obj_link_ow_soft;
-        }
-    }
-    ___DNSMASQ_SERVICE() {
-        [ ! "${1:-$dns0}" = dnsmasq ] && {
-            OBJ_PATH='/etc/systemd/system/dnsmasq.service'
-            __action -del
-
-            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/dnsmasq.service'
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=Caching DNS server
-Wants=dbus.service
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/dnsmasq -k --user=dnsmasq
-TimeoutStopSec=3
-
-[Install]
-WantedBy=multi-user.target
-'
-
-            OBJ_PATH='/etc/systemd/system/dnsmasq.service'
-            __file_write_ow_soft;
-
-            OBJ='/etc/systemd/system/dnsmasq.service'
-            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/dnsmasq.service'
-            __obj_link_ow_soft;
-        }
-    }
-    ___EVTEST_GRAB_SERVICE() {
-        [ ! "${1:-$m533ia}" ] && {
-            OBJ_PATH='/etc/systemd/system/evtest-grab.service'
-            __action -del
-
-            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/evtest-grab.service'
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=Grab m533ia keyboard at startup
-
-[Service]
-Type=simple
-ExecStart=/bin/bash -c '\''\
-device="$(/usr/bin/awk '\''\'\'''\''\
-/AT Translated Set 2 keyboard/ { found=1; next } \
-found && /Handlers=/ { \
-  for (i=1; i<=NF; i++) \
-    if ($i ~ /^event[0-9]+$/) { \
-      print "/dev/input/" $i; exit \
-    } \
-}'\''\'\'''\'' /proc/bus/input/devices)"; \
-exec /usr/bin/evtest --grab "$device"'\''
-User=root
-StandardOutput=null
-
-[Install]
-WantedBy=multi-user.target
-'
-
-            OBJ_PATH='/etc/systemd/system/evtest-grab.service'
-            __file_write_ow_soft;
-
-            OBJ='/etc/systemd/system/evtest-grab.service'
-            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/evtest-grab.service'
-            __obj_link_ow_soft;
-        }
-    }
-    ___IWD_SERVICE() {
-        [ ! "${1:-$wland}" = iwd ] && {
-            OBJ_PATH='/etc/systemd/system/iwd.service'
-            __action -del
-
-            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/iwd.service'
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=Wireless service
-
-[Service]
-ExecStart=/usr/lib/iwd/iwd
-
-[Install]
-WantedBy=multi-user.target
-'
-
-            OBJ_PATH='/etc/systemd/system/iwd.service'
-            __file_write_ow_soft;
-
-            OBJ='/etc/systemd/system/iwd.service'
-            OBJ_PATH='/etc/systemd/system/multi-user.target.wants/iwd.service'
-            __obj_link_ow_soft;
-        }
-    }
-    ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE() {
-        [ ! "${1:-$arch_linux}" ] && {
-            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service"
-            __action -del
-        } || {
-            OBJ=\
-'[D-BUS Service]
-Name=org.freedesktop.impl.portal.desktop.gtk
-Exec=/usr/bin/true
-'
-
-            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE() {
-        [ ! "${1:-$arch_linux}" ] && {
-            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service"
-            __action -del
-        } || {
-            OBJ=\
-'[D-BUS Service]
-Name=org.freedesktop.impl.portal.desktop.wlr
-Exec=/usr/bin/true
-'
-
-            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE() {
-        [ ! "${1:-$arch_linux}" ] && {
-            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.PermissionStore.service"
-            __action -del
-        } || {
-            OBJ=\
-'[D-BUS Service]
-Name=org.freedesktop.impl.portal.PermissionStore
-Exec=/usr/bin/true
-'
-
-            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.PermissionStore.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE() {
-        [ ! "${1:-$arch_linux}" ] && {
-            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service"
-            __action -del
-        } || {
-            OBJ=\
-'[D-BUS Service]
-Name=org.freedesktop.portal.Desktop
-Exec=/usr/bin/true
-'
-
-            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE() {
-        [ ! "${1:-$arch_linux}" ] && {
-            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Documents.service"
-            __action -del
-        } || {
-            OBJ=\
-'[D-BUS Service]
-Name=org.freedesktop.portal.Documents
-Exec=/usr/bin/true
-'
-
-            OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Documents.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___PIPEWIRE_SERVICE() {
-        [ ! "${1:-$audio_server}" = pipewire ] && {
-            OBJ_PATH="$home/.config/systemd/user/pipewire.service"
-            __action -del
-
-            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire.service"
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=PipeWire Multimedia Service
-
-[Service]
-ExecStart=/usr/bin/pipewire
-
-[Install]
-WantedBy=default.target
-'
-
-            OBJ_PATH="$home/.config/systemd/user/pipewire.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-
-            OBJ="$home/.config/systemd/user/pipewire.service"
-            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire.service"
-            __obj_link_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___PIPEWIRE_MEDIA_SESSION_SERVICE() {
-        [ ! "${1:-$pipewire_manager}" = pipewire ] && {
-            OBJ_PATH="$home/.config/systemd/user/pipewire-media-session.service"
-            __action -del
-
-            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-media-session.service"
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=PipeWire Media Session Manager
-After=pipewire.service
-BindsTo=pipewire.service
-
-[Service]
-ExecStartPre=/usr/bin/sleep 2
-ExecStart=/usr/bin/pipewire-media-session
-
-[Install]
-WantedBy=pipewire.service
-'
-
-            OBJ_PATH="$home/.config/systemd/user/pipewire-media-session.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-
-            OBJ="$home/.config/systemd/user/pipewire-media-session.service"
-            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-media-session.service"
-            __obj_link_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___PIPEWIRE_PULSE_SERVICE() {
-        [ ! "${1:-$audio_server}" = pipewire ] && {
-            OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.service"
-            __action -del
-
-            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-pulse.service"
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=PipeWire PulseAudio
-After=pipewire.service
-BindsTo=pipewire.service
-
-[Service]
-ExecStart=/usr/bin/pipewire-pulse
-
-[Install]
-WantedBy=pipewire.service
-'
-
-            OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-
-            OBJ="$home/.config/systemd/user/pipewire-pulse.service"
-            OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-pulse.service"
-            __obj_link_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___PIPEWIRE_SOCKET() {
-        [ ! "${1:-$audio_server}" = pipewire ] && {
-            OBJ_PATH="$home/.config/systemd/user/pipewire.socket"
-            __action -del
-        } || {
-            OBJ='/dev/null'
-            OBJ_PATH="$home/.config/systemd/user/pipewire.socket"
-            __obj_link_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___PIPEWIRE_PULSE_SOCKET() {
-        [ ! "${1:-$audio_server}" = pipewire ] && {
-            OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.socket"
-            __action -del
-        } || {
-            OBJ='/dev/null'
-            OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.socket"
-            __obj_link_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___RTKIT_DAEMON_SERVICE() {
-        [ ! "${1:-$arch_linux}" ] && {
-            OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
-            __action -del
-        } || {
-            OBJ='/dev/null'
-            OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
-            __obj_link_ow_soft;
-        }
-    }
-    ___XDG_DESKTOP_PORTAL_SERVICE() {
-        [ ! "${1:-$portal}" ] && {
-            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal.service"
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=Portal service
-PartOf=graphical-session.target
-
-[Service]
-Type=dbus
-BusName=org.freedesktop.portal.Desktop
-ExecStart=/usr/lib/xdg-desktop-portal
-Slice=session.slice
-'
-
-            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___XDG_DESKTOP_PORTAL_GTK_SERVICE() {
-        [ ! "${1:-$portal}" ] && {
-            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-gtk.service"
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=Portal service (GTK/GNOME implementation)
-PartOf=graphical-session.target
-
-[Service]
-Type=dbus
-BusName=org.freedesktop.impl.portal.desktop.gtk
-ExecStart=/usr/lib/xdg-desktop-portal-gtk
-Slice=session.slice
-'
-
-            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-gtk.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___XDG_DESKTOP_PORTAL_WLR_SERVICE() {
-        [ ! "${1:-$portal}" ] && {
-            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-wlr.service"
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=Portal service (wlroots implementation)
-PartOf=graphical-session.target
-
-[Service]
-Type=dbus
-BusName=org.freedesktop.impl.portal.desktop.wlr
-ExecStart=/usr/lib/xdg-desktop-portal-wlr
-Slice=session.slice
-'
-
-            OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-wlr.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___XDG_DOCUMENT_PORTAL_SERVICE() {
-        [ ! "${1:-$portal}" ] && {
-            OBJ_PATH="$home/.config/systemd/user/xdg-document-portal.service"
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=flatpak document portal service
-PartOf=graphical-session.target
-
-[Service]
-Type=dbus
-BusName=org.freedesktop.portal.Documents
-ExecStart=/usr/lib/xdg-document-portal
-Slice=session.slice
-'
-
-            OBJ_PATH="$home/.config/systemd/user/xdg-document-portal.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-    ___XDG_PERMISSION_STORE_SERVICE() {
-        [ ! "${1:-$portal}" ] && {
-            OBJ_PATH="$home/.config/systemd/user/xdg-permission-store.service"
-            __action -del
-        } || {
-            OBJ=\
-'[Unit]
-Description=sandboxed app permission store
-PartOf=graphical-session.target
-
-[Service]
-Type=dbus
-BusName=org.freedesktop.impl.portal.PermissionStore
-ExecStart=/usr/lib/xdg-permission-store
-Slice=session.slice
-'
-
-            OBJ_PATH="$home/.config/systemd/user/xdg-permission-store.service"
-            __file_write_ow_soft \
-                -uid "$uid" -gid "$gid" \
-                -user "$user" -group "$group"
-        }
-    }
-
-    [ "$init" = systemd ] && {
-        ___AT_SPI_DBUS_BUS_SERVICE;
-        ___BLUETOOTH_SERVICE;
-
-        [ "$dns" ] && {
-            ___DNSMASQ_SERVICE;
-        } || {
-            ___DNSMASQ_SERVICE ''
-        }
-
-        ___EVTEST_GRAB_SERVICE;
-        ___IWD_SERVICE;
-        ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE;
-        ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE;
-        ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE;
-        ___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE;
-        ___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE;
-
-        ___PIPEWIRE_SERVICE;
-        ___PIPEWIRE_PULSE_SERVICE;
-        [ "$audio_server" = pipewire ] && {
-            ___PIPEWIRE_MEDIA_SESSION_SERVICE;
-        } || {
-            ___PIPEWIRE_MEDIA_SESSION_SERVICE ''
-        }
-
-        [ "$arch_linux" ] && {
-            ___PIPEWIRE_SOCKET;
-            ___PIPEWIRE_PULSE_SOCKET;
-        } || {
-            ___PIPEWIRE_SOCKET ''
-            ___PIPEWIRE_PULSE_SOCKET ''
-        }
-
-        ___RTKIT_DAEMON_SERVICE;
-        ___XDG_DESKTOP_PORTAL_SERVICE;
-        ___XDG_DESKTOP_PORTAL_GTK_SERVICE;
-        ___XDG_DESKTOP_PORTAL_WLR_SERVICE;
-        ___XDG_DOCUMENT_PORTAL_SERVICE;
-        ___XDG_PERMISSION_STORE_SERVICE;
-    } || {
-        ___AT_SPI_DBUS_BUS_SERVICE ''
-        ___BLUETOOTH_SERVICE ''
-        ___DNSMASQ_SERVICE ''
-        ___EVTEST_GRAB_SERVICE ''
-        ___IWD_SERVICE ''
-        ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE ''
-        ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE ''
-        ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE ''
-        ___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE ''
-        ___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE ''
-        ___PIPEWIRE_SERVICE ''
-        ___PIPEWIRE_PULSE_SERVICE ''
-        ___PIPEWIRE_MEDIA_SESSION_SERVICE ''
-        ___PIPEWIRE_SOCKET ''
-        ___PIPEWIRE_PULSE_SOCKET ''
-        ___RTKIT_DAEMON_SERVICE ''
-        ___XDG_DESKTOP_PORTAL_SERVICE ''
-        ___XDG_DESKTOP_PORTAL_GTK_SERVICE ''
-        ___XDG_DESKTOP_PORTAL_WLR_SERVICE ''
-        ___XDG_DOCUMENT_PORTAL_SERVICE ''
-        ___XDG_PERMISSION_STORE_SERVICE ''
-    }
 }
 
 _bash_conf() {
@@ -851,7 +679,6 @@ _clk_sync() {
 # this is not ideal, as many do not, but the goal is clearly set.
 _conf() {
     _alsa_conf;
-    _autostart;
     _bash_conf;
     _bluez_conf;
     _dhcpcd_conf;
@@ -893,6 +720,7 @@ _conf() {
     _swayimg_conf;
     _swaylock_conf;
     _sysctl_conf;
+    _systemd;
     _systemd_conf;
     _xdg_conf;
 }
@@ -3769,6 +3597,58 @@ _sysctl_conf() {
     __file_write_ow_soft;
 }
 
+_systemd() {
+    [ "$systemd" ] || return 0
+
+    if [ "$arch_linux" ]; then
+        ___AT_SPI_DBUS_BUS_SERVICE;
+        ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE;
+        ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE;
+        ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE;
+        ___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE;
+        ___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE;
+        ___RTKIT_DAEMON_SERVICE;
+    fi
+
+    if [ "$bluetooth" ]; then
+        ___BLUETOOTH_SERVICE;
+    fi
+
+    if [ "$dns" ] && [ "$dns0" = dnsmasq ]; then
+        ___DNSMASQ_SERVICE;
+    fi
+
+    if [ "$m533ia" ]; then
+        ___EVTEST_GRAB_SERVICE;
+    fi
+
+    if [ "$wland" = iwd ]; then
+        ___IWD_SERVICE;
+    fi
+
+    if [ "$audio_server" = pipewire ]; then
+        ___PIPEWIRE_SERVICE;
+        ___PIPEWIRE_PULSE_SERVICE;
+
+        if [ "$arch_linux" ]; then
+            ___PIPEWIRE_SOCKET;
+            ___PIPEWIRE_PULSE_SOCKET;
+        fi
+
+        if [ "$pipewire_manager" = pipewire ]; then
+            ___PIPEWIRE_MEDIA_SESSION_SERVICE;
+        fi
+    fi
+
+    if [ "$portal" ]; then
+        ___XDG_DESKTOP_PORTAL_SERVICE;
+        ___XDG_DESKTOP_PORTAL_GTK_SERVICE;
+        ___XDG_DESKTOP_PORTAL_WLR_SERVICE;
+        ___XDG_DOCUMENT_PORTAL_SERVICE;
+        ___XDG_PERMISSION_STORE_SERVICE;
+    fi
+}
+
 # Directly modifies config files and doesn't use *.d drop-ins, because I want
 # to be aware of file changes and any breakage, which is expected of systemd.
 _systemd_conf() {
@@ -3873,6 +3753,8 @@ Inherits=Breeze
 }
 
 main() {
+    systemd=y
+
     # Device switches
     # ASUS VivoBook S15 X521IA-M533IA (AMD):
     m533ia=y
@@ -3902,8 +3784,6 @@ main() {
     display_server='wayland'
     # Dedicated DNS (stub) resolver; currently supported: dnsmasq
     dns0='dnsmasq'
-    # Init system; currently supported: systemd
-    init='systemd'
     # Pipewire manager; currently supported: pipewire
     pipewire_manager='pipewire'
     # QT theme engine; currently supported: kvantum
@@ -3929,7 +3809,7 @@ main() {
     opd="${1##*/}"
 
     readonly m533ia arch_linux audio_hq_resamp bluetooth ipv6 portal \
-             audio_server browser display_server dns dns0 init \
+             audio_server browser display_server dns dns0 \
              pipewire_manager qt_theme wland wm gid group hostname uid user \
              home efi_mnt arch_mirlist opd
 
