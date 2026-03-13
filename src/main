@@ -886,7 +886,6 @@ _conf() {
     _pipewire_conf;
     _pipewire_media_session_conf;
     _ranger_conf;
-    _reflector;
     _resolv_conf;
     _sh;
     _sudo_conf;
@@ -895,7 +894,6 @@ _conf() {
     _swaylock_conf;
     _sysctl_conf;
     _systemd_conf;
-    _tz;
     _xdg_conf;
 }
 
@@ -2802,42 +2800,44 @@ label pager,  !mime ^text, = "$PAGER" -- "$@"
         -user "$user" -group "$group"
 }
 
-_reflector() {
-    [ "$arch_linux" ] || {
-        __info -white - 'Nothing to be done.'
+_reflector_bg() {
+    __cmd -req-out -out-save OBJ -- \
+        reflector \
+        --country Bulgaria \
+        --connection-timeout 1 \
+        --download-timeout 20 \
+        --protocol https \
+        --completion-percent 100 \
+        --sort rate \
+        --threads 8 \
+        --latest 10 \
+        --number 3
 
-        return 0
-    }
+    OBJ="$OBJ"
+    __ed -- \
+        -m mof -m p -s \
+        'Server =' \
+        'Server =' \
+        -r '' \
+        - ''
 
-    [ "$bg" ] && {
-        __cmd -req-out -out-save OBJ -- \
-            reflector \
-            --country Bulgaria \
-            --connection-timeout 1 \
-            --download-timeout 20 \
-            --protocol https \
-            --completion-percent 100 \
-            --sort rate \
-            --threads 8 \
-            --latest 10 \
-            --number 3
-    } || [ "$de" ] && {
-        __cmd -req-out -out-save OBJ -- \
-            reflector \
-            --country Germany \
-            --connection-timeout 1 \
-            --download-timeout 60 \
-            --protocol https \
-            --completion-percent 100 \
-            --sort rate \
-            --threads 8 \
-            --latest 15 \
-            --number 3
-    } || {
-        __info -white - 'Nothing to be done.'
+    OBJ="$OBJ"
+    OBJ_PATH="$arch_mirlist"
+    __file_write_ow_soft;
+}
 
-        return 0
-    }
+_reflector_de() {
+    __cmd -req-out -out-save OBJ -- \
+        reflector \
+        --country Germany \
+        --connection-timeout 1 \
+        --download-timeout 60 \
+        --protocol https \
+        --completion-percent 100 \
+        --sort rate \
+        --threads 8 \
+        --latest 15 \
+        --number 3
 
     OBJ="$OBJ"
     __ed -- \
@@ -3806,20 +3806,18 @@ _systemd_conf() {
         -trunc
 }
 
-_tz() {
-    [ "$bg" ] && {
-        OBJ='/usr/share/zoneinfo/Europe/Sofia'
-        OBJ_PATH='/etc/localtime'
-        __obj_link_ow_soft;
-    } || [ "$de" ] && {
-        OBJ='/usr/share/zoneinfo/Europe/Berlin'
-        OBJ_PATH='/etc/localtime'
-        __obj_link_ow_soft;
-    } || {
-        __info -white - 'Nothing to be done.'
+tz_bg() {
+    OBJ='/usr/share/zoneinfo/Europe/Sofia'
+    OBJ_PATH='/etc/localtime'
+    __obj_link_ow_soft;
 
-        return 0
-    }
+    __cmd -- hwclock -w
+}
+
+tz_de() {
+    OBJ='/usr/share/zoneinfo/Europe/Berlin'
+    OBJ_PATH='/etc/localtime'
+    __obj_link_ow_soft;
 
     __cmd -- hwclock -w
 }
@@ -3895,12 +3893,6 @@ main() {
     # XDG portals support (D-Bus dependent protocols)
     portal=y
 
-    # Location switches
-    # Bulgaria:
-    bg=
-    # Germany:
-    de=y
-
     # Software
     # Audio server; currently supported: pipewire
     audio_server='pipewire'
@@ -3936,7 +3928,7 @@ main() {
     opd="${1%"${1##*[!/]}"}"
     opd="${1##*/}"
 
-    readonly m533ia arch_linux audio_hq_resamp bluetooth ipv6 portal bg de \
+    readonly m533ia arch_linux audio_hq_resamp bluetooth ipv6 portal \
              audio_server browser display_server dns dns0 init \
              pipewire_manager qt_theme wland wm gid group hostname uid user \
              home efi_mnt arch_mirlist opd
