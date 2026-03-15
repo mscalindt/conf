@@ -1,0 +1,3 @@
+[submodule "lib/syscfg"]
+	path = lib/syscfg
+	url = https://github.com/mscalindt/syscfg.git
