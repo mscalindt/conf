@@ -456,7 +456,6 @@ defaults.ctl.card 1
 _bash_conf() {
     OBJ=\
 '# System management
-sys_pwr_fw() { pwr_fw; }
 sys_pwr_off() { pwr_off "$@"; }
 sys_pwr_reset() { pwr_reset "$@"; }
 sys_pkg_get() { pkg_get "$@"; }
@@ -527,9 +526,6 @@ pkg_rmF() (
 )
 
 # Power management
-pwr_fw() (
-    su -c '\''systemctl reboot --firmware-setup'\''
-)
 pwr_off() (
     case ":$1" in
         :) su -c '\''shutdown -P now'\'' ;;
@@ -582,9 +578,6 @@ gpg_e() {
     gpg -r 7D1F56FAD6FB86652A60BEE65BC3343816EAB179 --compress-algo none -e "$1"
     touch -r "$1" "$1".gpg
 }
-
-# steam
-:
 
 # tar
 tar_c() {
@@ -657,8 +650,6 @@ EOF
         exit 1
     done
 )
-ipv6disable() { su -c '\''sysctl -w net.ipv6.conf.all.disable_ipv6=1; sysctl -w net.ipv6.conf.default.disable_ipv6=1'\''; }
-ipv6enable() { su -c '\''sysctl -w net.ipv6.conf.all.disable_ipv6=0; sysctl -w net.ipv6.conf.default.disable_ipv6=0'\''; }
 '
     OBJ_PATH="$home/.bash_functions"
     __file_write_ow_soft \
