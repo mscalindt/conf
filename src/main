@@ -683,7 +683,7 @@ alias gfixf='\''git add .; git commit --amend --date="now" --no-edit -s'\''
 alias gchk='\''git diff --check HEAD~10'\''
 
 # Source useful custom functions
-[ -f "$HOME"/.bash_functions ] && . "$HOME"/.bash_functions
+[ ! -f "$HOME"/.bash_functions ] || . "$HOME"/.bash_functions
 
 # '\''-ixon'\'': Disable "Ctrl + S"; WHY IS THIS STILL DEFAULT?
 # '\''susp undef'\'': Disable "Ctrl + Z"
