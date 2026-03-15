@@ -695,22 +695,6 @@ stty -ixon susp undef
         -user "$user" -group "$group"
 }
 
-_bluez_conf() {
-    OBJ=\
-'[General]
-Name = gUcciestBlueZ420
-DiscoverableTimeout = 0
-FastConnectable = true
-
-[Policy]
-AutoEnable=false
-ReconnectAttempts=3
-ReconnectIntervals=2,8,16
-'
-    OBJ_PATH='/etc/bluetooth/main.conf'
-    __file_write_ow_soft;
-}
-
 # RTC clock sync using the closest NTP server (pool.ntp.org)
 _clk_sync() {
     __cmd -- ntpd -gGLnq pool.ntp.org
@@ -724,7 +708,6 @@ _clk_sync() {
 _conf() {
     _alsa_conf;
     _bash_conf;
-    _bluez_conf;
     _dhcpcd_conf;
     _dnsmasq_conf;
     _doas_conf;
