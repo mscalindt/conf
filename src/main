@@ -3150,12 +3150,6 @@ systemctl --user start \
     xdg-document-portal xdg-permission-store
 '
         fi
-        OBJ="$OBJ"\
-'
-if [ -f /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 ]; then
-    exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-fi
-'
         OBJ_PATH="$home/.config/sway/systemd-handler"
         __file_write_ow_soft \
             -uid "$uid" -gid "$gid" \
