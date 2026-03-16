@@ -779,7 +779,6 @@ _conf() {
     _hostname;
     _hosts;
     _initramfs_conf;
-    _kitty_conf;
     _kvantum_conf;
     _locale;
     _makepkg_conf;
@@ -1305,50 +1304,6 @@ MODULES_DECOMPRESS="yes"
     __file_write_ow_soft;
 
     __cmd -- mkinitcpio -P
-}
-
-_kitty_conf() {
-    OBJ=\
-'font_family Source Code Pro
-font_size 10.0
-cursor_text_color background
-cursor_shape beam
-cursor_beam_thickness 1.0
-cursor_stop_blinking_after 0.0
-scrollback_lines 300000
-wheel_scroll_multiplier 3.0
-mouse_hide_wait 0.0
-url_color #FFFFFF
-url_style single
-select_by_word_characters -A-Za-z0-9,./?%&#:_=+@~
-enable_audio_bell no
-remember_window_size no
-initial_window_width 814
-initial_window_height 498
-hide_window_decorations yes
-background_opacity 0.5
-update_check_interval 0
-shell_integration disabled
-confirm_os_window_close 0
-paste_actions no-op
-color0 #767676
-color1 #f2201f
-color2 #23fd00
-color3 #fffd00
-color4 #1a8fff
-color5 #fd28ff
-color6 #14ffff
-color7 #ffffff
-background #300924
-map kitty_mod+a scroll_page_up
-map kitty_mod+s scroll_page_down
-map kitty_mod+z scroll_home
-map kitty_mod+x scroll_end
-'
-    OBJ_PATH="$home/.config/kitty/kitty.conf"
-    __file_write_ow_soft \
-        -uid "$uid" -gid "$gid" \
-        -user "$user" -group "$group"
 }
 
 _kvantum_conf() {
@@ -2364,7 +2319,6 @@ set hostname_in_titlebar false
 set idle_delay 100
 set max_console_history_size 100
 set mouse_enabled false
-set preview_images_method kitty
 set tilde_in_titlebar true
 set preview_max_size 1010101
 '
@@ -2452,7 +2406,6 @@ ext exe = wine "$1"
 # Misc mEmes
 mime application/x-executable               = "$1"
 mime ^font, has fontforge, X, flag f        = fontforge "$@"
-mime ^ranger/x-terminal-emulator, has kitty = kitty -- "$@"
 
 label open,   has xdg-open = xdg-open "$@"
 label editor, !mime ^text, = "${VISUAL:-$EDITOR}" -- "$@"
@@ -2580,10 +2533,9 @@ output * max_render_time off
 
 # Mod4 = Super key
 set $mod Mod4
-set $term kitty
-set $menu exec \
-    $term --class=sway-app-launcher \
-    /usr/bin/sway-launcher-desktop
+set $term alacritty
+set $menu exec $term \
+    --class sway-app-launcher -e /usr/bin/sway-launcher-desktop
 
 focus_follows_mouse always
 
@@ -3234,10 +3186,9 @@ output * max_render_time off
 
 # Mod4 = Super key
 set $mod Mod4
-set $term kitty
-set $menu exec \
-    $term --class=sway-app-launcher \
-    /usr/bin/sway-launcher-desktop
+set $term alacritty
+set $menu exec $term \
+    --class sway-app-launcher -e /usr/bin/sway-launcher-desktop
 
 focus_follows_mouse always
 
