@@ -280,6 +280,12 @@ ___PIPEWIRE_PULSE_SOCKET() {
         -user "$user" -group "$group"
 }
 
+___POLKIT_SERVICE() {
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/polkit.service'
+    __obj_link_ow_soft;
+}
+
 ___PORTAL() {
     OBJ=\
 'GTK_USE_PORTAL=1
@@ -3366,6 +3372,7 @@ _systemd() {
         ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE;
         ___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE;
         ___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE;
+        ___POLKIT_SERVICE;
         ___RTKIT_DAEMON_SERVICE;
     fi
 
