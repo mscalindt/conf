@@ -125,21 +125,8 @@ WantedBy=multi-user.target
 }
 
 ___IWD_SERVICE() {
-    OBJ=\
-'[Unit]
-Description=Wireless service
-
-[Service]
-ExecStart=/usr/lib/iwd/iwd
-
-[Install]
-WantedBy=multi-user.target
-'
+    OBJ='/dev/null'
     OBJ_PATH='/etc/systemd/system/iwd.service'
-    __file_write_ow_soft;
-
-    OBJ='/etc/systemd/system/iwd.service'
-    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/iwd.service'
     __obj_link_ow_soft;
 }
 
@@ -725,7 +712,6 @@ _conf() {
     _hostname;
     _hosts;
     _initramfs_conf;
-    _iwd_conf;
     _kitty_conf;
     _kvantum_conf;
     _locale;
@@ -1252,34 +1238,6 @@ MODULES_DECOMPRESS="yes"
     __file_write_ow_soft;
 
     __cmd -- mkinitcpio -P
-}
-
-_iwd_conf() {
-    OBJ=\
-'[General]
-EnableNetworkConfiguration=true
-AddressRandomization=network
-AddressRandomizationRange=nic
-
-[Network]
-'
-    if [ "$ipv6" ]; then
-        OBJ="$OBJ"\
-'EnableIPv6=true
-'
-    else
-        OBJ="$OBJ"\
-'EnableIPv6=false
-'
-    fi
-    OBJ="$OBJ"\
-'NameResolvingService=none
-
-[Scan]
-DisablePeriodicScan=true
-'
-    OBJ_PATH='/etc/iwd/main.conf'
-    __file_write_ow_soft;
 }
 
 _kitty_conf() {
@@ -3384,6 +3342,7 @@ _systemd() {
 
     if [ "$arch_linux" ]; then
         ___AT_SPI_DBUS_BUS_SERVICE;
+        ___IWD_SERVICE;
         ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE;
         ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE;
         ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE;
@@ -3402,10 +3361,6 @@ _systemd() {
 
     if [ "$m533ia" ]; then
         ___EVTEST_GRAB_SERVICE;
-    fi
-
-    if [ "$iwd" ]; then
-        ___IWD_SERVICE;
     fi
 
     if [ "$pipewire" ]; then
@@ -3551,7 +3506,6 @@ main() {
     dnsmasq=y
     env=y
     ipv6=
-    iwd=y
     kvantum=y
     m533ia=y
     pipewire=y
@@ -3573,7 +3527,7 @@ main() {
     opd="${1%"${1##*[!/]}"}"
     opd="${1##*/}"
 
-    readonly arch_linux audio_hq_resamp bluetooth dns dnsmasq env ipv6 iwd \
+    readonly arch_linux audio_hq_resamp bluetooth dns dnsmasq env ipv6 \
              kvantum m533ia pipewire pipewire_media_session portal sway \
              systemd wayland arch_mirlist efi_mnt gid group home hostname uid \
              user opd
