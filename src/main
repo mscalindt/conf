@@ -408,6 +408,72 @@ DESKTOP_SESSION=sway
         -user "$user" -group "$group"
 }
 
+_alacritty_conf() {
+    OBJ=\
+'[font]
+size = 10.0
+
+[font.bold]
+family = "Source Code Pro"
+style = "Bold"
+
+[font.bold_italic]
+family = "Source Code Pro"
+style = "Bold Italic"
+
+[font.italic]
+family = "Source Code Pro"
+style = "Italic"
+
+[font.normal]
+family = "Source Code Pro"
+style = "Regular"
+
+[cursor]
+style.shape = "Beam"
+style.blinking = "On"
+
+[colors]
+  [colors.primary]
+  background = "#300924"
+
+  [colors.normal]
+  black   = "#767676"
+  red     = "#f2201f"
+  green   = "#23fd00"
+  yellow  = "#fffd00"
+  blue    = "#1a8fff"
+  magenta = "#fd28ff"
+  cyan    = "#14ffff"
+  white   = "#ffffff"
+
+  [colors.bright]
+  black   = "#767676"
+  red     = "#f2201f"
+  green   = "#23fd00"
+  yellow  = "#fffd00"
+  blue    = "#1a8fff"
+  magenta = "#fd28ff"
+  cyan    = "#14ffff"
+  white   = "#ffffff"
+
+[window]
+opacity = 0.5
+
+[keyboard]
+bindings = [
+  { key = "A", mods = "Control|Shift", action = "ScrollPageUp" },
+  { key = "S", mods = "Control|Shift", action = "ScrollPageDown" },
+  { key = "Z", mods = "Control|Shift", action = "ScrollToTop" },
+  { key = "X", mods = "Control|Shift", action = "ScrollToBottom" },
+]
+'
+    OBJ_PATH="$home/.config/alacritty/alacritty.toml"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
+
 # $m533ia assertion:
 #
 # Use laptop's sound card ALC256 instead of HDMI by default
@@ -693,6 +759,7 @@ _clk_sync() {
 # Functions that should not run, shall themselves know and return. Currently,
 # this is not ideal, as many do not, but the goal is clearly set.
 _conf() {
+    _alacritty_conf;
     _alsa_conf;
     _bash_conf;
     _dhcpcd_conf;
