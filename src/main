@@ -2533,39 +2533,32 @@ _sudo_conf() {
 
 _sway_conf() {
     OBJ=\
-'output * adaptive_sync off
+'# Graphics; x11-related
+output * adaptive_sync off
 output * allow_tearing yes
 output * max_render_time off
 
-# Mod4 = Super key
-set $mod Mod4
-set $term alacritty
-set $menu exec $term \
-    --class sway-app-launcher -e /usr/bin/sway-launcher-desktop
-
+# Mouse movement switches focus
 focus_follows_mouse always
 
-# Prevent annoying apps from disrupting active focus by pinning them to a
-# certain workplace, in our case `7`, used as a last resort workspace or "bag".
-# Steam'\''s "launcher"
+# Pin programs to specific workspaces
 assign [title="Steam"] 7
-# Steam
 assign [class="steam"] 7
-
-# Pin specific apps to specific workspaces.
-# FeatherPad
 assign [app_id="featherpad"] 2
 
+# Tiling configuration for specific programs
 for_window [app_id="sway-app-launcher"] \
     floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 5
 for_window [app_id="firefox"] \
     border none
 
+# Touchpad configuration; libinput-related
 input type:touchpad {
     dwt disabled
     tap enabled
 }
 
+# Keyboard configuration; libinput/x11-related
 input type:keyboard {
     xkb_layout us,bg(phonetic)
     xkb_model pc86
@@ -2574,98 +2567,68 @@ input type:keyboard {
     repeat_rate 50
 }
 
-# Disable mouse acceleration
+# Mouse configuration (disable acceleration); libinput/x11-related
 input * {
     accel_profile flat
 }
 
-# Appearance {
-    output * bg #241f31 solid_color
-    default_border pixel
-    client.focused #0A75AD #0A75AD #0A75AD #0A75AD #0A75AD
-    font pango:Cantarell 12
-    seat seat0 xcursor_theme Breeze
-    exec_always /home/$USER/.config/sway/import-gsettings
-    exec_always /home/$USER/.config/sway/wp-handler
-# }
+# Solid color as wallpaper
+output * bg #241f31 solid_color
 
-# App keybindings {
-    bindsym $mod+Return exec $term
-    bindsym $mod+a exec $menu
-    bindsym $mod+t exec /usr/bin/Telegram
-    bindsym $mod+b exec /usr/bin/blueman-manager
-# }
+# Tiling configuration
+default_border pixel
+client.focused #0A75AD #0A75AD #0A75AD #0A75AD #0A75AD
 
-# Control keybindings {
-    bindsym $mod+1 workspace number 1
-    bindsym $mod+2 workspace number 2
-    bindsym $mod+3 workspace number 3
-    bindsym $mod+4 workspace number 4
-    bindsym $mod+5 workspace number 5
-    bindsym $mod+6 workspace number 6
-    bindsym $mod+7 workspace number 7
-    bindsym $mod+8 workspace number 8
+# Font configuration
+font pango:Cantarell 12
 
-    bindsym $mod+Left focus left
-    bindsym $mod+Down focus down
-    bindsym $mod+Up focus up
-    bindsym $mod+Right focus right
-    bindsym Alt+Tab focus right
-    bindsym Alt+Shift+Tab focus left
+# Mouse cursor configuration
+seat seat0 xcursor_theme Breeze
 
-    # Basic functions
-    bindsym $mod+z exec pamixer -d5
-    bindsym $mod+x exec pamixer -i5
-    bindsym $mod+c exec brightnessctl s 5%-
-    bindsym $mod+v exec brightnessctl s 5%+
-    bindsym print exec grim -l 9 $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
-    bindsym $mod+p exec grim -l 9 -g "$(slurp)" \
-                            $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
-    bindsym $mod+Shift+p exec grim -l 9 -g "$(slurp; sleep 2.5)" \
-                                  $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
+# Keybindings
+floating_modifier Mod4 normal
+bindsym Mod4+1 workspace number 1
+bindsym Mod4+2 workspace number 2
+bindsym Mod4+3 workspace number 3
+bindsym Mod4+4 workspace number 4
+bindsym Mod4+5 workspace number 5
+bindsym Mod4+6 workspace number 6
+bindsym Mod4+7 workspace number 7
+bindsym Mod4+8 workspace number 8
+bindsym Mod4+q kill
+bindsym Mod4+f fullscreen
+bindsym Mod4+w move container to workspace 8
+bindsym Mod4+e move container to workspace 7
+bindsym Mod4+Shift+c reload
+bindsym Mod4+Return exec /usr/bin/alacritty
+bindsym Mod4+a exec /usr/bin/alacritty \
+    --class sway-app-launcher -e /usr/bin/sway-launcher-desktop
+bindsym Mod4+t exec /usr/bin/Telegram
+bindsym Mod4+b exec /usr/bin/blueman-manager
+bindsym Mod4+l exec /usr/bin/swaylock
+bindsym Mod4+Shift+q exec /home/$USER/.config/sway/fkill_sway
+bindsym Mod4+Space exec /home/$USER/.config/sway/music_toggle
+bindsym Mod4+z exec /usr/bin/pamixer -d5
+bindsym Mod4+x exec /usr/bin/pamixer -i5
+bindsym Mod4+c exec /usr/bin/brightnessctl s 5%-
+bindsym Mod4+v exec /usr/bin/brightnessctl s 5%+
+bindsym print exec /usr/bin/grim \
+    -l 9 $(/usr/bin/date +'\''SS_%Y%m%d_%H%M%S.png'\'')
+bindsym Mod4+p exec /usr/bin/grim \
+    -l 9 -g "$(/usr/bin/slurp)" $(/usr/bin/date +'\''SS_%Y%m%d_%H%M%S.png'\'')
+bindsym Mod4+Shift+p exec /usr/bin/grim \
+    -l 9 -g "$(/usr/bin/slurp; /usr/bin/sleep 2.5)" \
+    $(/usr/bin/date +'\''SS_%Y%m%d_%H%M%S.png'\'')
+bindsym Mod4+h exec /usr/bin/grim \
+    -g "$(/usr/bin/slurp -p)" -t ppm - | \
+    /usr/bin/convert - -format '\''%[pixel:p{0,0}]'\'' txt:- | \
+    /usr/bin/tail -n 1 | /usr/bin/cut -d '\'' '\'' -f 4 | /usr/bin/wl-copy -n
 
-    # Extended functions
-    # get hex color of a pixel
-    bindsym $mod+h exec grim -g "$(slurp -p)" -t ppm - | \
-                        convert - -format '\''%[pixel:p{0,0}]'\'' txt:- | \
-                        tail -n 1 | cut -d '\'' '\'' -f 4 | wl-copy -n
-    # toggle audio playback
-    bindsym $mod+Space exec /home/$USER/.config/sway/music_toggle
-
-    # Kill window
-    bindsym $mod+q kill
-
-    # Force kill window
-    bindsym $mod+Shift+q exec /home/$USER/.config/sway/fkill
-
-    # Fullscreen window
-    bindsym $mod+f fullscreen
-
-    # Move window to workspace 8/7 / bag
-    bindsym $mod+w move container to workspace 8
-    bindsym $mod+e move container to workspace 7
-
-    # Drag window by holding down $mod + LMB
-    # Resize window by holding down $mod + RMB
-    floating_modifier $mod normal
-
-    # Invoke swaylock
-    bindsym $mod+l exec swaylock
-
-    # Reload the config
-    bindsym $mod+Shift+c reload
-# }
-
-mode "nointercept" {
-    bindsym $mod+Escape mode "default"
-}
-bindsym $mod+Shift+Escape mode "nointercept"
-
+# Status bar configuration
 bar {
-    status_command while /home/$USER/.config/sway/status; do sleep 0.1; done
+    status_command while /home/$USER/.config/sway/status_sway; do sleep 0.1; done
     position top
     font pango:Source Code Pro 10
-
     colors {
         statusline #ffffff
         background #2b2e37
@@ -2673,15 +2636,16 @@ bar {
     }
 }
 
+# Other
+exec_always /usr/bin/sh -c '\''rm -f "${TMPDIR:-/tmp}"/nettotal'\''
+exec_always /home/$USER/.config/sway/import-gsettings
+exec_always /home/$USER/.config/sway/wp-handler_sway
 '
     if [ "$arch_linux" ]; then
         OBJ="$OBJ"\
 'exec /home/$USER/.config/sway/systemd-handler
 '
     fi
-    OBJ="$OBJ"\
-'exec_always sh -c '\''rm -f "${TMPDIR:-/tmp}"/nettotal'\''
-'
     OBJ_PATH="$home/.config/sway/config"
     __file_write_ow_soft \
         -uid "$uid" -gid "$gid" \
@@ -2697,7 +2661,7 @@ PID=$(
 
 kill -9 "$PID"
 '
-    OBJ_PATH="$home/.config/sway/fkill"
+    OBJ_PATH="$home/.config/sway/fkill_sway"
     __file_write_ow_soft \
         -uid "$uid" -gid "$gid" \
         -user "$user" -group "$group" \
@@ -3125,7 +3089,7 @@ STATUS="$STATUS | $KB_LAYOUT | $DATE |"
 
 printf "%s" "$STATUS"
 '
-    OBJ_PATH="$home/.config/sway/status"
+    OBJ_PATH="$home/.config/sway/status_sway"
     __file_write_ow_soft \
         -uid "$uid" -gid "$gid" \
         -user "$user" -group "$group" \
@@ -3171,7 +3135,7 @@ elif [ -f "$WP" ]; then
     swaymsg output '\''*'\'' bg "$WP" fill
 fi
 '
-    OBJ_PATH="$home/.config/sway/wp-handler"
+    OBJ_PATH="$home/.config/sway/wp-handler_sway"
     __file_write_ow_soft \
         -uid "$uid" -gid "$gid" \
         -user "$user" -group "$group" \
@@ -3180,39 +3144,32 @@ fi
 
 _sway_conf_gaming() {
     OBJ=\
-'output * adaptive_sync off
+'# Graphics; x11-related
+output * adaptive_sync off
 output * allow_tearing yes
 output * max_render_time off
 
-# Mod4 = Super key
-set $mod Mod4
-set $term alacritty
-set $menu exec $term \
-    --class sway-app-launcher -e /usr/bin/sway-launcher-desktop
-
+# Mouse movement switches focus
 focus_follows_mouse always
 
-# Prevent annoying apps from disrupting active focus by pinning them to a
-# certain workplace, in our case `7`, used as a last resort workspace or "bag".
-# Steam'\''s "launcher"
+# Pin programs to specific workspaces
 assign [title="Steam"] 7
-# Steam
 assign [class="steam"] 7
-
-# Pin specific apps to specific workspaces.
-# FeatherPad
 assign [app_id="featherpad"] 2
 
+# Tiling configuration for specific programs
 for_window [app_id="sway-app-launcher"] \
     floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 5
 for_window [app_id="firefox"] \
     border none
 
+# Touchpad configuration; libinput-related
 input type:touchpad {
     dwt disabled
     tap enabled
 }
 
+# Keyboard configuration; libinput/x11-related
 input type:keyboard {
     xkb_layout us,bg(phonetic)
     xkb_model pc86
@@ -3221,92 +3178,67 @@ input type:keyboard {
     repeat_rate 50
 }
 
-# Disable mouse acceleration
+# Mouse configuration (disable acceleration); libinput/x11-related
 input * {
     accel_profile flat
 }
 
-# Appearance {
-    output * bg #241f31 solid_color
-    default_border pixel
-    client.focused #0A75AD #0A75AD #0A75AD #0A75AD #0A75AD
-    font pango:Cantarell 12
-    seat seat0 xcursor_theme Breeze
-    exec_always /home/$USER/.config/sway/import-gsettings
-    exec_always /home/$USER/.config/sway/wp-handler
-# }
+# Solid color as wallpaper
+output * bg #241f31 solid_color
 
-# App keybindings {
-    bindsym $mod+Return exec $term
-    bindsym $mod+a exec $menu
-    bindsym $mod+t exec /usr/bin/Telegram
-    bindsym $mod+b exec /usr/bin/blueman-manager
-# }
+# Tiling configuration
+default_border pixel
+client.focused #0A75AD #0A75AD #0A75AD #0A75AD #0A75AD
 
-# Control keybindings {
-    bindsym $mod+1 workspace number 1
-    bindsym $mod+2 workspace number 2
-    bindsym $mod+3 workspace number 3
-    bindsym $mod+4 workspace number 4
-    bindsym $mod+5 workspace number 5
-    bindsym $mod+6 workspace number 6
-    bindsym $mod+7 workspace number 7
+# Font configuration
+font pango:Cantarell 12
 
-    bindsym $mod+Left focus left
-    bindsym $mod+Down focus down
-    bindsym $mod+Up focus up
-    bindsym $mod+Right focus right
-    bindsym Alt+Tab focus right
-    bindsym Alt+Shift+Tab focus left
+# Mouse cursor configuration
+seat seat0 xcursor_theme Breeze
 
-    # Basic functions
-    bindsym $mod+z exec pamixer -d5
-    bindsym $mod+x exec pamixer -i5
-    bindsym $mod+c exec brightnessctl s 5%-
-    bindsym $mod+v exec brightnessctl s 5%+
-    bindsym print exec grim -l 9 $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
-    bindsym $mod+p exec grim -l 9 -g "$(slurp)" \
-                            $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
-    bindsym $mod+Shift+p exec grim -l 9 -g "$(slurp; sleep 2.5)" \
-                                  $(date +'\''SS_%Y%m%d_%H%M%S.png'\'')
+# Keybindings
+floating_modifier Mod4 normal
+bindsym Mod4+1 workspace number 1
+bindsym Mod4+2 workspace number 2
+bindsym Mod4+3 workspace number 3
+bindsym Mod4+4 workspace number 4
+bindsym Mod4+5 workspace number 5
+bindsym Mod4+6 workspace number 6
+bindsym Mod4+7 workspace number 7
+bindsym Mod4+8 workspace number 8
+bindsym Mod4+q kill
+bindsym Mod4+f fullscreen
+bindsym Mod4+w move container to workspace 8
+bindsym Mod4+e move container to workspace 7
+bindsym Mod4+Shift+c reload
+bindsym Mod4+Return exec /usr/bin/alacritty
+bindsym Mod4+a exec /usr/bin/alacritty \
+    --class sway-app-launcher -e /usr/bin/sway-launcher-desktop
+bindsym Mod4+t exec /usr/bin/Telegram
+bindsym Mod4+b exec /usr/bin/blueman-manager
+bindsym Mod4+l exec /usr/bin/swaylock
+bindsym Mod4+Shift+q exec /home/$USER/.config/sway/fkill_sway
+bindsym Mod4+Space exec /home/$USER/.config/sway/music_toggle
+bindsym Mod4+z exec /usr/bin/pamixer -d5
+bindsym Mod4+x exec /usr/bin/pamixer -i5
+bindsym Mod4+c exec /usr/bin/brightnessctl s 5%-
+bindsym Mod4+v exec /usr/bin/brightnessctl s 5%+
+bindsym print exec /usr/bin/grim \
+    -l 9 $(/usr/bin/date +'\''SS_%Y%m%d_%H%M%S.png'\'')
+bindsym Mod4+p exec /usr/bin/grim \
+    -l 9 -g "$(/usr/bin/slurp)" $(/usr/bin/date +'\''SS_%Y%m%d_%H%M%S.png'\'')
+bindsym Mod4+Shift+p exec /usr/bin/grim \
+    -l 9 -g "$(/usr/bin/slurp; /usr/bin/sleep 2.5)" \
+    $(/usr/bin/date +'\''SS_%Y%m%d_%H%M%S.png'\'')
+bindsym Mod4+h exec /usr/bin/grim \
+    -g "$(/usr/bin/slurp -p)" -t ppm - | \
+    /usr/bin/convert - -format '\''%[pixel:p{0,0}]'\'' txt:- | \
+    /usr/bin/tail -n 1 | /usr/bin/cut -d '\'' '\'' -f 4 | /usr/bin/wl-copy -n
 
-    # Extended functions
-    # get hex color of a pixel
-    bindsym $mod+h exec grim -g "$(slurp -p)" -t ppm - | \
-                        convert - -format '\''%[pixel:p{0,0}]'\'' txt:- | \
-                        tail -n 1 | cut -d '\'' '\'' -f 4 | wl-copy -n
-    # toggle audio playback
-    bindsym $mod+Space exec /home/$USER/.config/sway/music_toggle
-
-    # Kill window
-    bindsym $mod+q kill
-
-    # Force kill window
-    bindsym $mod+Shift+q exec /home/$USER/.config/sway/fkill
-
-    # Fullscreen window
-    bindsym $mod+f fullscreen
-
-    # Drag window by holding down $mod + LMB
-    # Resize window by holding down $mod + RMB
-    floating_modifier $mod normal
-
-    # Invoke swaylock
-    bindsym $mod+l exec swaylock
-
-    # Reload the config
-    bindsym $mod+Shift+c reload
-# }
-
-mode "nointercept" {
-    bindsym $mod+Escape mode "default"
-}
-bindsym $mod+Shift+Escape mode "nointercept"
-
+# Status bar configuration
 bar {
     position top
     font pango:Source Code Pro 10
-
     colors {
         statusline #ffffff
         background #2b2e37
@@ -3314,15 +3246,16 @@ bar {
     }
 }
 
+# Other
+exec_always /usr/bin/sh -c '\''rm -f "${TMPDIR:-/tmp}"/nettotal'\''
+exec_always /home/$USER/.config/sway/import-gsettings
+exec_always /home/$USER/.config/sway/wp-handler_sway
 '
     if [ "$arch_linux" ]; then
         OBJ="$OBJ"\
 'exec /home/$USER/.config/sway/systemd-handler
 '
     fi
-    OBJ="$OBJ"\
-'exec_always sh -c '\''rm -f "${TMPDIR:-/tmp}"/nettotal'\''
-'
     OBJ_PATH="$home/.config/sway/config"
     __file_write_ow_soft \
         -uid "$uid" -gid "$gid" \
