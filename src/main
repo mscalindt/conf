@@ -2728,7 +2728,11 @@ fi
     OBJ=\
 '#!/bin/sh
 
-NET_INTERFACE=wlan0
+'
+    OBJ="$OBJ"\
+"NET_INTERFACE='$interface_wlan'"
+    OBJ="$OBJ"\
+'
 
 replchars() {
     replchar() {
@@ -3473,6 +3477,7 @@ main() {
     group='mscalindt'
     home='/home/mscalindt'
     hostname='m533ia'
+    interface_wlan='wlan0'
     uid='1000'
     user='mscalindt'
 
