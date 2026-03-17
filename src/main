@@ -3486,8 +3486,8 @@ main() {
 
     readonly arch_linux audio_hq_resamp bluetooth dns dnsmasq env ipv6 \
              kvantum m533ia pipewire pipewire_media_session portal sway \
-             systemd wayland arch_mirlist efi_mnt gid group home hostname uid \
-             user opd
+             systemd wayland arch_mirlist efi_mnt gid group home hostname \
+             interface_wlan uid user opd
 
     [ "$opd" != main ] || exit 255
 
