@@ -19,6 +19,7 @@ config: ./syscfg ./conf
 	sh ./syscfg -s ./conf -- ./src/_dhcpcd_conf
 	sh ./syscfg -s ./conf -- ./src/_dnsmasq_conf
 	sh ./syscfg -s ./conf -- ./src/_doas_conf
+	sh ./syscfg -s ./conf -- ./src/_emacs_conf
 	sh ./syscfg -s ./conf -- ./src/_env
 	sh ./syscfg -s ./conf -- ./src/_face_bin
 	sh ./syscfg -s ./conf -- ./src/_featherpad_conf

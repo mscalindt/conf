@@ -1,0 +1,92 @@
+OBJ=\
+'(require '\''server)
+(unless (server-running-p)
+  (server-start))
+(when (and (fboundp '\''server-running-p) (server-running-p))
+  (defun emacsclient-new-tab (orig-fun &rest args)
+    (tab-new)
+    (apply orig-fun args))
+  (advice-add '\''server-visit-files :around #'\''emacsclient-new-tab))
+
+(cua-mode 1)
+
+(tab-bar-mode 1)
+(global-set-key (kbd "M-1") (lambda () (interactive) (tab-bar-select-tab 1)))
+(global-set-key (kbd "M-2") (lambda () (interactive) (tab-bar-select-tab 2)))
+(global-set-key (kbd "M-3") (lambda () (interactive) (tab-bar-select-tab 3)))
+(global-set-key (kbd "M-4") (lambda () (interactive) (tab-bar-select-tab 4)))
+(global-set-key (kbd "M-5") (lambda () (interactive) (tab-bar-select-tab 5)))
+(global-set-key (kbd "M-6") (lambda () (interactive) (tab-bar-select-tab 6)))
+(global-set-key (kbd "M-7") (lambda () (interactive) (tab-bar-select-tab 7)))
+(defun new-tab ()
+  (interactive)
+  (tab-new)
+  (switch-to-buffer (generate-new-buffer "*Untitled*")))
+(global-set-key (kbd "M-n") '\''new-tab)
+
+(defun close-tab ()
+  (interactive)
+  (if (= (length (tab-bar-tabs)) 1)
+      (switch-to-buffer (generate-new-buffer "*Untitled*"))
+    (tab-close)))
+(global-set-key (kbd "M-q") '\''close-tab)
+
+(defun tab-name-asterisk (&optional tab)
+  (let* ((tab (or tab (list (cons '\''buffer (current-buffer)))))
+         (buffer (alist-get '\''buffer tab))
+         (name (if (and buffer (buffer-live-p buffer))
+                   (buffer-name buffer)
+                 "???")))
+    (concat (if (and buffer (buffer-live-p buffer) (buffer-modified-p buffer)) "*" "")
+            name)))
+(setq tab-bar-tab-name-function #'\''tab-name-asterisk)
+
+(global-set-key (kbd "C-c") '\''kill-ring-save)
+(global-set-key (kbd "C-v") '\''yank)
+
+(defun select-all ()
+  (interactive)
+  (goto-char (point-min))
+  (push-mark (point-max) t t)
+  (activate-mark))
+(global-set-key (kbd "C-a") '\''select-all)
+
+(keymap-global-set "C-s" #'\''save-buffer)
+(global-set-key (kbd "C-z") '\''undo)
+(global-set-key (kbd "C-S-z") '\''undo-redo)
+
+(global-set-key (kbd "C-f") #'\''isearch-forward)
+
+(setq make-backup-files nil)
+(setq auto-save-default nil)
+
+(setq inhibit-startup-screen t)
+(setq initial-scratch-message "")
+(setq initial-buffer-choice t)
+
+(global-display-line-numbers-mode 1)
+(load-theme '\''wombat t)
+(set-face-attribute '\''tab-bar nil
+                    :background "#2a2a2a"
+                    :foreground "#cccccc")
+(set-face-attribute '\''tab-bar-tab nil
+                    :background "#5c5c5c"
+                    :foreground "#eeeeee"
+                    :box nil)
+(set-face-attribute '\''tab-bar-tab-inactive nil
+                    :background "#2a2a2a"
+                    :foreground "#aaaaaa"
+                    :box nil)
+(tool-bar-mode -1)
+
+(set-face-attribute '\''default nil
+                    :family "Source Code Pro"
+                    :height 120)
+
+(setq-default fill-column 80)
+(global-display-fill-column-indicator-mode 1)
+'
+OBJ_PATH="$home/.emacs.d/init.el"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
