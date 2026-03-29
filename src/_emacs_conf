@@ -98,6 +98,8 @@ OBJ=\
           (lambda ()
             (unless (eq major-mode '\''fundamental-mode)
               (fundamental-mode))))
+
+(setq-default cursor-type '\''bar)
 '
 OBJ_PATH="$home/.emacs.d/init.el"
 __file_write_ow_soft \
