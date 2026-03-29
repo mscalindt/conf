@@ -1,1 +1,8 @@
-main
+OBJ=\
+'set fill 72
+set breaklonglines
+'
+OBJ_PATH="$home/.nanorc"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"

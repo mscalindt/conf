@@ -1,1 +1,109 @@
-main
+OBJ=\
+'map D console delete
+copymap J <C-z>
+copymap K <C-x>
+copymap S <C-s>
+set autosave_bookmarks false
+set display_free_space_in_status_bar false
+set display_size_in_status_bar false
+set draw_borders both
+set hostname_in_titlebar false
+set idle_delay 100
+set max_console_history_size 100
+set mouse_enabled false
+set tilde_in_titlebar true
+set preview_max_size 1010101
+'
+OBJ_PATH="$home/.config/ranger/rc.conf"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
+'# Video
+mime ^video, has mpv,       X,  flag f = mpv --profile=video-cfg -- "$@"
+mime ^video, has parole,    X,  flag f = parole -- "$@"
+mime ^video, has vlc,       X,  flag f = vlc -- "$@"
+mime ^video, has mpv,       !X, terminal = mpv -- "$@"
+
+# Audio
+ext midi?, has wildmidi,    terminal = wildmidi -- "$@"
+mime ^audio, has mocp,      terminal = mocp -l -- "$@"
+mime ^audio, has mpv,       flag f = mpv --profile=audio-cfg -- "$@"
+mime ^audio, has parole,    X, flag f = parole -- "$@"
+mime ^audio, has vlc,       X, flag f = vlc -- "$@"
+
+# Images
+ext xcf, has gimp,                X, flag f = gimp -- "$@"
+mime ^image/svg, has inkscape,    X, flag f = inkscape -- "$@"
+mime ^image/svg, has display,     X, flag f = display -- "$@"
+mime ^image, has swayimg,         X, flag f = swayimg -- "$@"
+mime ^image, has imv,             X, flag f = imv -- "$@"
+mime ^image, has ristretto,       X, flag f = ristretto "$@"
+mime ^image, has gimp,            X, flag f = gimp -- "$@"
+
+# PDF/Books
+ext pdf, has firefox,          X, flag f = firefox -- "$@"
+ext pdf, has zathura,          X, flag f = zathura -- "$@"
+ext djvu, has zathura,         X, flag f = zathura -- "$@"
+ext djvu, has djview,          X, flag f = djview -- "$@"
+ext epub, has zathura,         X, flag f = zathura -- "$@"
+ext epub, has ebook-viewer,    X, flag f = ebook-viewer -- "$@"
+ext mobi, has ebook-viewer,    X, flag f = ebook-viewer -- "$@"
+ext cbr|cbz, has zathura,      X, flag f = zathura -- "$@"
+
+# Archives (atool)
+ext 7z|ace|ar|arc|bz2?|cab|cpio|cpt|deb|dgc|dmg|gz|iso|jar|msi|pkg|rar|shar|tar|tgz|xar|xpi|xz|zip,    has atool = atool --list --each -- "$@" | "$PAGER"
+ext 7z|ace|ar|arc|bz2?|cab|cpio|cpt|deb|dgc|dmg|gz|iso|jar|msi|pkg|rar|shar|tar|tgz|xar|xpi|xz|zip,    has atool = atool --extract --each -- "$@"
+
+# Archives
+ext 7z      has 7z = 7z -p l "$@" | "$PAGER"
+ext 7z,     has 7z = for file in "$@"; do 7z -p -o"${file%???}" x -- "$file"; done
+ext ace,    has unace = unace l "$1" | less
+ext ace,    has unace = for file in "$@"; do unace e "$file"; done
+ext bz2,    has tar = tar vvtf "$1" | "$PAGER"
+ext bz2,    has tar = for file in "$@"; do tar vvxf "$file"; done
+ext bz2,    has bzip2 = for file in "$@"; do bzip2 -dk "$file"; done
+ext gz,     has tar = tar vvtf "$1" | "$PAGER"
+ext gz,     has tar = for file in "$@"; do tar vvxf "$file"; done
+ext rar,    has unrar = unrar l "$1" | less
+ext rar,    has unrar = for file in "$@"; do unrar x "$file"; done
+ext tar,    has tar = tar vvtf "$1" | "$PAGER"
+ext tar,    has tar = for file in "$@"; do tar vvxf "$file"; done
+ext xz,     has tar = tar vvtf "$1" | "$PAGER"
+ext xz,     has tar = for file in "$@"; do tar vvxf "$file"; done
+ext zip,    has unzip = unzip -l "$1" | less
+ext zip,    has unzip = for file in "$@"; do unzip -d "${file%.*}" "$file"; done
+ext zst,    has tar = tar vvtf "$1" | "$PAGER"
+ext zst,    has tar = for file in "$@"; do tar vvxf "$file"; done
+
+# HTML
+ext x?html?, has firefox,     X, flag f = firefox -- "$@"
+ext x?html?, has midori,      X, flag f = midori -- "$@"
+ext x?html?, has chromium,    X, flag f = midori -- "$@"
+
+# Docs/Text
+ext sh,    has featherpad,     X, flag f = featherpad "$@"
+ext shfn,  has featherpad,     X, flag f = featherpad "$@"
+ext ini,   has featherpad,     X, flag f = featherpad "$@"
+ext docx?, has catdoc,         terminal = catdoc -- "$@" | "$PAGER"
+mime ^text, has featherpad,    X, flag f = featherpad "$@"
+mime ^text, label editor                 = "${VISUAL:-$EDITOR}" -- "$@"
+mime ^text, label pager                  = "$PAGER" -- "$@"
+
+# Misc exts
+ext 1|5 = man "$1"
+ext exe = wine "$1"
+
+# Misc mEmes
+mime application/x-executable               = "$1"
+mime ^font, has fontforge, X, flag f        = fontforge "$@"
+
+label open,   has xdg-open = xdg-open "$@"
+label editor, !mime ^text, = "${VISUAL:-$EDITOR}" -- "$@"
+label pager,  !mime ^text, = "$PAGER" -- "$@"
+'
+OBJ_PATH="$home/.config/ranger/rifle.conf"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"

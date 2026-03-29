@@ -1,1 +1,5 @@
-main
+OBJ=\
+'frequency = 44100
+'
+OBJ_PATH='/etc/openal/alsoft.conf'
+__file_write_ow_soft;

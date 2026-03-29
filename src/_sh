@@ -1,1 +1,21 @@
-main
+OBJ='/usr/bin/dash'
+OBJ_PATH='/usr/bin/sh'
+__obj_link_ow_soft;
+
+if [ "$arch_linux" ]; then
+    OBJ=\
+'[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = bash
+
+[Action]
+Description = Updating /bin/sh symlink to dash...
+When = PostTransaction
+Exec = /usr/bin/ln -sf /usr/bin/dash /usr/bin/sh
+Depends = dash
+'
+    OBJ_PATH='/usr/share/libalpm/hooks/dashbinsh.hook'
+    __file_write_ow_soft;
+fi

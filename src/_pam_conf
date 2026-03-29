@@ -1,1 +1,39 @@
-main
+OBJ=\
+'deny=7
+even_deny_root
+nodelay
+root_unlock_time=8400
+unlock_time=600
+'
+OBJ_PATH='/etc/security/faillock.conf'
+__file_write_ow_soft;
+
+OBJ=
+OBJ_PATH='/etc/login.defs'
+__ed -log "${TMPDIR:-/tmp}/_pam_conf" -- \
+    -m p -s \
+    'FAIL_DELAY' \
+    'FAIL_DELAY 0'
+OBJ="$OBJ"
+OBJ_PATH='/etc/login.defs'
+__file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_pam_conf" -sanit -trunc
+
+OBJ=
+OBJ_PATH='/etc/pam.d/su'
+__ed -crc 3615679525 -log "${TMPDIR:-/tmp}/_pam_conf" -- \
+    -m 7 -s \
+    '' \
+    'auth            required        pam_unix.so nodelay'
+OBJ="$OBJ"
+OBJ_PATH='/etc/pam.d/su'
+__file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_pam_conf" -sanit -trunc
+
+OBJ=
+OBJ_PATH='/etc/pam.d/system-auth'
+__ed -crc 1797369364 -log "${TMPDIR:-/tmp}/_pam_conf" -- \
+    -m mof -m s -s \
+    'try_first_pass nullok' \
+    'try_first_pass nullok nodelay'
+OBJ="$OBJ"
+OBJ_PATH='/etc/pam.d/system-auth'
+__file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_pam_conf" -sanit -trunc

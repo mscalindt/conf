@@ -1,0 +1,25 @@
+___PIPEWIRE_MEDIA_SESSION_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=PipeWire Media Session Manager
+After=pipewire.service
+BindsTo=pipewire.service
+
+[Service]
+ExecStartPre=/usr/bin/sleep 2
+ExecStart=/usr/bin/pipewire-media-session
+
+[Install]
+WantedBy=pipewire.service
+'
+    OBJ_PATH="$home/.config/systemd/user/pipewire-media-session.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ="$home/.config/systemd/user/pipewire-media-session.service"
+    OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-media-session.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

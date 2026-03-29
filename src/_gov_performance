@@ -1,1 +1,6 @@
-main
+for OBJ_PATH in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+    OBJ=\
+'performance
+'
+    __file_write_ow_soft;
+done

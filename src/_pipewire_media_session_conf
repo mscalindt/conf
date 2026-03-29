@@ -1,1 +1,115 @@
-main
+OBJ=\
+'context.properties = {
+    support.dbus = true
+    default-profile.restore-bluetooth = true
+}
+
+context.spa-libs = {
+    api.bluez5.*    = bluez5/libspa-bluez5
+    api.alsa.*      = alsa/libspa-alsa
+    api.v4l2.*      = v4l2/libspa-v4l2
+    api.libcamera.* = libcamera/libspa-libcamera
+}
+
+context.modules = [
+    { name = libpipewire-module-protocol-native }
+    { name = libpipewire-module-client-node }
+    { name = libpipewire-module-client-device }
+    { name = libpipewire-module-adapter }
+    { name = libpipewire-module-metadata }
+    { name = libpipewire-module-session-manager }
+]
+
+session.modules = {
+    default = [
+        alsa-monitor
+        alsa-seq
+        default-nodes
+        default-profile
+        default-routes
+        metadata
+        policy-node
+        restore-stream
+        streams-follow-default
+        v4l2
+'
+if [ "$bluetooth" ]; then
+    OBJ="$OBJ"\
+'        bluez5
+        bluez5-autoswitch
+'
+fi
+if [ "$portal" ]; then
+    OBJ="$OBJ"\
+'        portal
+'
+fi
+OBJ="$OBJ"\
+'    ]
+}
+'
+OBJ_PATH='/etc/pipewire/media-session.d/media-session.conf'
+__file_write_ow_soft;
+
+OBJ=\
+'properties = {
+    bluez5.enable-sbc-xq = false
+    bluez5.enable-msbc = false
+    bluez5.enable-hw-volume = true
+    bluez5.enable-faststream = false
+
+    bluez5.codecs = [ aac ]
+
+    bluez5.default.rate = 44100  # 44.100 kHz
+}
+
+rules = [
+    {
+        matches = [
+            {
+                device.name = "~bluez_card.*"
+            }
+        ]
+        actions = {
+            update-props = {
+                bluez5.auto-connect = [ a2dp_sink ]
+                bluez5.a2dp.aac.bitratemode = 0  # CBR 256 kbps
+                bluez5.profile = a2dp-sink
+                bluez5.autoswitch-profile = false
+            }
+        }
+    }
+    {
+        matches = [
+            {
+                node.name = "~bluez_input.*"
+            }
+            {
+                node.name = "~bluez_output.*"
+            }
+        ]
+        actions = {
+            update-props = {
+                node.pause-on-idle = false
+'
+if [ "$audio_hq_resamp" ]; then
+    OBJ="$OBJ"\
+'                resample.quality = 15
+'
+else
+    OBJ="$OBJ"\
+'                resample.quality = 9
+'
+fi
+OBJ="$OBJ"\
+'                session.suspend-timeout-seconds = 0
+                bluez5.media-source-role = playback
+            }
+        }
+    }
+]
+'
+if [ "$bluetooth" ]; then
+    OBJ_PATH='/etc/pipewire/media-session.d/bluez-monitor.conf'
+    __file_write_ow_soft;
+fi

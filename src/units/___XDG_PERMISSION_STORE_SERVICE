@@ -1,0 +1,17 @@
+___XDG_PERMISSION_STORE_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=sandboxed app permission store
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.impl.portal.PermissionStore
+ExecStart=/usr/lib/xdg-permission-store
+Slice=session.slice
+'
+    OBJ_PATH="$home/.config/systemd/user/xdg-permission-store.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

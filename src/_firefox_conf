@@ -1,1 +1,25 @@
-main
+__cmd -- \
+    git clone \
+    --depth 1 \
+    'https://github.com/mscalindt/firefox-profile' \
+    "${TMPDIR:-/tmp}"/firefox-profile
+
+OBJ="${TMPDIR:-/tmp}/firefox-profile/src/mscalindt"
+OBJ_PATH="$home/.mozilla/firefox/mscalindt"
+__obj_write \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group" \
+    -no-avoid
+__cmd -- chown -Rh "$uid":"$gid" -- "$home/.mozilla/firefox/mscalindt"
+
+OBJ="${TMPDIR:-/tmp}/firefox-profile/src/profiles.ini"
+OBJ_PATH="$home/.mozilla/firefox/profiles.ini"
+__obj_write \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ_PATH="$home/.mozilla/firefox/installs.ini"
+__action -del
+
+OBJ_PATH="${TMPDIR:-/tmp}"/firefox-profile
+__action -del

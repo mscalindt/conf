@@ -1,0 +1,14 @@
+___DISPLAY_SERVER_wayland() {
+    OBJ=\
+'GTK_A11Y=none
+GDK_BACKEND=wayland
+MOZ_ENABLE_WAYLAND=1
+QT_QPA_PLATFORM=wayland
+QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+SDL_VIDEODRIVER=wayland
+'
+    OBJ_PATH="$home/.syscfg_env/display_server"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

@@ -1,1 +1,26 @@
-main
+if [ "$ipv6" ]; then
+    OBJ=\
+'static domain_name_servers=::1 127.0.0.1
+duid
+slaac private
+'
+else
+    OBJ=\
+'static domain_name_servers=127.0.0.1
+clientid
+noipv6
+'
+fi
+OBJ="$OBJ"\
+'option classless_static_routes
+option interface_mtu
+option host_name
+option rapid_commit
+require dhcp_server_identifier
+
+noarp
+nohook resolv.conf
+noipv4ll
+'
+OBJ_PATH='/etc/dhcpcd.conf'
+__file_write_ow_soft;

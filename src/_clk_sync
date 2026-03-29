@@ -1,1 +1,4 @@
-main
+# RTC clock sync using the closest NTP server (pool.ntp.org)
+
+__cmd -- ntpd -gGLnq pool.ntp.org
+__cmd -- hwclock -w

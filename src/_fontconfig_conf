@@ -1,1 +1,48 @@
-main
+OBJ=\
+'<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+  <alias>
+    <family>serif</family>
+    <prefer>
+      <family>DejaVu Serif</family>
+    </prefer>
+  </alias>
+  <alias>
+    <family>DejaVu Serif</family>
+    <default>
+      <family>serif</family>
+    </default>
+  </alias>
+
+  <alias>
+    <family>sans-serif</family>
+    <prefer>
+      <family>Cantarell</family>
+    </prefer>
+  </alias>
+  <alias>
+    <family>Cantarell</family>
+    <default>
+      <family>sans-serif</family>
+    </default>
+  </alias>
+
+  <alias>
+    <family>monospace</family>
+    <prefer>
+      <family>Cantarell</family>
+    </prefer>
+  </alias>
+  <alias>
+    <family>Cantarell</family>
+    <default>
+      <family>monospace</family>
+    </default>
+  </alias>
+</fontconfig>
+'
+OBJ_PATH="$home/.config/fontconfig/conf.d/01-font.conf"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"

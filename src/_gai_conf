@@ -1,1 +1,10 @@
-main
+OBJ=\
+'precedence ::ffff:0:0/96  100
+'
+if [ "$ipv6" ]; then
+    OBJ_PATH='/etc/gai.conf'
+    __action -del
+else
+    OBJ_PATH='/etc/gai.conf'
+    __file_write_ow_soft;
+fi

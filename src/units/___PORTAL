@@ -1,0 +1,9 @@
+___PORTAL() {
+    OBJ=\
+'GTK_USE_PORTAL=1
+'
+    OBJ_PATH="$home/.syscfg_env/portal"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

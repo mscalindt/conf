@@ -1,1 +1,5 @@
-main
+OBJ=\
+'permit persist :wheel as root
+'
+OBJ_PATH='/etc/doas.conf'
+__file_write_ow_soft -mode 0400

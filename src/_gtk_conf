@@ -1,1 +1,68 @@
-main
+OBJ=\
+'gtk-cursor-theme-name="Breeze"
+gtk-font-name="Cantarell 12"
+#gtk-document-font-name="DejaVu Serif 12"
+#gtk-monospace-font-name="Cantarell 12"
+gtk-cursor-theme-size=0
+gtk-application-prefer-dark-theme=true
+gtk-enable-primary-paste=false
+gtk-toolbar-style=GTK_TOOLBAR_ICONS
+gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+gtk-button-images=1
+gtk-menu-images=1
+gtk-enable-event-sounds=0
+gtk-enable-input-feedback-sounds=0
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle=hintfull
+gtk-xft-rgba=rgb
+'
+OBJ_PATH="$home/.gtkrc-2.0"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
+'.titlebar,
+window {
+	border-radius: 0;
+	box-shadow: none;
+}
+
+decoration {
+	box-shadow: none;
+}
+
+decoration:backdrop {
+	box-shadow: none;
+}
+'
+OBJ_PATH="$home/.config/gtk-3.0/gtk.css"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
+'[Settings]
+gtk-cursor-theme-name="Breeze"
+gtk-font-name="Cantarell 12"
+#gtk-document-font-name="DejaVu Serif 12"
+#gtk-monospace-font-name="Cantarell 12"
+gtk-cursor-theme-size=0
+gtk-application-prefer-dark-theme=true
+gtk-enable-primary-paste=false
+gtk-toolbar-style=GTK_TOOLBAR_ICONS
+gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+gtk-button-images=1
+gtk-menu-images=1
+gtk-enable-event-sounds=0
+gtk-enable-input-feedback-sounds=0
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle=hintfull
+gtk-xft-rgba=rgb
+'
+OBJ_PATH="$home/.config/gtk-3.0/settings.ini"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"

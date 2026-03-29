@@ -1,0 +1,17 @@
+___XDG_DOCUMENT_PORTAL_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=flatpak document portal service
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.portal.Documents
+ExecStart=/usr/lib/xdg-document-portal
+Slice=session.slice
+'
+    OBJ_PATH="$home/.config/systemd/user/xdg-document-portal.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

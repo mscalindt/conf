@@ -1,1 +1,12 @@
-main
+OBJ=\
+'color=2b2e37
+indicator-idle-visible
+inside-color=2b2e37
+ring-color=0A75AD
+layout-bg-color=2b2e37
+layout-border-color=2b2e37
+'
+OBJ_PATH="$home/.swaylock/config"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"

@@ -1,1 +1,20 @@
-main
+[ "$env" ] || return 0
+
+___BASH_PROFILE;
+___ENV;
+
+if [ "$kvantum" ]; then
+    ___QT_THEME;
+fi
+
+if [ "$wayland" ]; then
+    ___DISPLAY_SERVER_wayland;
+
+    if [ "$portal" ]; then
+        ___PORTAL;
+    fi
+
+    if [ "$sway" ]; then
+        ___WM_sway;
+    fi
+fi

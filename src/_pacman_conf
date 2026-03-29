@@ -1,1 +1,28 @@
-main
+[ "$arch_linux" ] || return 0
+
+OBJ=
+OBJ_PATH='/etc/pacman.conf'
+__ed -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
+    -m s -s \
+    'Color' \
+    'Color' \
+    -s \
+    'ParallelDownloads' \
+    'ParallelDownloads = 5' \
+    -m s -s \
+    'VerbosePkgLists' \
+    'VerbosePkgLists' \
+    -s \
+    'NoExtract' \
+    'NoExtract = etc/xdg/autostart/*.desktop'
+OBJ="$OBJ"
+__ed -crc 3803429353 -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
+    -m s -s \
+    '[multilib]' \
+    '[multilib]' \
+    -m 94 -s \
+    '' \
+    "Include = $arch_mirlist"
+OBJ="$OBJ"
+OBJ_PATH='/etc/pacman.conf'
+__file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_pacman_conf" -sanit -trunc

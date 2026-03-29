@@ -1,0 +1,22 @@
+___PIPEWIRE_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=PipeWire Multimedia Service
+
+[Service]
+ExecStart=/usr/bin/pipewire
+
+[Install]
+WantedBy=default.target
+'
+    OBJ_PATH="$home/.config/systemd/user/pipewire.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ="$home/.config/systemd/user/pipewire.service"
+    OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

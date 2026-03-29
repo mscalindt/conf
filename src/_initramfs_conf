@@ -1,1 +1,21 @@
-main
+[ "$arch_linux" ] || return 0
+
+if [ "$m533ia" ]; then
+    OBJ=\
+'MODULES=(amdgpu pinctrl-amd)
+'
+else
+    OBJ=\
+'MODULES=()
+'
+fi
+OBJ="$OBJ"\
+'BINARIES=()
+FILES=()
+HOOKS=(base udev autodetect microcode modconf keyboard block filesystems fsck)
+MODULES_DECOMPRESS="yes"
+'
+OBJ_PATH='/etc/mkinitcpio.conf'
+__file_write_ow_soft;
+
+__cmd -- mkinitcpio -P

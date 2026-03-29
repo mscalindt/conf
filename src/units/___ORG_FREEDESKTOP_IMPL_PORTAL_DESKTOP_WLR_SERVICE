@@ -1,0 +1,11 @@
+___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE() {
+    OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.impl.portal.desktop.wlr
+Exec=/usr/bin/true
+'
+    OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.impl.portal.desktop.wlr.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

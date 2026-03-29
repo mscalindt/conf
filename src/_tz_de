@@ -1,1 +1,5 @@
-main
+OBJ='/usr/share/zoneinfo/Europe/Berlin'
+OBJ_PATH='/etc/localtime'
+__obj_link_ow_soft;
+
+__cmd -- hwclock -w

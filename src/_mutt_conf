@@ -1,1 +1,39 @@
-main
+OBJ=\
+'# Personal
+set realname = "Dimitar Yurukov"
+set from = "mscalindt@gmail.com"
+
+# SMTP
+set smtp_url = "smtps://mscalindt@smtp.gmail.com"
+set ssl_force_tls = yes
+
+# IMAP
+set imap_user = "mscalindt@gmail.com"
+set folder = "imaps://imap.gmail.com"
+set spoolfile = "imaps://imap.gmail.com/INBOX"
+
+# Settings
+set signature="~/.mutt/muttsig"
+set send_charset="us-ascii:utf-8"
+set charset = UTF-8
+set edit_headers = yes
+set use_from = yes
+set envelope_from = yes
+unset use_domain
+
+# Keybindings
+bind index "^" imap-fetch-mail
+'
+OBJ_PATH="$home/.mutt/muttrc"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
+'PGP: https://github.com/mscalindt.gpg
+Email: mscalindt@gmail.com
+'
+OBJ_PATH="$home/.mutt/muttsig"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"

@@ -1,1 +1,5 @@
-main
+OBJ=\
+'user_allow_other
+'
+OBJ_PATH='/etc/fuse.conf'
+__file_write_ow_soft;

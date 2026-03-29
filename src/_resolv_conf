@@ -1,1 +1,25 @@
-main
+if [ "$dns" ]; then
+    if [ "$ipv6" ]; then
+        OBJ=\
+'nameserver ::1
+nameserver 127.0.0.1
+'
+    else
+        OBJ=\
+'nameserver 127.0.0.1
+'
+    fi
+    if [ "$dnsmasq" ]; then
+        OBJ="$OBJ"\
+'options trust-ad
+'
+    fi
+    OBJ_PATH='/etc/resolv.conf'
+    __file_write_ow_soft;
+    if command -v chattr > /dev/null 2>&1; then
+        __cmd -- chattr +i '/etc/resolv.conf'
+    fi
+else
+    OBJ_PATH='/etc/resolv.conf'
+    __action -del
+fi

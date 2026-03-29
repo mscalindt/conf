@@ -1,0 +1,17 @@
+___XDG_DESKTOP_PORTAL_WLR_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Portal service (wlroots implementation)
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.impl.portal.desktop.wlr
+ExecStart=/usr/lib/xdg-desktop-portal-wlr
+Slice=session.slice
+'
+    OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-wlr.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

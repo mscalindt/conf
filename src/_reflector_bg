@@ -1,1 +1,21 @@
-main
+__cmd -req-out -out-save OBJ -- \
+    reflector \
+    --country Bulgaria \
+    --connection-timeout 1 \
+    --download-timeout 20 \
+    --protocol https \
+    --completion-percent 100 \
+    --sort rate \
+    --threads 8 \
+    --latest 10 \
+    --number 3
+OBJ="$OBJ"
+__ed -- \
+    -m mof -m p -s \
+    'Server =' \
+    'Server =' \
+    -r '' \
+    - ''
+OBJ="$OBJ"
+OBJ_PATH="$arch_mirlist"
+__file_write_ow_soft;

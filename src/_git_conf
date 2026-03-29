@@ -1,1 +1,32 @@
-main
+OBJ=\
+'[core]
+	editor = nano
+[credential]
+	helper = cache --timeout=86400
+[http]
+	version = HTTP/2
+[merge]
+	log = 10000
+[rerere]
+	enabled = true
+[sendemail]
+        smtpuser = mscalindt@gmail.com
+	smtpserver = smtp.gmail.com
+	smtpencryption = tls
+	smtpserverport = 587
+[user]
+	email = mscalindt@protonmail.com
+	name = Dimitar Yurukov
+	signingkey = 7D1F56FAD6FB86652A60BEE65BC3343816EAB179
+[commit]
+	gpgsign = 1
+[color "diff"]
+	old = red
+	new = yellow
+[submodule]
+	recurse = true
+'
+OBJ_PATH="$home/.gitconfig"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"

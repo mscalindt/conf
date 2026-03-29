@@ -1,1 +1,80 @@
-main
+# Defines free space as usable sectors within the block size, because we start
+# the first partition on the $block_size sector anyway (for clarity, and
+# because we do not know the first usable sector). Keeps things consistent; we
+# do not care for the minuscule (~32 MiB total from start and end if
+# $block_size=4096) of space loss. Outside start/end sectors do not matter;
+# only the multiple of sectors inside the partitioning (partitioning start/end)
+# itself matters for alignment.
+
+case "$drive_dev" in
+    *'/nvme'*)
+        if command -v nvme > /dev/null 2>&1 && [ "$optimal_lbaf" ]; then
+            nvme id-ns "$drive_dev" | { while IFS= read -r LINE; do
+                case "$LINE" in
+                    'flbas'*)
+                        FLBAS="${LINE#*: }"
+                    ;;
+                    'lbaf'*)
+                        if [ "$LBAF_RP" ]; then
+                            LBAF_RP_NEW="${LINE#*rp:}"
+                            LBAF_RP_NEW="${LBAF_RP_NEW%% *}"
+
+                            if [ "${LBAF_RP_NEW#0x}" -lt "${LBAF_RP#0x}" ]; then
+                                LBAF_N="${LINE#*lbaf}"
+                                LBAF_N="${LBAF_N#"${LBAF_N%%[! ]*}"}"
+                                LBAF_N="${LBAF_N%% *}"
+                                LBAF_RP="$LBAF_RP_NEW"
+                            fi
+                        else
+                            LBAF_N="${LINE#*lbaf}"
+                            LBAF_N="${LBAF_N#"${LBAF_N%%[! ]*}"}"
+                            LBAF_N="${LBAF_N%% *}"
+                            LBAF_RP="${LINE#*rp:}"
+                            LBAF_RP="${LBAF_RP%% *}"
+                        fi
+                    ;;
+                esac
+                done
+
+                case "$FLBAS" in
+                    "$LBAF_RP") __info -white - 'Already using optimal LBAF!' ;;
+                    *) __cmd -- nvme format -l "$LBAF_N" "$drive_dev" ;;
+                esac
+            }
+        else
+            __info -white - 'LBAF will not be queried.'
+        fi
+    ;;
+esac
+
+if command -v sgdisk > /dev/null 2>&1; then
+    (
+        __cmd -- sgdisk -Z "$drive_dev"
+
+        FREE=$(sgdisk -E "$drive_dev")
+        FREE=$((FREE - block_size))
+
+        START="$block_size"
+        END=$((START + (1024*1024*1024 / block_size) - 1))
+        if [ "$END" -gt "$FREE" ]; then
+            __err -red - 'Not enough space.'; exit 1
+        fi
+        __cmd -- sgdisk -n 1:"$START":"$END" -t 1:EF00
+
+        START=$((END + 1))
+        END=$((FREE - (1024*1024*1024 * partitioning_reserve_gib / block_size)))
+        case "$END" in
+            '-'*) __err -red - 'Not enough space.'; exit 1 ;;
+        esac
+        __cmd -- sgdisk -n 2:"$START":"$END" -t 2:8300
+    )
+
+    if [ "$efi_fat" ]; then
+        __cmd -- mkfs.fat -S "$block_size" -F 32 "$efi_partition"
+    fi
+    if [ "$root_ext4" ]; then
+        __cmd -- mkfs.ext4 -b "$block_size" "$root_partition"
+    fi
+else
+    __info -white - "Partition the drive manually with $block_size alignment."
+fi

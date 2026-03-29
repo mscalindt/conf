@@ -1,0 +1,17 @@
+___XDG_DESKTOP_PORTAL_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Portal service
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.portal.Desktop
+ExecStart=/usr/lib/xdg-desktop-portal
+Slice=session.slice
+'
+    OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

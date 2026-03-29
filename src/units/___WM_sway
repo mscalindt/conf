@@ -1,0 +1,11 @@
+___WM_sway() {
+    OBJ=\
+'XDG_CURRENT_DESKTOP=sway
+XDG_SESSION_DESKTOP=sway
+DESKTOP_SESSION=sway
+'
+    OBJ_PATH="$home/.syscfg_env/wm"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

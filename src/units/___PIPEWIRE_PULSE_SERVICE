@@ -1,0 +1,24 @@
+___PIPEWIRE_PULSE_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=PipeWire PulseAudio
+After=pipewire.service
+BindsTo=pipewire.service
+
+[Service]
+ExecStart=/usr/bin/pipewire-pulse
+
+[Install]
+WantedBy=pipewire.service
+'
+    OBJ_PATH="$home/.config/systemd/user/pipewire-pulse.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ="$home/.config/systemd/user/pipewire-pulse.service"
+    OBJ_PATH="$home/.config/systemd/user/default.target.wants/pipewire-pulse.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

@@ -1,10 +1,11 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Run](#run)
-3. [Releases](#releases)
-4. [License](#license)
-5. [Notice](#notice)
+2. [Build](#build)
+3. [Run](#run)
+4. [Releases](#releases)
+5. [License](#license)
+6. [Notice](#notice)
 
 ## Introduction
 
@@ -14,13 +15,15 @@ The system configuration/dotfiles of `mscalindt`. Managed with `syscfg`.
 [syscfg at GitLab](https://gitlab.com/mscalindt/syscfg)\
 [syscfg at Codeberg](https://codeberg.org/mscalindt/syscfg)
 
-## Run
+## Build
 
 Clone the repository using the `--recursive` option to ensure all submodules
 are downloaded.
 
 ```
 git clone --recursive https://github.com/mscalindt/conf
+cd conf
+make
 ```
 
 If the repository has been cloned without the submodules, they can be
@@ -30,17 +33,22 @@ initialized and fetched with:
 git submodule update --init --recursive
 ```
 
-To execute a function, run `make` as root (currently required by syscfg) with
-the `FUNC` variable defined. Example:
+## Run
+
+Specify the `CONF` variable or let recipes run with the default device
+configuration file.
+
+To execute a specific function, use the `run` recipe with the `FUNC` variable
+defined. Example:
 
 ```
-$ doas make FUNC=_gov_performance
+$ make FUNC=_face_bin run
 ```
 
-or manually, by running `syscfg` and giving it the path to a function:
+To execute all intended software configuration, use the `config` recipe:
 
 ```
-$ doas lib/syscfg/src/syscfg "$PWD"/src/_gov_performance
+$ make config
 ```
 
 ## Releases

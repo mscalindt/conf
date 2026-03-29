@@ -1,1 +1,101 @@
-main
+OBJ=\
+'context.properties = {
+    module.rt = false  # disable rtkit module
+
+    mem.allow-mlock = false  # swap is not used -> mlock is useless overhead
+
+    default.clock.quantum-limit = 8192
+}
+
+filter.properties = {
+    node.latency = 1024/44100  # 44.1k with ~23.2ms
+}
+
+stream.properties = {
+    node.latency = 1024/44100  # 44.1k with ~23.2ms
+'
+if [ "$audio_hq_resamp" ]; then
+    OBJ="$OBJ"\
+'    resample.quality = 15
+'
+else
+    OBJ="$OBJ"\
+'    resample.quality = 9
+'
+fi
+OBJ="$OBJ"\
+'}
+
+alsa.properties = {
+    alsa.rate = 44100  # 44.100 kHz
+}
+'
+OBJ_PATH='/etc/pipewire/client.conf.d/client.conf'
+__file_write_ow_soft;
+
+OBJ=\
+'context.properties = {
+    module.rt = false  # disable rtkit module
+    module.x11.bell = false  # disable x11 bell module
+'
+if [ ! "$portal" ]; then
+    OBJ="$OBJ"\
+'
+    module.portal = false  # disable portal module
+'
+fi
+OBJ="$OBJ"\
+'
+    mem.allow-mlock = false  # swap is not used -> mlock is useless overhead
+
+    loop.rt-prio = 0  # disable module-rt prio
+
+    # 44.1k with ~23.2ms; related limits noted for explicit config
+    default.clock.rate = 44100
+    default.clock.allowed-rates = [ 44100 ]
+    default.clock.quantum = 1024
+    default.clock.min-quantum = 32
+    default.clock.max-quantum = 2048
+    default.clock.quantum-limit = 8192
+    default.clock.quantum-floor = 4
+}
+'
+OBJ_PATH='/etc/pipewire/pipewire.conf.d/pipewire.conf'
+__file_write_ow_soft;
+
+OBJ=\
+'context.properties = {
+    mem.allow-mlock = false  # swap is not used -> mlock is useless overhead
+
+    default.clock.quantum-limit = 8192
+}
+
+pulse.properties = {
+    pulse.allow-module-loading = false  # we use no modules
+    # 44.1k with ~23.2ms
+    pulse.min.req = 128/44100  # ~2.9ms
+    pulse.default.req = 1024/44100  # ~23.2ms
+    pulse.min.frag = 128/44100  # ~2.9ms
+    pulse.default.frag = 88200/44100  # 2s
+    pulse.default.tlength = 88200/44100  # 2s
+    pulse.min.quantum = 128/44100  # ~2.9ms
+    pulse.idle.timeout = 0  # I guess disables suspend functionality
+}
+
+stream.properties = {
+    node.latency = 1024/44100  # 44.1k with ~23.2ms
+'
+if [ "$audio_hq_resamp" ]; then
+    OBJ="$OBJ"\
+'    resample.quality = 15
+'
+else
+    OBJ="$OBJ"\
+'    resample.quality = 9
+'
+fi
+OBJ="$OBJ"\
+'}
+'
+OBJ_PATH='/etc/pipewire/pipewire-pulse.conf.d/pipewire-pulse.conf'
+__file_write_ow_soft;

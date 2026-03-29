@@ -1,0 +1,5 @@
+___RTKIT_DAEMON_SERVICE() {
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
+    __obj_link_ow_soft;
+}

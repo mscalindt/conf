@@ -1,0 +1,23 @@
+___BLUETOOTH_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Bluetooth service
+Requires=dbus.service
+After=dbus.service
+
+[Service]
+Type=dbus
+BusName=org.bluez
+ExecStart=/usr/lib/bluetooth/bluetoothd
+TimeoutStopSec=3
+
+[Install]
+WantedBy=multi-user.target
+'
+    OBJ_PATH='/etc/systemd/system/bluetooth.service'
+    __file_write_ow_soft;
+
+    OBJ='/etc/systemd/system/bluetooth.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluetooth.service'
+    __obj_link_ow_soft;
+}

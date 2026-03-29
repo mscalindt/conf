@@ -1,1 +1,239 @@
-main
+OBJ=\
+'# System management
+sys_pwr_off() { pwr_off "$@"; }
+sys_pwr_reset() { pwr_reset "$@"; }
+sys_pkg_get() { pkg_get "$@"; }
+sys_pkg_rm() { pkg_rm "$@"; }
+sys_pkg_rmF() { pkg_rmF "$@"; }
+sys_up() { up; }
+sys_upF() { upF; }
+
+# Package management
+pkg_get() (
+    case ":$1" in
+        :)
+            printf "%bERROR:%b No package(s) specified.\n" \
+                   "\033[1;31m" "\033[0m"
+            exit 2
+        ;;
+    esac
+
+    ARGS='\''--sync'\''
+
+    while [ "$1" ]; do
+        ARGS="$ARGS"" \"$1\""
+        shift
+    done
+
+    eval "su -c '\''pacman ${ARGS}'\''"
+)
+pkg_rm() (
+    case ":$1" in
+        :)
+            printf "%bERROR:%b No package(s) specified.\n" \
+                   "\033[1;31m" "\033[0m"
+            exit 2
+        ;;
+    esac
+
+    ARGS='\''--remove'\''
+    ARGS="$ARGS"'\'' --nosave'\''
+    ARGS="$ARGS"'\'' --recursive'\''
+
+    while [ "$1" ]; do
+        ARGS="$ARGS"" \"$1\""
+        shift
+    done
+
+    eval "su -c '\''pacman ${ARGS}'\''"
+)
+pkg_rmF() (
+    case ":$1" in
+        :)
+            printf "%bERROR:%b No package(s) specified.\n" \
+                   "\033[1;31m" "\033[0m"
+            exit 2
+        ;;
+    esac
+
+    ARGS='\''--remove'\''
+    ARGS="$ARGS"'\'' --nosave'\''
+    ARGS="$ARGS"'\'' --recursive'\''
+    ARGS="$ARGS"'\'' -dd'\''
+
+    while [ "$1" ]; do
+        ARGS="$ARGS"" \"$1\""
+        shift
+    done
+
+    eval "su -c '\''pacman ${ARGS}'\''"
+)
+
+# Power management
+pwr_off() (
+    case ":$1" in
+        :) su -c '\''shutdown -P now'\'' ;;
+        *) su -c "shutdown -P $1" ;;
+    esac
+)
+pwr_reset() (
+    case ":$1" in
+        :) su -c '\''shutdown -r now'\'' ;;
+        *) su -c "shutdown -r $1" ;;
+    esac
+)
+
+# Update management
+up() (
+    ARGS='\''--sync'\''
+    ARGS="$ARGS"'\'' --refresh'\''
+    ARGS="$ARGS"'\'' --sysupgrade'\''
+
+    eval "su -c '\''pacman ${ARGS}'\''"
+)
+upF() (
+    ARGS='\''--sync'\''
+    ARGS="$ARGS"'\'' -yyuu'\''
+
+    eval "su -c '\''pacman ${ARGS}'\''"
+)
+
+# gpg
+gpg_d() {
+    case "$1" in
+        *.gpg) ;;
+        *) echo EINVAL; return 1 ;;
+    esac
+
+    [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
+    [ ! -e "${1%.gpg}" ] && [ ! -h "${1%.gpg}" ] || { echo EEXIST; return 1; }
+
+    gpg -o "${1%.gpg}" -d "$1"
+    touch -r "$1" "${1%.gpg}"
+}
+gpg_e() {
+    case "$1" in
+        *.gpg) echo EINVAL; return 1 ;;
+    esac
+
+    [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
+    [ ! -e "$1".gpg ] && [ ! -h "$1".gpg ] || { echo EEXIST; return 1; }
+
+    gpg -r 7D1F56FAD6FB86652A60BEE65BC3343816EAB179 --compress-algo none -e "$1"
+    touch -r "$1" "$1".gpg
+}
+
+# tar
+tar_c() {
+    case "$1" in
+        *.tar) echo EINVAL; return 1 ;;
+    esac
+
+    [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
+    [ ! -e "$1".tar ] && [ ! -h "$1".tar ] || { echo EEXIST; return 1; }
+
+    tar --numeric-owner -cvpf "$1".tar "$1"
+    touch -r "$1" "$1".tar
+}
+tar_e() {
+    case "$1" in
+        *.tar) ;;
+        *) echo EINVAL; return 1 ;;
+    esac
+
+    [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
+    [ ! -e "${1%.tar}" ] && [ ! -h "${1%.tar}" ] || { echo EEXIST; return 1; }
+
+    tar --numeric-owner -xvpf "$1"
+}
+
+# unfinished
+steamwinerun() ( WINEPREFIX="$HOME"/.steam/root/steamapps/compatdata/$1/pfx wine "$2"; )
+dgrd() (
+    if [ ! "$1" ] || [ ! "$2" ]; then
+        printf "%s\n" '\''STEP (1-X) = $1'\''
+        printf "%s\n" '\''NAME = $2+'\''
+        exit 2
+    fi
+
+    STEP="$1"; shift
+    DIR=/var/cache/pacman/pkg
+    OUT_FLAG=0
+
+    while [ "$#" -ge 1 ]; do
+        NAME="$1"
+        FILES=$(
+            find "$DIR" -name "$NAME"-[0123456789]*.zst -printf "%T+ %p\n" | \
+            sort -r
+        )
+
+        if [ ! "$FILES" ]; then
+            printf "%s\n" '\''ERR NO FILES. NAME=%s'\'' "$NAME"
+            exit 1
+        fi
+
+        x=0; while IFS= read -r LINE; do
+            [ "$x" = "$STEP" ] || { x=$((x + 1)); continue; }
+
+            LINE="${LINE#* }"
+            if [ "$OUT_FLAG" = 0 ]; then
+                printf "%s\n" '\''pacman -U \'\''
+                OUT_FLAG=1
+            fi
+            if [ "$2" ]; then
+                printf "%s %s\n" "$LINE" '\''\'\''
+            else
+                printf "%s\n" "$LINE"
+            fi
+            shift; continue 2
+        done <<EOF
+$FILES
+EOF
+
+        printf "ERR PKG DGRD STEP NO EXIST. x=%s\n" "$x"
+        exit 1
+    done
+)
+'
+OBJ_PATH="$home/.bash_functions"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
+'# Don'\''t parse .bashrc if not running interactively
+[[ $- != *i* ]] && return
+
+PS1=\
+'\''\[\033[1;32m\]['\''\
+"\$(\
+RC=\$?; \
+[ "\$RC" -eq 0 ] \
+    && printf "%s%d" '\''\[\033[1;32m\]'\'' "\$RC" \
+    || printf "%s%d" '\''\[\033[1;33m\]'\'' "\$RC" \
+)"'\'' '\''\
+'\''\[\033[1;36m\]\u@\h '\''\
+'\''\[\033[1;31m\]\W\[\033[1;32m\]]\$\[\033[0m\] '\''
+
+export HISTCONTROL=ignoreboth:erasedups
+
+alias ls='\''ls --color'\''
+alias grep='\''grep --color=always'\''
+alias ip='\''ip --color'\''
+alias yt-dlp='\''yt-dlp --mtime'\''
+alias clr='\''tput reset; stty -ixon susp undef'\''
+alias gfix='\''git add .; git commit --amend --date="now" -s'\''
+alias gfixf='\''git add .; git commit --amend --date="now" --no-edit -s'\''
+alias gchk='\''git diff --check HEAD~10'\''
+
+# Source useful custom functions
+[ ! -f "$HOME"/.bash_functions ] || . "$HOME"/.bash_functions
+
+# '\''-ixon'\'': Disable "Ctrl + S"; WHY IS THIS STILL DEFAULT?
+# '\''susp undef'\'': Disable "Ctrl + Z"
+stty -ixon susp undef
+'
+OBJ_PATH="$home/.bashrc"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"

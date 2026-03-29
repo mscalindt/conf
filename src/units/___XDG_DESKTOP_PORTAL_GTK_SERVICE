@@ -1,0 +1,17 @@
+___XDG_DESKTOP_PORTAL_GTK_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Portal service (GTK/GNOME implementation)
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.impl.portal.desktop.gtk
+ExecStart=/usr/lib/xdg-desktop-portal-gtk
+Slice=session.slice
+'
+    OBJ_PATH="$home/.config/systemd/user/xdg-desktop-portal-gtk.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

@@ -1,1 +1,17 @@
-main
+[ "$arch_linux" ] || return 0
+
+OBJ=
+OBJ_PATH='/etc/makepkg.conf'
+__ed -log "${TMPDIR:-/tmp}/_makepkg_conf" -- \
+    -m p -s \
+    'CFLAGS="-march=x86-64 -mtune=' \
+    'CFLAGS="-march=x86-64 -mtune=native -O2 -pipe -fno-plt -fexceptions \' \
+    -s \
+    'MAKEFLAGS="-j' \
+    'MAKEFLAGS="-j6"' \
+    -m p -s \
+    'OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge ' \
+    'OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge !debug lto)'
+OBJ="$OBJ"
+OBJ_PATH='/etc/makepkg.conf'
+__file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_makepkg_conf" -sanit -trunc

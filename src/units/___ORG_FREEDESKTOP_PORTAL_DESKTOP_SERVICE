@@ -1,0 +1,11 @@
+___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE() {
+    OBJ=\
+'[D-BUS Service]
+Name=org.freedesktop.portal.Desktop
+Exec=/usr/bin/true
+'
+    OBJ_PATH="$home/.local/share/dbus-1/services/org.freedesktop.portal.Desktop.service"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

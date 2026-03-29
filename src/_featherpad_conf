@@ -1,1 +1,69 @@
-main
+OBJ=\
+'[text]
+appendEmptyLine=true
+autoBracket=false
+autoReplace=false
+autoSave=false
+autoSaveInterval=1
+darkBgColorValue=30
+darkColorScheme=true
+dateFormat=
+dictionaryPath=
+executeCommand=
+executeScripts=false
+font="Source Code Pro,12,-1,5,50,0,0,0,0,0"
+inertialScrolling=false
+lightBgColorValue=255
+lineNumbers=true
+maxSHSize=2
+noIndent=false
+noSyntaxHighlighting=false
+noWrap=false
+pastePaths=false
+recentFiles=
+recentFilesNumber=10
+recentOpened=false
+removeTrailingSpaces=false
+saveLastFilesList=false
+saveUnmodified=false
+scrollJumpWorkaround=false
+selectionHighlighting=false
+showEndings=false
+showWhiteSpace=false
+skipNonText=true
+spellCheckFromStart=false
+textMargin=false
+textTabSize=8
+thickCursor=false
+vLineDistance=80
+
+[window]
+closeWithLastTab=false
+disableMenubarAccel=false
+fullscreen=false
+hideSearchbar=false
+hideSingleTab=false
+max=true
+menubarTitle=false
+nativeDialog=true
+noMenubar=false
+noToolbar=true
+openInWindows=false
+position=none
+prefSize=@Size(497 530)
+sharedSearchHistory=false
+showCursorPos=false
+showLangSelector=false
+showStatusbar=true
+sidePaneMode=false
+size=@Size(700 500)
+splitterPos=20
+startSize=@Size(700 500)
+sysIcons=false
+tabPosition=0
+tabWrapAround=false
+'
+OBJ_PATH="$home/.config/featherpad/fp.conf"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"

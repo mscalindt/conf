@@ -1,1 +1,11 @@
-main
+# "Removable" GRUB UEFI installation (NVRAM-less... when no NVRAM entries)
+
+__cmd -- \
+    grub-install \
+    --target=x86_64-efi \
+    --efi-directory="$efi_mnt" \
+    --boot-directory="$efi_mnt"/EFI/BOOT \
+    --removable \
+    --no-nvram
+
+__cmd -- grub-mkconfig -o "$efi_mnt"/EFI/BOOT/grub/grub.cfg

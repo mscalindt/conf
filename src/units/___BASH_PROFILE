@@ -1,0 +1,11 @@
+___BASH_PROFILE() {
+    OBJ=\
+'for file in "$HOME"/.syscfg_env/*; do
+    set -a; . "$file"; set +a
+done
+'
+    OBJ_PATH="$home/.bash_profile"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

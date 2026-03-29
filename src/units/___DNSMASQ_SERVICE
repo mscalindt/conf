@@ -1,0 +1,21 @@
+___DNSMASQ_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Caching DNS server
+Wants=dbus.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/dnsmasq -k --user=dnsmasq
+TimeoutStopSec=3
+
+[Install]
+WantedBy=multi-user.target
+'
+    OBJ_PATH='/etc/systemd/system/dnsmasq.service'
+    __file_write_ow_soft;
+
+    OBJ='/etc/systemd/system/dnsmasq.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/dnsmasq.service'
+    __obj_link_ow_soft;
+}

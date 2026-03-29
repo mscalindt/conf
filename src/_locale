@@ -1,1 +1,16 @@
-main
+# English locale config
+
+OBJ=\
+'LANG=en_US.UTF-8
+'
+OBJ_PATH='/etc/locale.conf'
+__file_write_ow_soft;
+
+OBJ=\
+'bg_BG.UTF-8 UTF-8
+en_US.UTF-8 UTF-8
+'
+OBJ_PATH='/etc/locale.gen'
+__file_write_ow_soft;
+
+__cmd -- locale-gen

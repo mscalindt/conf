@@ -1,1 +1,47 @@
-main
+[ "$systemd" ] || return 0
+
+if [ "$arch_linux" ]; then
+    ___AT_SPI_DBUS_BUS_SERVICE;
+    ___IWD_SERVICE;
+    ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_GTK_SERVICE;
+    ___ORG_FREEDESKTOP_IMPL_PORTAL_DESKTOP_WLR_SERVICE;
+    ___ORG_FREEDESKTOP_IMPL_PORTAL_PERMISSIONSTORE_SERVICE;
+    ___ORG_FREEDESKTOP_PORTAL_DESKTOP_SERVICE;
+    ___ORG_FREEDESKTOP_PORTAL_DOCUMENTS_SERVICE;
+    ___POLKIT_SERVICE;
+    ___RTKIT_DAEMON_SERVICE;
+fi
+
+if [ "$bluetooth" ]; then
+    ___BLUETOOTH_SERVICE;
+fi
+
+if [ "$dns" ] && [ "$dnsmasq" ]; then
+    ___DNSMASQ_SERVICE;
+fi
+
+if [ "$m533ia" ]; then
+    ___EVTEST_GRAB_SERVICE;
+fi
+
+if [ "$pipewire" ]; then
+    ___PIPEWIRE_SERVICE;
+    ___PIPEWIRE_PULSE_SERVICE;
+
+    if [ "$arch_linux" ]; then
+        ___PIPEWIRE_SOCKET;
+        ___PIPEWIRE_PULSE_SOCKET;
+    fi
+
+    if [ "$pipewire_media_session" ]; then
+        ___PIPEWIRE_MEDIA_SESSION_SERVICE;
+    fi
+fi
+
+if [ "$portal" ]; then
+    ___XDG_DESKTOP_PORTAL_SERVICE;
+    ___XDG_DESKTOP_PORTAL_GTK_SERVICE;
+    ___XDG_DESKTOP_PORTAL_WLR_SERVICE;
+    ___XDG_DOCUMENT_PORTAL_SERVICE;
+    ___XDG_PERMISSION_STORE_SERVICE;
+fi

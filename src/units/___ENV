@@ -1,0 +1,10 @@
+___ENV() {
+    OBJ=\
+'EDITOR=nano
+PATH="${PATH}:$HOME/.local/bin:$HOME/scripts"
+'
+    OBJ_PATH="$home/.syscfg_env/env"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}

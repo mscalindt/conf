@@ -1,0 +1,30 @@
+___EVTEST_GRAB_SERVICE() {
+    OBJ=\
+'[Unit]
+Description=Grab m533ia keyboard at startup
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c '\''\
+device="$(/usr/bin/awk '\''\'\'''\''\
+/AT Translated Set 2 keyboard/ { found=1; next } \
+found && /Handlers=/ { \
+  for (i=1; i<=NF; i++) \
+    if ($i ~ /^event[0-9]+$/) { \
+      print "/dev/input/" $i; exit \
+    } \
+}'\''\'\'''\'' /proc/bus/input/devices)"; \
+exec /usr/bin/evtest --grab "$device"'\''
+User=root
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target
+'
+    OBJ_PATH='/etc/systemd/system/evtest-grab.service'
+    __file_write_ow_soft;
+
+    OBJ='/etc/systemd/system/evtest-grab.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/evtest-grab.service'
+    __obj_link_ow_soft;
+}

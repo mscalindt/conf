@@ -1,1 +1,21 @@
-main
+# Delete all boot entries (UEFI)
+
+set -- '/sys/firmware/efi/efivars'/Boot0*
+
+[ -e "$1" ] || {
+    __info -white - 'No valid entries have been found.'
+
+    return 0
+}
+
+set -- \
+    '/sys/firmware/efi/efivars'/BootOrder* \
+    '/sys/firmware/efi/efivars'/Boot0*
+
+if command -v chattr > /dev/null 2>&1; then
+    __cmd -- chattr -ia "$@"
+fi
+
+__cmd -- rm -f "$@"
+
+__info -white - 'The entries were removed; firmware will attempt recovery.'

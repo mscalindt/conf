@@ -1,1 +1,15 @@
-main
+if [ "$ipv6" ]; then
+    OBJ=\
+'::1              localhost
+127.0.0.1        localhost
+'
+else
+    OBJ=\
+'127.0.0.1        localhost
+'
+fi
+OBJ="$OBJ"\
+"127.0.1.1        $hostname
+"
+OBJ_PATH='/etc/hosts'
+__file_write_ow_soft;

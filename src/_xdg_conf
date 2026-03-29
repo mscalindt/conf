@@ -1,1 +1,45 @@
-main
+OBJ=\
+'# Programs that support:
+[Added Associations]
+application/json=featherpad.desktop
+application/javascript=firefox.desktop
+
+# Programs that don'\''t support:
+[Removed Associations]
+
+# Programs that will be used to open by default:
+[Default Applications]
+# /usr/lib/firefox/firefox: URLs / `.html` / `.pdf` / `.json`
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
+text/html=firefox.desktop
+application/pdf=firefox.desktop
+application/json=firefox.desktop
+# /usr/bin/featherpad: Text / Empty file / `.patch`/`.diff` / `.sh` / `.c` /
+# JavaScript source
+text/plain=featherpad.desktop
+inode/x-empty=featherpad.desktop
+text/x-diff=featherpad.desktop
+text/x-shellscript=featherpad.desktop
+text/x-c=featherpad.desktop
+application/javascript=featherpad.desktop
+'
+OBJ_PATH="$home/.config/mimeapps.list"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ="$home/.config/mimeapps.list"
+OBJ_PATH="$home/.local/share/applications/mimeapps.list"
+__obj_link_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
+'[icon theme]
+Inherits=Breeze
+'
+OBJ_PATH="$home/.icons/default/index.theme"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
