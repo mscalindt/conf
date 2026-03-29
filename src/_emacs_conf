@@ -87,6 +87,17 @@ OBJ=\
 (global-display-fill-column-indicator-mode 1)
 
 (setq vc-follow-symlinks t)
+
+(setq auto-mode-alist nil)
+(setq magic-mode-alist nil)
+(setq interpreter-mode-alist nil)
+(add-hook '\''find-file-hook
+          (lambda ()
+            (fundamental-mode)))
+(add-hook '\''after-change-major-mode-hook
+          (lambda ()
+            (unless (eq major-mode '\''fundamental-mode)
+              (fundamental-mode))))
 '
 OBJ_PATH="$home/.emacs.d/init.el"
 __file_write_ow_soft \
