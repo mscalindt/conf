@@ -11,6 +11,7 @@ focus_follows_mouse always
 assign [title="Steam"] 7
 assign [class="steam"] 7
 assign [app_id="featherpad"] 2
+assign [app_id="emacs"] 2
 
 # Tiling configuration for specific programs
 for_window [app_id="sway-app-launcher"] \
