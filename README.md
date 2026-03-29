@@ -9,7 +9,7 @@
 
 ## Introduction
 
-The system configuration/dotfiles of `mscalindt`. Managed with `syscfg`.
+The system configuration/dotfiles of `mscalindt` using the `syscfg` API.
 
 [syscfg at GitHub](https://github.com/mscalindt/syscfg)\
 [syscfg at GitLab](https://gitlab.com/mscalindt/syscfg)\
