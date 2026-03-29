@@ -85,6 +85,8 @@ OBJ=\
 
 (setq-default fill-column 80)
 (global-display-fill-column-indicator-mode 1)
+
+(setq vc-follow-symlinks t)
 '
 OBJ_PATH="$home/.emacs.d/init.el"
 __file_write_ow_soft \
