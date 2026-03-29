@@ -29,10 +29,10 @@ case "$MOD_ALIAS" in
             printf "%s\n" "$LOG" | {
                 while IFS= read -r LINE; do
                     case "$LINE" in
-                        *': [doc]'*)
+                        *': [doc]'* | *': [fmt]'*)
                             continue
                         ;;
-                        *'syscfg: '* | *'(): '*)
+                        *'syscfg: '* | *'(): '* | *'.gitmodules: '*)
                             printf "%s\n" "$LINE"
                         ;;
                         *)
