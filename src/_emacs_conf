@@ -1,15 +1,22 @@
 OBJ=\
-'(require '\''server)
-(unless (server-running-p)
-  (server-start))
-(when (and (fboundp '\''server-running-p) (server-running-p))
-  (defun emacsclient-new-tab (orig-fun &rest args)
-    (tab-new)
-    (apply orig-fun args))
-  (advice-add '\''server-visit-files :around #'\''emacsclient-new-tab))
+';; Copy/Paste: Ctrl+c/v
+;; Save: Ctrl+s
+;; Scroll up/down: Alt+a/s
+;; Search: Ctrl+f
+;; Select all: Ctrl+a
+;; Tabs: Alt+1/2/3/4/5/6/7
+;; Close/Open tab: Alt+q/n
+;; Undo/Redo: Ctrl+z Ctrl+Shift+z
+
+;; emacsclient
+(require '\''server)
+(unless (server-running-p) (server-start))
+(advice-add '\''server-visit-files :around
+  (lambda (f &rest args) (tab-new) (apply f args)))
 
 (cua-mode 1)
 
+;; Tab configuration
 (tab-bar-mode 1)
 (global-set-key (kbd "M-1") (lambda () (interactive) (tab-bar-select-tab 1)))
 (global-set-key (kbd "M-2") (lambda () (interactive) (tab-bar-select-tab 2)))
@@ -18,88 +25,87 @@ OBJ=\
 (global-set-key (kbd "M-5") (lambda () (interactive) (tab-bar-select-tab 5)))
 (global-set-key (kbd "M-6") (lambda () (interactive) (tab-bar-select-tab 6)))
 (global-set-key (kbd "M-7") (lambda () (interactive) (tab-bar-select-tab 7)))
-(defun new-tab ()
-  (interactive)
-  (tab-new)
-  (switch-to-buffer (generate-new-buffer "*Untitled*")))
-(global-set-key (kbd "M-n") '\''new-tab)
-
-(defun close-tab ()
-  (interactive)
-  (if (= (length (tab-bar-tabs)) 1)
-      (switch-to-buffer (generate-new-buffer "*Untitled*"))
-    (tab-close)))
-(global-set-key (kbd "M-q") '\''close-tab)
-
-(defun tab-name-asterisk (&optional tab)
-  (let* ((tab (or tab (list (cons '\''buffer (current-buffer)))))
-         (buffer (alist-get '\''buffer tab))
-         (name (if (and buffer (buffer-live-p buffer))
-                   (buffer-name buffer)
-                 "???")))
-    (concat (if (and buffer (buffer-live-p buffer) (buffer-modified-p buffer)) "*" "")
-            name)))
-(setq tab-bar-tab-name-function #'\''tab-name-asterisk)
+(global-set-key (kbd "M-n")
+  (lambda () (interactive)
+    (tab-new)
+    (switch-to-buffer (generate-new-buffer "Untitled"))))
+(global-set-key (kbd "M-q")
+  (lambda () (interactive)
+    (if (= (length (tab-bar-tabs)) 1)
+        (switch-to-buffer (generate-new-buffer "Untitled"))
+      (tab-close))))
+(setq tab-bar-tab-name-function
+  (lambda (&optional tab)
+    (let* ((tab (or tab (list (cons '\''buffer (current-buffer)))))
+           (b (alist-get '\''buffer tab)))
+      (concat (if (and b (buffer-live-p b) (buffer-modified-p b)) "*" "")
+              (if (and b (buffer-live-p b)) (buffer-name b) "???")))))
 
 (global-set-key (kbd "C-c") '\''kill-ring-save)
 (global-set-key (kbd "C-v") '\''yank)
 
-(defun select-all ()
-  (interactive)
-  (goto-char (point-min))
-  (push-mark (point-max) t t)
-  (activate-mark))
-(global-set-key (kbd "C-a") '\''select-all)
+(global-set-key (kbd "C-a")
+  (lambda () (interactive)
+    (goto-char (point-min))
+    (push-mark (point-max) t t)
+    (activate-mark)))
 
 (keymap-global-set "C-s" #'\''save-buffer)
+
 (global-set-key (kbd "C-z") '\''undo)
 (global-set-key (kbd "C-S-z") '\''undo-redo)
 
-(global-set-key (kbd "C-f") #'\''isearch-forward)
-
-(setq make-backup-files nil)
-(setq auto-save-default nil)
-
-(setq inhibit-startup-screen t)
-(setq initial-scratch-message "")
-(setq initial-buffer-choice t)
-
-(global-display-line-numbers-mode 1)
-(load-theme '\''wombat t)
-(set-face-attribute '\''tab-bar nil
-                    :background "#2a2a2a"
-                    :foreground "#cccccc")
-(set-face-attribute '\''tab-bar-tab nil
-                    :background "#5c5c5c"
-                    :foreground "#eeeeee"
-                    :box nil)
-(set-face-attribute '\''tab-bar-tab-inactive nil
-                    :background "#2a2a2a"
-                    :foreground "#aaaaaa"
-                    :box nil)
-(tool-bar-mode -1)
-
-(set-face-attribute '\''default nil
-                    :family "Source Code Pro"
-                    :height 120)
-
-(setq-default fill-column 80)
-(global-display-fill-column-indicator-mode 1)
-
-(setq vc-follow-symlinks t)
-
-(setq auto-mode-alist nil)
-(setq magic-mode-alist nil)
-(setq interpreter-mode-alist nil)
-(add-hook '\''find-file-hook
-          (lambda ()
-            (fundamental-mode)))
+;; Emacs force fundamental mode
+(setq auto-mode-alist nil
+      magic-mode-alist nil
+      interpreter-mode-alist nil)
+(add-hook '\''find-file-hook (lambda () (fundamental-mode)))
 (add-hook '\''after-change-major-mode-hook
-          (lambda ()
-            (unless (eq major-mode '\''fundamental-mode)
-              (fundamental-mode))))
+  (lambda () (unless (eq major-mode '\''fundamental-mode) (fundamental-mode))))
 
+;; Emacs theme & font configuration
+(load-theme '\''wombat t)
+(tool-bar-mode -1)
 (setq-default cursor-type '\''bar)
+(set-face-attribute '\''tab-bar nil :background "#2a2a2a" :foreground "#cccccc")
+(set-face-attribute '\''tab-bar-tab nil :background "#5c5c5c" :foreground "#eeeeee" :box nil)
+(set-face-attribute '\''tab-bar-tab-inactive nil :background "#2a2a2a" :foreground "#aaaaaa" :box nil)
+(set-face-attribute '\''default nil :family "Source Code Pro" :height 120)
+
+;; Other Emacs configuration
+(setq make-backup-files nil
+      auto-save-default nil
+      inhibit-startup-screen t
+      initial-scratch-message ""
+      initial-buffer-choice t
+      vc-follow-symlinks t)
+(global-display-line-numbers-mode 1)
+(global-display-fill-column-indicator-mode 1)
+(setq-default fill-column 80)
+
+(global-set-key (kbd "M-a") #'\''scroll-down-command)
+(global-set-key (kbd "M-s") #'\''scroll-up-command)
+
+;; Search overhaul for simplicity / usability
+(setq isearch-wrap-pause '\''no
+      isearch-lazy-highlight t
+      lazy-highlight-cleanup nil
+      lazy-highlight-initial-delay 0
+      isearch-lazy-count t
+      lazy-count-prefix-format "(%s/%s) "
+      lazy-count-suffix-format nil
+      lazy-count-initial-delay 0)
+(add-hook '\''isearch-mode-hook
+  (lambda ()
+    (define-key isearch-mode-map (kbd "C-v") #'\''isearch-yank-kill)
+    (define-key isearch-mode-map (kbd "RET") #'\''isearch-repeat-forward)
+    (define-key isearch-mode-map [return] #'\''isearch-repeat-forward)))
+(global-set-key (kbd "C-f")
+  (lambda () (interactive)
+    (when (bound-and-true-p lazy-highlight-overlays)
+      (mapc #'\''delete-overlay lazy-highlight-overlays)
+      (setq lazy-highlight-overlays nil))
+    (isearch-forward)))
 '
 OBJ_PATH="$home/.emacs.d/init.el"
 __file_write_ow_soft \
