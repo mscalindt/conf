@@ -66,10 +66,14 @@ OBJ=\
 ;; Emacs theme & font configuration
 (load-theme '\''wombat t)
 (tool-bar-mode -1)
-(setq-default cursor-type '\''bar)
+(setq-default cursor-type '\''(bar . 2))
+(set-cursor-color "purple")
 (set-face-attribute '\''tab-bar nil :background "#2a2a2a" :foreground "#cccccc")
 (set-face-attribute '\''tab-bar-tab nil :background "#5c5c5c" :foreground "#eeeeee" :box nil)
 (set-face-attribute '\''tab-bar-tab-inactive nil :background "#2a2a2a" :foreground "#aaaaaa" :box nil)
+(set-face-attribute '\''show-paren-match nil
+                    :background nil
+                    :foreground "red")
 (set-face-attribute '\''default nil :family "Source Code Pro" :height 120)
 
 ;; Other Emacs configuration
