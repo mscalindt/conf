@@ -111,10 +111,18 @@ OBJ=\
 ;; Fix M+v binding of cua taking precedence
 (with-eval-after-load '\''cua-base
   (define-key cua--cua-keys-keymap (kbd "M-v") nil))
+(defun backward-simple-word ()
+  (interactive)
+  (skip-syntax-backward " ")
+  (skip-chars-backward "^ \t\n"))
+(defun forward-simple-word ()
+  (interactive)
+  (skip-syntax-forward " ")
+  (skip-chars-forward "^ \t\n"))
 (global-set-key (kbd "M-z") #'\''beginning-of-line)
 (global-set-key (kbd "M-x") #'\''end-of-line)
-(global-set-key (kbd "M-c") #'\''backward-word)
-(global-set-key (kbd "M-v") #'\''forward-word)
+(global-set-key (kbd "M-c") #'\''backward-simple-word)
+(global-set-key (kbd "M-v") #'\''forward-simple-word)
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
