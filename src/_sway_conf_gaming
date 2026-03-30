@@ -73,6 +73,7 @@ bindsym Mod4+a exec /usr/bin/alacritty \
 bindsym Mod4+t exec /usr/bin/Telegram
 bindsym Mod4+b exec /usr/bin/blueman-manager
 bindsym Mod4+l exec /usr/bin/swaylock
+bindsym Mod4+Shift+e exec /usr/bin/emacs
 bindsym Mod4+Shift+q exec /home/$USER/.config/sway/fkill_sway
 bindsym Mod4+Space exec /home/$USER/.config/sway/music_toggle
 bindsym Mod4+z exec /usr/bin/pamixer -d5
