@@ -7,6 +7,8 @@ OBJ=\
 ;; Tabs: Alt+1/2/3/4/5/6/7
 ;; Close/Open tab: Alt+q/n
 ;; Undo/Redo: Ctrl+z Ctrl+Shift+z
+;; To line begin/end: Alt+z/x
+;; To word begin/end: Alt+c/v
 
 ;; emacsclient
 (require '\''server)
@@ -105,6 +107,14 @@ OBJ=\
 
 (global-set-key (kbd "M-a") #'\''scroll-down-command)
 (global-set-key (kbd "M-s") #'\''scroll-up-command)
+
+;; Fix M+v binding of cua taking precedence
+(with-eval-after-load '\''cua-base
+  (define-key cua--cua-keys-keymap (kbd "M-v") nil))
+(global-set-key (kbd "M-z") #'\''beginning-of-line)
+(global-set-key (kbd "M-x") #'\''end-of-line)
+(global-set-key (kbd "M-c") #'\''backward-word)
+(global-set-key (kbd "M-v") #'\''forward-word)
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
