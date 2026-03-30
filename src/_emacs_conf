@@ -82,6 +82,15 @@ OBJ=\
 (global-display-line-numbers-mode 1)
 (global-display-fill-column-indicator-mode 1)
 (setq-default fill-column 80)
+(setq frame-title-format
+      '\''(:eval
+        (let* ((buf (window-buffer))
+               (fname (and (buffer-live-p buf) (buffer-file-name buf)))
+               (name (if fname
+                         (abbreviate-file-name fname)
+                       (buffer-name buf))))
+          (concat (if (and buf (buffer-live-p buf) (buffer-modified-p buf)) "*" "")
+                  name))))
 
 (global-set-key (kbd "M-a") #'\''scroll-down-command)
 (global-set-key (kbd "M-s") #'\''scroll-up-command)
