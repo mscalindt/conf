@@ -96,6 +96,8 @@ OBJ=\
 (global-set-key [mouse-2] nil)
 (global-set-key [mouse-3] nil)
 (setq vc-handled-backends nil)
+(setq-default mode-line-format
+              '\''("%b" " | " mode-name ""))
 
 (global-set-key (kbd "M-a") #'\''scroll-down-command)
 (global-set-key (kbd "M-s") #'\''scroll-up-command)
