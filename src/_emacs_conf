@@ -20,42 +20,12 @@ OBJ=\
 
 ;; Tab configuration
 (tab-bar-mode 1)
-(global-set-key (kbd "M-1") (lambda () (interactive) (tab-bar-select-tab 1)))
-(global-set-key (kbd "M-2") (lambda () (interactive) (tab-bar-select-tab 2)))
-(global-set-key (kbd "M-3") (lambda () (interactive) (tab-bar-select-tab 3)))
-(global-set-key (kbd "M-4") (lambda () (interactive) (tab-bar-select-tab 4)))
-(global-set-key (kbd "M-5") (lambda () (interactive) (tab-bar-select-tab 5)))
-(global-set-key (kbd "M-6") (lambda () (interactive) (tab-bar-select-tab 6)))
-(global-set-key (kbd "M-7") (lambda () (interactive) (tab-bar-select-tab 7)))
-(global-set-key (kbd "M-n")
-  (lambda () (interactive)
-    (tab-new)
-    (switch-to-buffer (generate-new-buffer "Untitled"))))
-(global-set-key (kbd "M-q")
-  (lambda () (interactive)
-    (if (= (length (tab-bar-tabs)) 1)
-        (switch-to-buffer (generate-new-buffer "Untitled"))
-      (tab-close))))
 (setq tab-bar-tab-name-function
   (lambda (&optional tab)
     (let* ((tab (or tab (list (cons '\''buffer (current-buffer)))))
            (b (alist-get '\''buffer tab)))
       (concat (if (and b (buffer-live-p b) (buffer-modified-p b)) "*" "")
               (if (and b (buffer-live-p b)) (buffer-name b) "???")))))
-
-(global-set-key (kbd "C-c") '\''kill-ring-save)
-(global-set-key (kbd "C-v") '\''yank)
-
-(global-set-key (kbd "C-a")
-  (lambda () (interactive)
-    (goto-char (point-min))
-    (push-mark (point-max) t t)
-    (activate-mark)))
-
-(keymap-global-set "C-s" #'\''save-buffer)
-
-(global-set-key (kbd "C-z") '\''undo-only)
-(global-set-key (kbd "C-S-z") '\''undo-redo)
 
 ;; Emacs force fundamental mode
 (setq auto-mode-alist nil
@@ -98,32 +68,13 @@ OBJ=\
                        (buffer-name buf))))
           (concat (if (and buf (buffer-live-p buf) (buffer-modified-p buf)) "*" "")
                   name))))
-(global-set-key [C-down-mouse-1] nil)
-(global-set-key [C-down-mouse-3] nil)
-(global-set-key [mouse-2] nil)
-(global-set-key [mouse-3] nil)
 (setq vc-handled-backends nil)
 (setq-default mode-line-format
               '\''("%b" " | " mode-name ""))
 
-(global-set-key (kbd "M-a") #'\''scroll-down-command)
-(global-set-key (kbd "M-s") #'\''scroll-up-command)
-
 ;; Fix M+v binding of cua taking precedence
 (with-eval-after-load '\''cua-base
   (define-key cua--cua-keys-keymap (kbd "M-v") nil))
-(defun backward-simple-word ()
-  (interactive)
-  (skip-syntax-backward " ")
-  (skip-chars-backward "^ \t\n"))
-(defun forward-simple-word ()
-  (interactive)
-  (skip-syntax-forward " ")
-  (skip-chars-forward "^ \t\n"))
-(global-set-key (kbd "M-z") #'\''beginning-of-line)
-(global-set-key (kbd "M-x") #'\''end-of-line)
-(global-set-key (kbd "M-c") #'\''backward-simple-word)
-(global-set-key (kbd "M-v") #'\''forward-simple-word)
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
@@ -145,6 +96,54 @@ OBJ=\
       (mapc #'\''delete-overlay lazy-highlight-overlays)
       (setq lazy-highlight-overlays nil))
     (isearch-forward)))
+
+;; Functions
+(defun backward-simple-word ()
+  (interactive)
+  (skip-syntax-backward " ")
+  (skip-chars-backward "^ \t\n"))
+(defun forward-simple-word ()
+  (interactive)
+  (skip-syntax-forward " ")
+  (skip-chars-forward "^ \t\n"))
+
+;; Keybindings
+(global-set-key (kbd "M-1") (lambda () (interactive) (tab-bar-select-tab 1)))
+(global-set-key (kbd "M-2") (lambda () (interactive) (tab-bar-select-tab 2)))
+(global-set-key (kbd "M-3") (lambda () (interactive) (tab-bar-select-tab 3)))
+(global-set-key (kbd "M-4") (lambda () (interactive) (tab-bar-select-tab 4)))
+(global-set-key (kbd "M-5") (lambda () (interactive) (tab-bar-select-tab 5)))
+(global-set-key (kbd "M-6") (lambda () (interactive) (tab-bar-select-tab 6)))
+(global-set-key (kbd "M-7") (lambda () (interactive) (tab-bar-select-tab 7)))
+(global-set-key (kbd "M-n")
+  (lambda () (interactive)
+    (tab-new)
+    (switch-to-buffer (generate-new-buffer "Untitled"))))
+(global-set-key (kbd "M-q")
+  (lambda () (interactive)
+    (if (= (length (tab-bar-tabs)) 1)
+        (switch-to-buffer (generate-new-buffer "Untitled"))
+      (tab-close))))
+(global-set-key (kbd "C-c") '\''kill-ring-save)
+(global-set-key (kbd "C-v") '\''yank)
+(global-set-key (kbd "C-a")
+  (lambda () (interactive)
+    (goto-char (point-min))
+    (push-mark (point-max) t t)
+    (activate-mark)))
+(global-set-key (kbd "C-z") '\''undo-only)
+(global-set-key (kbd "C-S-z") '\''undo-redo)
+(global-set-key (kbd "M-a") #'\''scroll-down-command)
+(global-set-key (kbd "M-s") #'\''scroll-up-command)
+(global-set-key (kbd "M-z") #'\''beginning-of-line)
+(global-set-key (kbd "M-x") #'\''end-of-line)
+(global-set-key (kbd "M-c") #'\''backward-simple-word)
+(global-set-key (kbd "M-v") #'\''forward-simple-word)
+(keymap-global-set "C-s" #'\''save-buffer)
+(global-set-key [C-down-mouse-1] nil)
+(global-set-key [C-down-mouse-3] nil)
+(global-set-key [mouse-2] nil)
+(global-set-key [mouse-3] nil)
 '
 OBJ_PATH="$home/.emacs.d/init.el"
 __file_write_ow_soft \
