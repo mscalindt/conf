@@ -86,6 +86,10 @@ OBJ=\
 (custom-set-faces
 '\''(whitespace-tab ((t (:background "#7c7c7c")))))
 (global-whitespace-mode 1)
+(setq tab-always-indent nil)
+(setq indent-tabs-mode nil)
+(setq tab-width 4)
+(electric-indent-mode -1)
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
@@ -150,6 +154,7 @@ OBJ=\
 (global-set-key (kbd "M-x") #'\''end-of-line)
 (global-set-key (kbd "M-c") #'\''backward-simple-word)
 (global-set-key (kbd "M-v") #'\''forward-simple-word)
+(global-set-key (kbd "TAB") (lambda () (interactive) (insert "    ")))
 (keymap-global-set "C-s" #'\''save-buffer)
 (global-set-key [C-down-mouse-1] nil)
 (global-set-key [C-down-mouse-3] nil)
