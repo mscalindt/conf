@@ -54,7 +54,7 @@ OBJ=\
 
 (keymap-global-set "C-s" #'\''save-buffer)
 
-(global-set-key (kbd "C-z") '\''undo)
+(global-set-key (kbd "C-z") '\''undo-only)
 (global-set-key (kbd "C-S-z") '\''undo-redo)
 
 ;; Emacs force fundamental mode
