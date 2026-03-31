@@ -16,8 +16,6 @@ OBJ=\
 (advice-add '\''server-visit-files :around
   (lambda (f &rest args) (tab-new) (apply f args)))
 
-(cua-mode 1)
-
 ;; Tab configuration
 (tab-bar-mode 1)
 (setq tab-bar-tab-name-function
@@ -55,7 +53,8 @@ OBJ=\
       inhibit-startup-screen t
       initial-scratch-message ""
       initial-buffer-choice t
-      vc-follow-symlinks t)
+      vc-follow-symlinks t
+      transient-mark-mode 0)
 (global-display-line-numbers-mode 1)
 (global-display-fill-column-indicator-mode 1)
 (setq-default fill-column 80)
@@ -71,10 +70,17 @@ OBJ=\
 (setq vc-handled-backends nil)
 (setq-default mode-line-format
               '\''("%b" " | " mode-name ""))
-
-;; Fix M+v binding of cua taking precedence
-(with-eval-after-load '\''cua-base
-  (define-key cua--cua-keys-keymap (kbd "M-v") nil))
+(defadvice kill-ring-save (after keep-transient-mark-active ())
+  (setq deactivate-mark nil))
+(ad-activate '\''kill-ring-save)
+(advice-add '\''self-insert-command :before
+  (lambda (&rest args)
+    (when (use-region-p)
+      (delete-region (region-beginning) (region-end)))))
+(advice-add '\''yank :before
+  (lambda (&rest args)
+    (when (use-region-p)
+      (delete-region (region-beginning) (region-end)))))
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
