@@ -81,6 +81,11 @@ OBJ=\
   (lambda (&rest args)
     (when (use-region-p)
       (delete-region (region-beginning) (region-end)))))
+(require '\''whitespace)
+(setq whitespace-style '\''(tabs face))
+(custom-set-faces
+'\''(whitespace-tab ((t (:background "#7c7c7c")))))
+(global-whitespace-mode 1)
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
