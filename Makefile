@@ -6,8 +6,8 @@ build: ./syscfg ./conf
 ./syscfg: ./lib/syscfg/src/syscfg.sh
 	(cd lib/syscfg && $(MAKE))
 	cp lib/syscfg/syscfg ./syscfg
-./conf: ./src/units/ ./src/conf/main.conf ./src/conf/$(CONF)
-	sh ./scripts/build.sh ./src/units/ ./src/conf/main.conf ./src/conf/$(CONF)
+./conf: ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF)
+	sh ./scripts/build.sh ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF)
 
 clean:
 	rm ./lib/syscfg/syscfg ./syscfg ./conf
