@@ -155,11 +155,20 @@ OBJ=\
 (global-set-key (kbd "M-c") #'\''backward-simple-word)
 (global-set-key (kbd "M-v") #'\''forward-simple-word)
 (global-set-key (kbd "TAB") (lambda () (interactive) (insert "    ")))
+(global-set-key [C-drag-mouse-1] #'\''mouse-set-region) ;; fix unmark on ctrl
+(global-set-key [C-double-mouse-1] #'\''mouse-set-region)
+(global-set-key [double-mouse-1] #'\''mouse-set-region)
 (keymap-global-set "C-s" #'\''save-buffer)
 (global-set-key [C-down-mouse-1] nil)
+(global-set-key [C-down-mouse-2] nil)
 (global-set-key [C-down-mouse-3] nil)
+(global-set-key [mouse-1] nil)
 (global-set-key [mouse-2] nil)
 (global-set-key [mouse-3] nil)
+(global-set-key [M-wheel-down] nil)
+(global-set-key [M-wheel-up] nil)
+(global-set-key [M-mouse-2] nil)
+(global-set-key [M-mouse-3] nil)
 '
 OBJ_PATH="$home/.emacs.d/init.el"
 __file_write_ow_soft \
