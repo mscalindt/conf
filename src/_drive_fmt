@@ -52,6 +52,7 @@ if command -v sgdisk > /dev/null 2>&1; then
         __cmd -- sgdisk -Z "$drive_dev"
 
         FREE=$(sgdisk -E "$drive_dev")
+        FREE="${FREE##*[!0123456789]}"
         FREE=$((FREE - block_size))
 
         START="$block_size"
