@@ -60,14 +60,14 @@ if command -v sgdisk > /dev/null 2>&1; then
         if [ "$END" -gt "$FREE" ]; then
             __err -red - 'Not enough space.'; exit 1
         fi
-        __cmd -- sgdisk -n 1:"$START":"$END" -t 1:EF00
+        __cmd -- sgdisk -n 1:"$START":"$END" -t 1:EF00 -w "$drive_dev"
 
         START=$((END + 1))
         END=$((FREE - (1024*1024*1024 * partitioning_reserve_gib / block_size)))
         case "$END" in
             '-'*) __err -red - 'Not enough space.'; exit 1 ;;
         esac
-        __cmd -- sgdisk -n 2:"$START":"$END" -t 2:8300
+        __cmd -- sgdisk -n 2:"$START":"$END" -t 2:8300 -w "$drive_dev"
     )
 
     if [ "$efi_fat" ]; then
