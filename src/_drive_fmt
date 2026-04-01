@@ -76,7 +76,11 @@ if command -v sgdisk > /dev/null 2>&1; then
         __cmd -- mkfs.fat -S "$block_size" -F 32 "$efi_partition"
     fi
     if [ "$root_ext4" ]; then
-        __cmd -- mkfs.ext4 -b "$block_size" "$root_partition"
+        # ext4 minimum block size: 1024.
+        case "$block_size" in
+            512) __cmd -- mkfs.ext4 -b 4096 "$root_partition" ;;
+            *) __cmd -- mkfs.ext4 -b "$block_size" "$root_partition" ;;
+        esac
     fi
 else
     __info -white - "Partition the drive manually with $block_size alignment."
