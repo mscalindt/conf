@@ -117,12 +117,6 @@ OBJ=\
     (define-key isearch-mode-map (kbd "C-v") #'\''isearch-yank-kill)
     (define-key isearch-mode-map (kbd "RET") #'\''isearch-repeat-forward)
     (define-key isearch-mode-map [return] #'\''isearch-repeat-forward)))
-(global-set-key (kbd "C-f")
-  (lambda () (interactive)
-    (when (bound-and-true-p lazy-highlight-overlays)
-      (mapc #'\''delete-overlay lazy-highlight-overlays)
-      (setq lazy-highlight-overlays nil))
-    (isearch-forward)))
 
 ;; Functions
 (defun backward-simple-word ()
@@ -170,6 +164,12 @@ OBJ=\
 (global-set-key [C-drag-mouse-1] #'\''mouse-set-region) ;; fix unmark on ctrl
 (global-set-key [C-double-mouse-1] #'\''mouse-set-region)
 (global-set-key [double-mouse-1] #'\''mouse-set-region)
+(global-set-key (kbd "C-f")
+  (lambda () (interactive)
+    (when (bound-and-true-p lazy-highlight-overlays)
+      (mapc #'\''delete-overlay lazy-highlight-overlays)
+      (setq lazy-highlight-overlays nil))
+    (isearch-forward)))
 (keymap-global-set "C-s" #'\''save-buffer)
 (global-set-key [C-down-mouse-1] nil)
 (global-set-key [C-down-mouse-2] nil)
