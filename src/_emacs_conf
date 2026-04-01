@@ -91,6 +91,10 @@ OBJ=\
 (setq tab-width 4)
 (electric-indent-mode -1)
 (modify-syntax-entry ?_ "w")
+(advice-add '\''push-mark :around
+  (lambda (orig &rest args)
+    (let ((inhibit-message t))
+      (apply orig args))))
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
