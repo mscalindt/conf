@@ -90,6 +90,7 @@ OBJ=\
 (setq indent-tabs-mode nil)
 (setq tab-width 4)
 (electric-indent-mode -1)
+(modify-syntax-entry ?_ "w")
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
