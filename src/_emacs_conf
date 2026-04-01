@@ -95,6 +95,13 @@ OBJ=\
   (lambda (orig &rest args)
     (let ((inhibit-message t))
       (apply orig args))))
+(add-hook '\''fundamental-mode-hook #'\''font-lock-mode)
+(defface sq-face
+  '\''((t (:foreground "#ff8c00" :weight bold)))
+  "Face for single quotes.")
+(font-lock-add-keywords '\''fundamental-mode
+                        '\''(("\\\\'\''" . '\''default)
+                          ("'\''" . '\''sq-face)))
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
