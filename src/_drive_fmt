@@ -65,7 +65,7 @@ if command -v sgdisk > /dev/null 2>&1; then
         case "$END2" in
             '-'*) __err -red - 'Not enough space.'; exit 1 ;;
         esac
-        __cmd -- sgdisk -n 1:"$START":"$END" -t 1:EF00 -n 2:"$START2":"$END2" -t 2:8300 -w "$drive_dev"
+        __cmd -- sgdisk -n 1:"$START":"$END" -t 1:EF00 -n 2:"$START2":"$END2" -t 2:8300 "$drive_dev"
         __cmd -- sleep 1
 
         __cmd -- blockdev --rereadpt -v "$drive_dev"
