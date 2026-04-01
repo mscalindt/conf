@@ -163,7 +163,7 @@ OBJ=\
 (global-set-key [C-down-mouse-1] nil)
 (global-set-key [C-down-mouse-2] nil)
 (global-set-key [C-down-mouse-3] nil)
-(global-set-key [mouse-1] nil)
+(global-set-key [mouse-1] #'\''ignore)
 (global-set-key [mouse-2] nil)
 (global-set-key [mouse-3] nil)
 (global-set-key [M-wheel-down] nil)
