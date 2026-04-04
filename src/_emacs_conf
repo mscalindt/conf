@@ -46,6 +46,10 @@ OBJ=\
                     :background nil
                     :foreground "red")
 (set-face-attribute '\''default nil :family "Source Code Pro" :height 120)
+(set-face-attribute '\''region nil
+                    :background "#6a6a6a"
+                    :foreground nil
+                    :extend t)
 
 ;; Other Emacs configuration
 (setq make-backup-files nil
