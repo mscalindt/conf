@@ -102,6 +102,14 @@ OBJ=\
 (font-lock-add-keywords '\''fundamental-mode
                         '\''(("\\\\'\''" . '\''default)
                           ("'\''" . '\''sq-face)))
+(global-hl-line-mode 1)
+(set-face-attribute '\''hl-line nil
+                    :background "#383838"
+                    :underline nil
+                    :box nil
+                    :strike-through nil
+                    :overline nil
+                    :extend t)
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
