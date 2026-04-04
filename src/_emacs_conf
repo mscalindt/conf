@@ -37,6 +37,7 @@ OBJ=\
 (load-theme '\''wombat t)
 (tool-bar-mode -1)
 (setq-default cursor-type '\''bar)
+(setq blink-cursor-interval 0.35)
 (set-cursor-color "purple")
 (set-face-attribute '\''tab-bar nil :background "#2a2a2a" :foreground "#cccccc")
 (set-face-attribute '\''tab-bar-tab nil :background "#5c5c5c" :foreground "#eeeeee" :box nil)
