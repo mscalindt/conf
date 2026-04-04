@@ -129,6 +129,15 @@ OBJ=\
                     :strike-through nil
                     :overline nil
                     :extend t)
+(global-auto-revert-mode 1)
+(setq auto-revert-verbose nil)
+(setq revert-without-query '\''(".*"))
+(advice-add
+ '\''ask-user-about-supersession-threat
+ :override
+ (lambda (filename)
+   (message "Auto-reverted %s." filename)
+   (revert-buffer :ignore-auto :noconfirm)))
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
