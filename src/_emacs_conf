@@ -83,8 +83,12 @@ OBJ=\
           (concat (if (and buf (buffer-live-p buf) (buffer-modified-p buf)) "*" "")
                   name))))
 (setq vc-handled-backends nil)
+(add-hook '\''post-command-hook #'\''force-mode-line-update)
 (setq-default mode-line-format
-              '\''("%b" " | " mode-name ""))
+              '\''("%b" " | " mode-name
+              (:eval (progn (force-mode-line-update t) (format " | Chars: %d"
+                  (if (use-region-p)
+                      (abs (- (region-end) (region-beginning))) 0))))))
 (defadvice kill-ring-save (after keep-transient-mark-active ())
   (setq deactivate-mark nil))
 (ad-activate '\''kill-ring-save)
