@@ -1,0 +1,7 @@
+___KEYBOXD_SERVICE() {
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/keyboxd.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
