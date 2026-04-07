@@ -1,0 +1,7 @@
+OBJ=\
+'#use-keyboxd
+'
+OBJ_PATH="$home/.gnupg/common.conf"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"

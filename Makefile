@@ -28,6 +28,7 @@ config: ./syscfg ./conf
 	sh ./syscfg -s ./conf -- ./src/_fuse_conf
 	sh ./syscfg -s ./conf -- ./src/_gai_conf
 	sh ./syscfg -s ./conf -- ./src/_git_conf
+	sh ./syscfg -s ./conf -- ./src/_gpg_conf
 	sh ./syscfg -s ./conf -- ./src/_grub
 	sh ./syscfg -s ./conf -- ./src/_grub_conf
 	sh ./syscfg -s ./conf -- ./src/_gtk_conf
