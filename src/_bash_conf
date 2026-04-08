@@ -119,7 +119,7 @@ gpg_e() {
     [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
     [ ! -e "$1".gpg ] && [ ! -h "$1".gpg ] || { echo EEXIST; return 1; }
 
-    gpg -r 7D1F56FAD6FB86652A60BEE65BC3343816EAB179 --compress-algo none -e "$1"
+    gpg -r ABE7F9D4F0E397B6B435883DE5790A7FA2016698 --compress-algo none -e "$1"
     touch -r "$1" "$1".gpg
 }
 
