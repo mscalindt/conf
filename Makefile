@@ -13,6 +13,7 @@ clean:
 	rm ./lib/syscfg/syscfg ./syscfg ./conf
 
 config: ./syscfg ./conf
+	@test -n "$(CN)" || { echo 'CN is empty'; exit 2; }
 	sh ./syscfg -s ./conf -- ./src/_alacritty_conf
 	sh ./syscfg -s ./conf -- ./src/_alsa_conf
 	sh ./syscfg -s ./conf -- ./src/_bash_conf
@@ -56,6 +57,7 @@ config: ./syscfg ./conf
 	sh ./syscfg -s ./conf -- ./src/_swaylock_conf
 	sh ./syscfg -s ./conf -- ./src/_systemd
 	sh ./syscfg -s ./conf -- ./src/_systemd_conf
+	sh ./syscfg -s ./conf -- ./src/_tz_$(CN)
 	sh ./syscfg -s ./conf -- ./src/_xdg_conf
 
 run: ./syscfg ./conf

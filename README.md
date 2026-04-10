@@ -49,10 +49,11 @@ defined. Example:
 $ make FUNC=_face_bin run
 ```
 
-To execute all intended software configuration, use the `config` recipe:
+To execute all intended software configuration, use the `config` recipe and
+specify the `CN` (country) variable:
 
 ```
-$ make config
+$ make CN=bg config
 ```
 
 ## Releases
