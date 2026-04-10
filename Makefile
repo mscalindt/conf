@@ -25,6 +25,7 @@ config: ./syscfg ./conf
 	sh ./syscfg -s ./conf -- ./src/_featherpad_conf
 	sh ./syscfg -s ./conf -- ./src/_firefox_conf
 	sh ./syscfg -s ./conf -- ./src/_fontconfig_conf
+	sh ./syscfg -So /etc/fstab -s ./conf -- ./src/_fstab
 	sh ./syscfg -s ./conf -- ./src/_fuse_conf
 	sh ./syscfg -s ./conf -- ./src/_gai_conf
 	sh ./syscfg -s ./conf -- ./src/_git_conf
@@ -59,7 +60,7 @@ config: ./syscfg ./conf
 
 run: ./syscfg ./conf
 	@test -n "$(FUNC)" || { echo 'FUNC is empty'; exit 2; }
-	sh ./syscfg -s ./conf -- ./src/$(FUNC)
+	sh ./scripts/run.sh ./src/$(FUNC) "$(OUT)"
 
 rel:
 	@test -n "$(REL)" || { echo 'REL is empty'; exit 2; }

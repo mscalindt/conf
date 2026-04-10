@@ -35,8 +35,12 @@ git submodule update --init --recursive
 
 ## Run
 
+**Note:** Use `make clean` on re-run/rebuild to ensure the environment is
+proper.
+
 Specify the `CONF` variable or let recipes run with the default device
-configuration file.
+configuration file. The output of a function ran with the `run` recipe can be
+redirected using the `OUT` variable.
 
 To execute a specific function, use the `run` recipe with the `FUNC` variable
 defined. Example:

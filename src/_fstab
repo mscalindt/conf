@@ -1,0 +1,34 @@
+__info - -- "$root_partition    "
+__info - -- '/    '
+if [ "$root_ext4" ]; then
+    __info - -- 'ext4    '
+else
+    __err -red - 'Root filesystem type has not been specified.'; exit 1
+fi
+__info - -- 'rw'
+if [ "$fstab_relatime" ]; then
+    __info - -- ',relatime'
+else
+    __info - -- ',noatime'
+fi
+if [ "$fstab_ext4_nobarrier" ]; then
+    __info - -- ',barrier=0'
+fi
+__info - -- '    '
+__info - - '0    1'
+
+__info - -- "$efi_partition    "
+__info - -- "$efi_mnt    "
+if [ "$efi_fat" ]; then
+    __info - -- 'vfat    '
+else
+    __err -red - 'EFI filesystem type has not been specified.'; exit 1
+fi
+__info - -- 'rw'
+if [ "$fstab_relatime" ]; then
+    __info - -- ',relatime'
+else
+    __info - -- ',noatime'
+fi
+__info - -- '    '
+__info - - '0    2'
