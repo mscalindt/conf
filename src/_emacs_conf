@@ -207,6 +207,16 @@ OBJ=\
       (setq lazy-highlight-overlays nil))
     (isearch-forward)))
 (keymap-global-set "C-s" #'\''save-buffer)
+(global-set-key [triple-mouse-1]
+  (lambda (event)
+    (interactive "e")
+    (let ((pos (posn-point (event-end event))))
+      (when pos
+        (goto-char pos)
+        (beginning-of-line)
+        (push-mark nil t t)
+        (end-of-line)
+        (setq deactivate-mark nil)))))
 (global-set-key [C-down-mouse-1] nil)
 (global-set-key [C-down-mouse-2] nil)
 (global-set-key [C-down-mouse-3] nil)
