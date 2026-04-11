@@ -119,18 +119,15 @@ OBJ=\
 (defface sq-face
   '\''((t (:foreground "#ff8c00" :weight bold)))
   "Face for single quotes.")
-(defface dollar-face
-  '\''((t (:foreground "#ffd700")))
-  "Face for dollar sign.")
-(defface paren-face
+(defface word-face
   '\''((t (:foreground "#ff69b4")))
-  "Face for parentheses.")
+  "Face for word boundary characters.")
 (font-lock-add-keywords '\''fundamental-mode
                         '\''(("\\\\'\''" . '\''default)
                           ("'\''" . '\''sq-face)
-                          ("\\$" . '\''dollar-face)
-                          ("[(]" . '\''paren-face)
-                          ("[)]" . '\''paren-face)))
+                          ("\\$" . '\''word-face)
+                          ("[(]" . '\''word-face)
+                          ("[)]" . '\''word-face)))
 (global-hl-line-mode 1)
 (set-face-attribute '\''hl-line nil
                     :background "#383838"
