@@ -122,8 +122,11 @@ OBJ=\
 (defface word-face
   '\''((t (:foreground "#ff69b4")))
   "Face for word boundary characters.")
+(defface backslash-face
+  '\''((t (:foreground "#ff4d4d")))
+  "Face for backslash characters.")
 (font-lock-add-keywords '\''fundamental-mode
-                        '\''(("\\\\'\''" . '\''default)
+                        '\''(("\\\\." . '\''backslash-face)
                           ("'\''" . '\''sq-face)
                           ("\\$" . '\''word-face)
                           ("[(]" . '\''word-face)
