@@ -122,6 +122,11 @@ OBJ=\
 (font-lock-add-keywords '\''fundamental-mode
                         '\''(("\\\\'\''" . '\''default)
                           ("'\''" . '\''sq-face)))
+(defface dollar-face
+  '\''((t (:foreground "#ffd700")))
+  "Face for dollar sign.")
+(font-lock-add-keywords '\''fundamental-mode
+                        '\''(("\\$" . '\''dollar-face)))
 (global-hl-line-mode 1)
 (set-face-attribute '\''hl-line nil
                     :background "#383838"
