@@ -133,7 +133,8 @@ OBJ=\
                           ("[)]" . '\''word-face)
                           ("[{]" . '\''word-face)
                           ("[}]" . '\''word-face)
-                          ("`" . '\''word-face)))
+                          ("`" . '\''word-face)
+                          ("[0-9]+" . '\''word-face)))
 (global-hl-line-mode 1)
 (set-face-attribute '\''hl-line nil
                     :background "#383838"
