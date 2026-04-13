@@ -1,104 +1,5 @@
 OBJ=\
-'# System management
-sys_pwr_off() { pwr_off "$@"; }
-sys_pwr_reset() { pwr_reset "$@"; }
-sys_pkg_get() { pkg_get "$@"; }
-sys_pkg_rm() { pkg_rm "$@"; }
-sys_pkg_rmF() { pkg_rmF "$@"; }
-sys_up() { up; }
-sys_upF() { upF; }
-
-# Package management
-pkg_get() (
-    case ":$1" in
-        :)
-            printf "%bERROR:%b No package(s) specified.\n" \
-                   "\033[1;31m" "\033[0m"
-            exit 2
-        ;;
-    esac
-
-    ARGS='\''--sync'\''
-
-    while [ "$1" ]; do
-        ARGS="$ARGS"" \"$1\""
-        shift
-    done
-
-    eval "su -c '\''pacman ${ARGS}'\''"
-)
-pkg_rm() (
-    case ":$1" in
-        :)
-            printf "%bERROR:%b No package(s) specified.\n" \
-                   "\033[1;31m" "\033[0m"
-            exit 2
-        ;;
-    esac
-
-    ARGS='\''--remove'\''
-    ARGS="$ARGS"'\'' --nosave'\''
-    ARGS="$ARGS"'\'' --recursive'\''
-
-    while [ "$1" ]; do
-        ARGS="$ARGS"" \"$1\""
-        shift
-    done
-
-    eval "su -c '\''pacman ${ARGS}'\''"
-)
-pkg_rmF() (
-    case ":$1" in
-        :)
-            printf "%bERROR:%b No package(s) specified.\n" \
-                   "\033[1;31m" "\033[0m"
-            exit 2
-        ;;
-    esac
-
-    ARGS='\''--remove'\''
-    ARGS="$ARGS"'\'' --nosave'\''
-    ARGS="$ARGS"'\'' --recursive'\''
-    ARGS="$ARGS"'\'' -dd'\''
-
-    while [ "$1" ]; do
-        ARGS="$ARGS"" \"$1\""
-        shift
-    done
-
-    eval "su -c '\''pacman ${ARGS}'\''"
-)
-
-# Power management
-pwr_off() (
-    case ":$1" in
-        :) su -c '\''shutdown -P now'\'' ;;
-        *) su -c "shutdown -P $1" ;;
-    esac
-)
-pwr_reset() (
-    case ":$1" in
-        :) su -c '\''shutdown -r now'\'' ;;
-        *) su -c "shutdown -r $1" ;;
-    esac
-)
-
-# Update management
-up() (
-    ARGS='\''--sync'\''
-    ARGS="$ARGS"'\'' --refresh'\''
-    ARGS="$ARGS"'\'' --sysupgrade'\''
-
-    eval "su -c '\''pacman ${ARGS}'\''"
-)
-upF() (
-    ARGS='\''--sync'\''
-    ARGS="$ARGS"'\'' -yyuu'\''
-
-    eval "su -c '\''pacman ${ARGS}'\''"
-)
-
-fastd() {
+'fastd() {
     case "$1" in
         *.tar.gpg) ;;
         *) echo EINVAL; return 1 ;;
@@ -196,7 +97,6 @@ tar_e() {
 }
 
 # unfinished
-steamwinerun() ( WINEPREFIX="$HOME"/.steam/root/steamapps/compatdata/$1/pfx wine "$2"; )
 dgrd() (
     if [ ! "$1" ] || [ ! "$2" ]; then
         printf "%s\n" '\''STEP (1-X) = $1'\''
