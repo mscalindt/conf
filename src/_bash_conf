@@ -98,6 +98,54 @@ upF() (
     eval "su -c '\''pacman ${ARGS}'\''"
 )
 
+fastd() {
+    case "$1" in
+        *.tar.gpg) ;;
+        *) echo EINVAL; return 1 ;;
+    esac
+
+    cp -p "$1" /tmp/"$1" || return "$?"
+    cd /tmp || return "$?"
+    gpg_d "$1" || return "$?"
+    rm -rf "$1"
+    tar_e "${1%????}" || return "$?"
+    rm -f "${1%????}"
+    cd "$OLDPWD" || return "$?"
+
+    case "$2" in
+        *0*)
+        ;;
+        *1*)
+            rm -f "$1"
+        ;;
+        *)
+            cp -pr /tmp/"${1%????????}" ./ || return "$?"
+            rm -rf "$1" /tmp/"${1%????????}"
+        ;;
+    esac
+}
+faste() {
+    cp -pr "$1" /tmp/"$1" || return "$?"
+    cd /tmp || return "$?"
+    tar_c "$1" || return "$?"
+    rm -rf "$1"
+    gpg_e "$1".tar || return "$?"
+    rm -f "$1".tar
+    cd "$OLDPWD" || return "$?"
+
+    case "$2" in
+        *0*)
+        ;;
+        *1*)
+            rm -rf "$1"
+        ;;
+        *)
+            cp -p /tmp/"$1".tar.gpg ./ || return "$?"
+            rm -rf "$1" /tmp/"$1".tar.gpg
+        ;;
+    esac
+}
+
 # gpg
 gpg_d() {
     case "$1" in
@@ -108,7 +156,7 @@ gpg_d() {
     [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
     [ ! -e "${1%.gpg}" ] && [ ! -h "${1%.gpg}" ] || { echo EEXIST; return 1; }
 
-    gpg -o "${1%.gpg}" -d "$1"
+    gpg -o "${1%.gpg}" -d "$1" || return "$?"
     touch -r "$1" "${1%.gpg}"
 }
 gpg_e() {
@@ -119,7 +167,7 @@ gpg_e() {
     [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
     [ ! -e "$1".gpg ] && [ ! -h "$1".gpg ] || { echo EEXIST; return 1; }
 
-    gpg -r ABE7F9D4F0E397B6B435883DE5790A7FA2016698 --compress-algo none -e "$1"
+    gpg -r ABE7F9D4F0E397B6B435883DE5790A7FA2016698 --compress-algo none -e "$1" || return "$?"
     touch -r "$1" "$1".gpg
 }
 
@@ -132,7 +180,7 @@ tar_c() {
     [ -e "$1" ] || [ -h "$1" ] || { echo ENOENT; return 1; }
     [ ! -e "$1".tar ] && [ ! -h "$1".tar ] || { echo EEXIST; return 1; }
 
-    tar --numeric-owner -cvpf "$1".tar "$1"
+    tar --numeric-owner -cvpf "$1".tar "$1" || return "$?"
     touch -r "$1" "$1".tar
 }
 tar_e() {
