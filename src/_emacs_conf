@@ -78,7 +78,7 @@ OBJ=\
         (let* ((buf (window-buffer))
                (fname (and (buffer-live-p buf) (buffer-file-name buf)))
                (name (if fname
-                         (abbreviate-file-name fname)
+                         fname
                        (buffer-name buf))))
           (concat (if (and buf (buffer-live-p buf) (buffer-modified-p buf)) "*" "")
                   name))))
