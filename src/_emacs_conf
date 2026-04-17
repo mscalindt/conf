@@ -120,15 +120,20 @@ OBJ=\
 (defface sq-face
   '\''((t (:foreground "#ff8c00" :weight bold)))
   "Face for single quotes.")
+(defface dq-face
+  '\''((t (:foreground "#95e454" :weight bold)))
+  "Face for double quotes.")
 (defface word-face
   '\''((t (:foreground "#ff69b4")))
   "Face for word boundary characters.")
 (defface backslash-face
   '\''((t (:foreground "#ff4d4d")))
   "Face for backslash characters.")
+(modify-syntax-entry ?\" "." (syntax-table))
 (font-lock-add-keywords '\''fundamental-mode
                         '\''(("\\\\." . '\''backslash-face)
                           ("'\''" . '\''sq-face)
+                          ("\"" . '\''dq-face)
                           ("\\$" . '\''word-face)
                           ("[(]" . '\''word-face)
                           ("[)]" . '\''word-face)
