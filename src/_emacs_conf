@@ -37,8 +37,7 @@ OBJ=\
 (load-theme '\''wombat t)
 (tool-bar-mode -1)
 (setq-default cursor-type '\''bar)
-(setq blink-cursor-interval 0.35)
-(set-cursor-color "purple")
+(set-cursor-color "white")
 (set-face-attribute '\''tab-bar nil
                     :background "#2a2a2a"
                     :foreground "#cccccc")
@@ -57,7 +56,7 @@ OBJ=\
                     :family "Source Code Pro"
                     :height 120)
 (set-face-attribute '\''region nil
-                    :background "#6a6a6a"
+                    :background "#5294e2"
                     :foreground nil
                     :extend t)
 
@@ -143,7 +142,7 @@ OBJ=\
                           ("[0-9]+" . '\''word-face)))
 (global-hl-line-mode 1)
 (set-face-attribute '\''hl-line nil
-                    :background "#383838"
+                    :background "#2c2c2c"
                     :underline nil
                     :box nil
                     :strike-through nil
