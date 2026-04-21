@@ -23,7 +23,7 @@ are downloaded.
 ```
 git clone --recursive https://github.com/mscalindt/conf
 cd conf
-make
+make CONF=__DEVICE__.conf
 ```
 
 If the repository has been cloned without the submodules, they can be
@@ -35,8 +35,8 @@ git submodule update --init --recursive
 
 ## Run
 
-**Note:** Use `make clean` on re-run/rebuild to ensure the environment is
-proper.
+**Note:** Use `make clean` if a different device configuration file than the
+one from the last build is to be used.
 
 Specify the `CONF` variable or let recipes run with the default device
 configuration file. The output of a function ran with the `run` recipe can be
