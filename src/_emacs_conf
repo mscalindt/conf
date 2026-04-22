@@ -156,6 +156,7 @@ OBJ=\
  (lambda (filename)
    (message "Auto-reverted %s." filename)
    (revert-buffer :ignore-auto :noconfirm)))
+(setq scroll-preserve-screen-position t)
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
