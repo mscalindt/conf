@@ -26,6 +26,7 @@ config: ./syscfg ./conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_featherpad_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_firefox_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_fontconfig_conf
+	rm -f /etc/fstab
 	sh ./syscfg --no-color --status-pager -So /etc/fstab -s ./conf -- ./src/_fstab
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_fuse_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_gai_conf
