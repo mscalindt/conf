@@ -26,6 +26,12 @@ cd conf
 make CONF=__DEVICE__.conf
 ```
 
+List device configurations:
+
+```
+ls src/devices
+```
+
 If the repository has been cloned without the submodules, they can be
 initialized and fetched with:
 
