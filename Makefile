@@ -1,16 +1,20 @@
 .PHONY: build clean config run rel sbm_up
 
 CONF ?= m533ia.conf
+BUILD_CONF = .build.tmp
 
 build: ./syscfg ./conf
+BUILD_TS:
+$(BUILD_CONF): BUILD_TS
+	@sh ./scripts/build_ts.sh "$(BUILD_CONF)" "$(CONF)"
 ./syscfg: ./lib/syscfg/src/syscfg.sh
 	(cd lib/syscfg && $(MAKE))
 	cp lib/syscfg/syscfg ./syscfg
-./conf: ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF)
+./conf: $(BUILD_CONF) ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF)
 	sh ./scripts/build.sh ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF)
 
 clean:
-	rm ./lib/syscfg/syscfg ./syscfg ./conf
+	rm ./.build.tmp ./lib/syscfg/syscfg ./syscfg ./conf
 
 config: ./syscfg ./conf
 	@test -n "$(CN)" || { echo 'CN is empty'; exit 2; }
@@ -61,7 +65,7 @@ config: ./syscfg ./conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_tz_$(CN)
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_xdg_conf
 
-run: ./syscfg ./conf
+run:
 	@test -n "$(FUNC)" || { echo 'FUNC is empty'; exit 2; }
 	sh ./scripts/run.sh ./src/$(FUNC) "$(OUT)"
 

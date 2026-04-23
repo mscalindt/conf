@@ -41,12 +41,7 @@ git submodule update --init --recursive
 
 ## Run
 
-**Note:** Use `make clean` if a different device configuration file than the
-one from the last build is to be used.
-
-Specify the `CONF` variable or let recipes run with the default device
-configuration file. The output of a function ran with the `run` recipe can be
-redirected using the `OUT` variable.
+The output of a function can be redirected using the `OUT` variable.
 
 To execute a specific function, use the `run` recipe with the `FUNC` variable
 defined. Example:
