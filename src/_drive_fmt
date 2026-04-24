@@ -5,6 +5,9 @@
 # $block_size=4096) of space loss. Outside start/end sectors do not matter;
 # only the multiple of sectors inside the partitioning (partitioning start/end)
 # itself matters for alignment.
+#
+# NOTE: For correct size math, $block_size must accurately reflect the logical
+#       sector size of the drive.
 
 case "$drive_dev" in
     *'/nvme'*)
