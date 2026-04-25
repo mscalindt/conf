@@ -16,7 +16,7 @@ __ed -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
     'NoExtract' \
     'NoExtract = etc/xdg/autostart/*.desktop'
 OBJ="$OBJ"
-__ed -crc 3803429353 -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
+__ed -crc 2870886219 -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
     -m s -s \
     '[multilib]' \
     '[multilib]' \
