@@ -21,6 +21,7 @@ GRUB_CMDLINE_LINUX="\
 loglevel=3 nowatchdog mitigations=off processor.ignore_ppc=1 \
 usbhid.mousepoll=1 tsc=unstable pcie_aspm=off usbcore.autosuspend=-1 \
 pcie_aspm.policy=performance pcie_port_pm=off net.ifnames=0 \
+ahci.mobile_lpm_policy=1 \
 '
 if [ ! "$ipv6" ]; then
     OBJ="$OBJ"\
