@@ -4,6 +4,10 @@ if [ "$m533ia" ]; then
     OBJ=\
 'MODULES=(amdgpu pinctrl-amd)
 '
+elif [ "$_25ju" ]; then
+     OBJ=\
+'MODULES=(i915)
+'
 else
     OBJ=\
 'MODULES=()
