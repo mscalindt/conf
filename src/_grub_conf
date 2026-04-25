@@ -27,6 +27,11 @@ if [ ! "$ipv6" ]; then
 'ipv6.disable=1 \
 '
 fi
+if [ "$_25ju" ]; then
+    OBJ="$OBJ"\
+'i915.enable_psr=0 \
+'
+fi
 OBJ="$OBJ"\
 '"
 '
