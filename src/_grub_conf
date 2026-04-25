@@ -29,7 +29,7 @@ if [ ! "$ipv6" ]; then
 fi
 if [ "$_25ju" ]; then
     OBJ="$OBJ"\
-'i915.enable_psr=0 i915.enable_dc=0 \
+'i915.enable_psr=0 i915.enable_dc=0 intel_idle.max_cstate=1 \
 '
 fi
 OBJ="$OBJ"\
