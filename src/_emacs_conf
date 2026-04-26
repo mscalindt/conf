@@ -153,7 +153,7 @@ OBJ=\
  (lambda (filename)
    (message "Auto-reverted %s." filename)
    (revert-buffer :ignore-auto :noconfirm)))
-(setq scroll-preserve-screen-position '\''always)
+(setq scroll-preserve-screen-position t)
 (setq auto-window-vscroll nil)
 (setq scroll-conservatively 10000)
 (setq scroll-margin 0)
