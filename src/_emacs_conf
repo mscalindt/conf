@@ -75,21 +75,22 @@ OBJ=\
 (setq vc-handled-backends nil)
 (add-hook '\''post-command-hook #'\''force-mode-line-update)
 (setq-default mode-line-format
-              '\''("%b" " | " mode-name
-                (:eval (progn
-                         (force-mode-line-update t)
-                         (let* ((last-char (when (> (point-max) 0)
-                                             (char-before (point-max))))
-                                (mod-str (if (buffer-modified-p) " | MOD" ""))
-                                (region-len (if (use-region-p)
-                                                (abs (- (region-end) (region-beginning)))
-                                              0)))
-                           (format " | Chars: %d%s%s"
-                                   region-len
-                                   mod-str
-                                   (if (and last-char (/= last-char ?\n))
-                                       " | NO LF"
-                                     "")))))))
+              (list
+               '\''(:eval (or buffer-file-name ""))
+               " | "
+               '\''mode-name
+               '\''(:eval (let* ((last-char (when (> (point-max) 0)
+                                           (char-before (point-max))))
+                              (mod-str (if (buffer-modified-p) " | MOD" ""))
+                              (region-len (if (use-region-p)
+                                              (abs (- (region-end) (region-beginning)))
+                                            0)))
+                         (format " | Chars: %d%s%s"
+                                 region-len
+                                 mod-str
+                                 (if (and last-char (/= last-char ?\n))
+                                     " | NO LF"
+                                   ""))))))
 (defadvice kill-ring-save (after keep-transient-mark-active ())
   (setq deactivate-mark nil))
 (ad-activate '\''kill-ring-save)
