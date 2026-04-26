@@ -15,12 +15,6 @@ OBJ=\
 
 ;; Tab configuration
 (tab-bar-mode 1)
-(setq tab-bar-tab-name-function
-  (lambda (&optional tab)
-    (let* ((tab (or tab (list (cons '\''buffer (current-buffer)))))
-           (b (alist-get '\''buffer tab)))
-      (concat (if (and b (buffer-live-p b) (buffer-modified-p b)) "*" "")
-              (if (and b (buffer-live-p b)) (buffer-name b) "???")))))
 
 ;; Emacs force fundamental mode
 (setq auto-mode-alist nil
