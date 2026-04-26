@@ -152,15 +152,6 @@ OBJ=\
                     :strike-through nil
                     :overline nil
                     :extend t)
-(global-auto-revert-mode 1)
-(setq auto-revert-verbose nil)
-(setq revert-without-query '\''(".*"))
-(advice-add
- '\''ask-user-about-supersession-threat
- :override
- (lambda (filename)
-   (message "Auto-reverted %s." filename)
-   (revert-buffer :ignore-auto :noconfirm)))
 (setq scroll-preserve-screen-position t)
 (setq auto-window-vscroll nil)
 (setq scroll-conservatively 10000)
