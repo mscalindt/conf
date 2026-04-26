@@ -1,14 +1,11 @@
 OBJ=\
-';; Copy/Paste: Ctrl+c/v
-;; Save: Ctrl+s
+';; Save: Ctrl+s
 ;; Scroll up/down: Alt+a/s
 ;; Search: Ctrl+f
 ;; Select all: Ctrl+a
 ;; Tabs: Alt+1/2/3/4/5/6/7
 ;; Close/Open tab: Alt+q/n
 ;; Undo/Redo: Ctrl+z Ctrl+Shift+z
-;; To line begin/end: Alt+z/x
-;; To word begin/end: Alt+c/v
 
 ;; emacsclient
 (require '\''server)
@@ -179,16 +176,6 @@ OBJ=\
     (define-key isearch-mode-map (kbd "RET") #'\''isearch-repeat-forward)
     (define-key isearch-mode-map [return] #'\''isearch-repeat-forward)))
 
-;; Functions
-(defun backward-simple-word ()
-  (interactive)
-  (skip-syntax-backward " ")
-  (skip-chars-backward "^ \t\n"))
-(defun forward-simple-word ()
-  (interactive)
-  (skip-syntax-forward " ")
-  (skip-chars-forward "^ \t\n"))
-
 ;; Keybindings
 (global-set-key (kbd "M-1") (lambda () (interactive) (tab-bar-select-tab 1)))
 (global-set-key (kbd "M-2") (lambda () (interactive) (tab-bar-select-tab 2)))
@@ -206,7 +193,9 @@ OBJ=\
     (if (= (length (tab-bar-tabs)) 1)
         (switch-to-buffer (generate-new-buffer "Untitled"))
       (tab-close))))
+
 (global-set-key (kbd "C-c") '\''kill-ring-save)
+(global-set-key [mouse-3] '\''kill-ring-save)
 (global-set-key (kbd "C-v") '\''yank)
 (global-set-key (kbd "C-a")
   (lambda () (interactive)
@@ -217,10 +206,6 @@ OBJ=\
 (global-set-key (kbd "C-S-z") '\''undo-redo)
 (global-set-key (kbd "M-a") #'\''scroll-down-command)
 (global-set-key (kbd "M-s") #'\''scroll-up-command)
-(global-set-key (kbd "M-z") #'\''beginning-of-line)
-(global-set-key (kbd "M-x") #'\''end-of-line)
-(global-set-key (kbd "M-c") #'\''backward-simple-word)
-(global-set-key (kbd "M-v") #'\''forward-simple-word)
 (global-set-key (kbd "TAB") (lambda () (interactive) (insert "    ")))
 (global-set-key [C-drag-mouse-1] #'\''mouse-set-region) ;; fix unmark on ctrl
 (global-set-key [C-double-mouse-1] #'\''mouse-set-region)
@@ -238,8 +223,6 @@ OBJ=\
 (global-set-key [C-down-mouse-2] nil)
 (global-set-key [C-down-mouse-3] nil)
 (global-set-key [mouse-1] #'\''ignore)
-(global-set-key [mouse-2] nil)
-(global-set-key [mouse-3] nil)
 (global-set-key [M-wheel-down] nil)
 (global-set-key [M-wheel-up] nil)
 (global-set-key [M-mouse-2] nil)
