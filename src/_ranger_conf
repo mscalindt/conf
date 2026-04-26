@@ -1,7 +1,7 @@
 OBJ=\
 'map D console delete
-copymap J <C-z>
-copymap K <C-x>
+copymap K <A-a>
+copymap J <A-s>
 copymap S <C-s>
 set autosave_bookmarks false
 set display_free_space_in_status_bar false
