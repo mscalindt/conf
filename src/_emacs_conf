@@ -82,9 +82,17 @@ OBJ=\
 (add-hook '\''post-command-hook #'\''force-mode-line-update)
 (setq-default mode-line-format
               '\''("%b" " | " mode-name
-              (:eval (progn (force-mode-line-update t) (format " | Chars: %d"
-                  (if (use-region-p)
-                      (abs (- (region-end) (region-beginning))) 0))))))
+                (:eval (progn
+                         (force-mode-line-update t)
+                         (let ((last-char (when (> (point-max) 0)
+                                            (char-before (point-max)))))
+                           (format " | Chars: %d%s"
+                                   (if (use-region-p)
+                                       (abs (- (region-end) (region-beginning)))
+                                     0)
+                                   (if (and last-char (/= last-char ?\n))
+                                       " | NO LF"
+                                     "")))))))
 (defadvice kill-ring-save (after keep-transient-mark-active ())
   (setq deactivate-mark nil))
 (ad-activate '\''kill-ring-save)
