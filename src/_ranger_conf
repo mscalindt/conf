@@ -2,7 +2,6 @@ OBJ=\
 'map D console delete
 copymap K <A-a>
 copymap J <A-s>
-copymap S <C-s>
 set autosave_bookmarks false
 set display_free_space_in_status_bar false
 set display_size_in_status_bar false
