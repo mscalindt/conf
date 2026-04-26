@@ -51,10 +51,10 @@ opacity = 0.5
 
 [keyboard]
 bindings = [
-  { key = "A", mods = "Control|Shift", action = "ScrollPageUp" },
-  { key = "S", mods = "Control|Shift", action = "ScrollPageDown" },
-  { key = "Z", mods = "Control|Shift", action = "ScrollToTop" },
-  { key = "X", mods = "Control|Shift", action = "ScrollToBottom" },
+  { key = "A", mods = "Control", action = "ScrollPageUp" },
+  { key = "S", mods = "Control", action = "ScrollPageDown" },
+  { key = "A", mods = "Control|Shift", action = "ScrollToTop" },
+  { key = "S", mods = "Control|Shift", action = "ScrollToBottom" },
 ]
 '
 OBJ_PATH="$home/.config/alacritty/alacritty.toml"
