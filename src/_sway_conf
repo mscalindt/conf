@@ -568,14 +568,9 @@ fi
 OBJ=\
 '#!/bin/sh
 
-'\
-"WP=$home/.config/sway/wp
-"\
-'WP_NEW="${TMPDIR:-/tmp}"/wp
+'"WP=$home/.config/sway/wp"'
 
-if [ -f "$WP_NEW" ]; then
-    swaymsg output '\''*'\'' bg "$WP_NEW" fill
-elif [ -f "$WP" ]; then
+if [ -f "$WP" ]; then
     swaymsg output '\''*'\'' bg "$WP" fill
 fi
 '
