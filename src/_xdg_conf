@@ -37,7 +37,7 @@ __obj_link_ow_soft \
 
 OBJ=\
 '[icon theme]
-Inherits=Breeze
+Inherits=Breeze5
 '
 OBJ_PATH="$home/.icons/default/index.theme"
 __file_write_ow_soft \

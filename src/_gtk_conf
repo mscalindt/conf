@@ -1,5 +1,5 @@
 OBJ=\
-'gtk-cursor-theme-name="Breeze"
+'gtk-cursor-theme-name="Breeze5"
 gtk-font-name="Cantarell 12"
 #gtk-document-font-name="DejaVu Serif 12"
 #gtk-monospace-font-name="Cantarell 12"
@@ -44,7 +44,7 @@ __file_write_ow_soft \
 
 OBJ=\
 '[Settings]
-gtk-cursor-theme-name="Breeze"
+gtk-cursor-theme-name="Breeze5"
 gtk-font-name="Cantarell 12"
 #gtk-document-font-name="DejaVu Serif 12"
 #gtk-monospace-font-name="Cantarell 12"
