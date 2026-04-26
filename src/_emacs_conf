@@ -63,15 +63,7 @@ OBJ=\
 (global-display-line-numbers-mode 1)
 (global-display-fill-column-indicator-mode 1)
 (setq-default fill-column 80)
-(setq frame-title-format
-      '\''(:eval
-        (let* ((buf (window-buffer))
-               (fname (and (buffer-live-p buf) (buffer-file-name buf)))
-               (name (if fname
-                         fname
-                       (buffer-name buf))))
-          (concat (if (and buf (buffer-live-p buf) (buffer-modified-p buf)) "*" "")
-                  name))))
+(setq frame-title-format "%f")
 (setq vc-handled-backends nil)
 (add-hook '\''post-command-hook #'\''force-mode-line-update)
 (setq-default mode-line-format
