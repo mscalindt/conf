@@ -191,7 +191,9 @@ OBJ=\
   (lambda () (interactive)
     (if (= (length (tab-bar-tabs)) 1)
         (switch-to-buffer (generate-new-buffer "Untitled"))
-      (tab-close))))
+      (let ((buf (current-buffer)))
+        (tab-close)
+        (kill-buffer buf)))))
 
 (global-set-key (kbd "C-c") '\''kill-ring-save)
 (global-set-key [mouse-3] '\''kill-ring-save)
