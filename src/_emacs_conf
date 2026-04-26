@@ -78,12 +78,15 @@ OBJ=\
               '\''("%b" " | " mode-name
                 (:eval (progn
                          (force-mode-line-update t)
-                         (let ((last-char (when (> (point-max) 0)
-                                            (char-before (point-max)))))
-                           (format " | Chars: %d%s"
-                                   (if (use-region-p)
-                                       (abs (- (region-end) (region-beginning)))
-                                     0)
+                         (let* ((last-char (when (> (point-max) 0)
+                                             (char-before (point-max))))
+                                (mod-str (if (buffer-modified-p) " | MOD" ""))
+                                (region-len (if (use-region-p)
+                                                (abs (- (region-end) (region-beginning)))
+                                              0)))
+                           (format " | Chars: %d%s%s"
+                                   region-len
+                                   mod-str
                                    (if (and last-char (/= last-char ?\n))
                                        " | NO LF"
                                      "")))))))
