@@ -1,4 +1,4 @@
-.PHONY: build clean config run rel sbm_up
+.PHONY: build clean config run rel sbm_up srcs
 
 CONF ?= m533ia.conf
 BUILD_CONF = .build.tmp
