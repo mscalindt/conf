@@ -14,8 +14,6 @@ assign [app_id="featherpad"] 2
 assign [app_id="emacs"] 2
 
 # Tiling configuration for specific programs
-for_window [app_id="sway-app-launcher"] \
-    floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 5
 for_window [app_id="firefox"] \
     border none
 
@@ -68,10 +66,7 @@ bindsym Mod4+w move container to workspace 8
 bindsym Mod4+e move container to workspace 7
 bindsym Mod4+Shift+c reload
 bindsym Mod4+Return exec /usr/bin/alacritty
-bindsym Mod4+a exec /usr/bin/alacritty \
-    --class sway-app-launcher -e /usr/bin/sway-launcher-desktop
 bindsym Mod4+t exec /usr/bin/Telegram
-bindsym Mod4+b exec /usr/bin/blueman-manager
 bindsym Mod4+l exec /usr/bin/swaylock
 bindsym Mod4+Shift+e exec /usr/bin/emacs
 bindsym Mod4+Shift+q exec /home/$USER/.config/sway/fkill_sway
