@@ -11,7 +11,7 @@ $(BUILD_CONF): BUILD_TS
 	(cd lib/syscfg && $(MAKE))
 	cp lib/syscfg/syscfg ./syscfg
 ./conf: $(BUILD_CONF) ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF)
-	sh ./scripts/build.sh ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF)
+	sh ./scripts/build.sh ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF) ./src/devices/readonly
 
 clean:
 	rm ./.build.tmp ./lib/syscfg/syscfg ./syscfg ./conf

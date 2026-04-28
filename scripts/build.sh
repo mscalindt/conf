@@ -6,13 +6,13 @@ for unit in "$1"/*; do
 $unit"
 done
 
-conf=$(cat "$2")
-FILE="$FILE
-$conf"
+shift
 
-conf=$(cat "$3")
-FILE="$FILE
+for file in "$@"; do
+    conf=$(cat "$file")
+    FILE="$FILE
 $conf"
+done
 
 NAME='conf'
 printf "%s\n" "$FILE" > ./"$NAME"
