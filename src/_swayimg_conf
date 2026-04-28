@@ -1,8 +1,47 @@
 OBJ=\
-'[general]
-overlay = yes
+'swayimg.enable_overlay(true)
+swayimg.enable_decoration(false)
+swayimg.viewer.set_window_background(0x00000000)
+swayimg.enable_antialiasing(true)
+swayimg.text.set_size(24)
+swayimg.text.set_padding(0)
+swayimg.text.set_timeout(0)
+swayimg.text.set_shadow(0xff000000)
+swayimg.viewer.set_default_scale("fit")
+
+swayimg.viewer.set_text("topleft", {
+  "Scale: {scale}"
+})
+
+swayimg.viewer.set_text("topright", {
+})
+
+swayimg.viewer.set_text("bottomleft", {
+  "File name:  {name}",
+  "File size:  {sizehr}",
+  "File time:  {time}",
+  "Image size: {frame.width}x{frame.height}"
+})
+
+swayimg.viewer.set_text("bottomright", {
+  "Camera:    {meta.Exif.Image.Model}",
+  "Exposure:  {meta.Exif.Image.ExposureTime}",
+  "F Number:  {meta.Exif.Image.FNumber}",
+  "ISO:       {meta.Exif.Image.ISOSpeedRatings}",
+  "Time:      {meta.Exif.Photo.DateTimeOriginal}"
+})
+
+swayimg.text.set_font("Source Code Pro")
+
+swayimg.on_window_resize(function()
+  swayimg.viewer.set_fix_scale("optimal")
+end)
+
+swayimg.viewer.on_key("q", function()
+  swayimg.exit()
+end)
 '
-OBJ_PATH="$home/.config/swayimg/config"
+OBJ_PATH="$home/.config/swayimg/init.lua"
 __file_write_ow_soft \
     -uid "$uid" -gid "$gid" \
     -user "$user" -group "$group"
