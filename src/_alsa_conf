@@ -20,7 +20,7 @@ else
 'defaults.pcm.rate_converter "speexrate_medium"
 '
 fi
-if [ "$m533ia" ]; then
+if [ "$_m533ia" ]; then
     OBJ="$OBJ"\
 'defaults.pcm.card 1
 defaults.ctl.card 1

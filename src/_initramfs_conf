@@ -1,6 +1,6 @@
 [ "$arch_linux" ] || return 0
 
-if [ "$m533ia" ]; then
+if [ "$_m533ia" ]; then
     OBJ=\
 'MODULES=(amdgpu pinctrl-amd)
 '

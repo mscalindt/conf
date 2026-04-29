@@ -22,7 +22,7 @@ if [ "$dns" ] && [ "$dnsmasq" ]; then
     ___DNSMASQ_SERVICE;
 fi
 
-if [ "$m533ia" ]; then
+if [ "$_m533ia" ]; then
     ___EVTEST_GRAB_SERVICE;
 fi
 
