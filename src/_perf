@@ -1,0 +1,32 @@
+# (RAM) latency-first performance configuration.
+
+for OBJ_PATH in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+    OBJ=\
+'performance
+'
+    __file_write_ow_soft;
+done
+
+OBJ=\
+'5
+'
+OBJ_PATH='/proc/sys/vm/dirty_background_ratio'
+__file_write_ow_soft;
+
+OBJ=\
+'6000
+'
+OBJ_PATH='/proc/sys/vm/dirty_expire_centisecs'
+__file_write_ow_soft;
+
+OBJ=\
+'10
+'
+OBJ_PATH='/proc/sys/vm/dirty_ratio'
+__file_write_ow_soft;
+
+OBJ=\
+'1500
+'
+OBJ_PATH='/proc/sys/vm/dirty_writeback_centisecs'
+__file_write_ow_soft;
