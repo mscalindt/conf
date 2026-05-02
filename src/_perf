@@ -1,4 +1,10 @@
-# (RAM) latency-first performance configuration.
+# (RAM) latency-first performance configuration. Currently assumes three
+# things:
+# - 8 GB RAM (for predictable storage write performance);
+# - NVMe (handle at least ~1 GB write efficiently);
+# - No swap and no OOM state.
+#
+# Not recommended for systems with swap, dynamic near-OOM workload.
 
 for OBJ_PATH in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
     OBJ=\
