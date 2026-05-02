@@ -1,10 +1,12 @@
-# (RAM) latency-first performance configuration. Currently assumes three
-# things:
+# Strict (RAM) NVMe-optimized batching writeback configuration.
+#
+# Currently assumes three things:
 # - 8 GB RAM (for predictable storage write performance);
-# - NVMe (handle at least ~1 GB write efficiently);
+# - NVMe (handle at least ~1 GB write efficiently; SLC cache focused);
 # - No swap and no OOM state.
 #
 # Not recommended for systems with swap, dynamic near-OOM workload.
+# WARNING: Also not recommended for unreliable systems / power loss.
 
 for OBJ_PATH in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
     OBJ=\
@@ -14,25 +16,25 @@ for OBJ_PATH in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
 done
 
 OBJ=\
-'5
+'6
 '
 OBJ_PATH='/proc/sys/vm/dirty_background_ratio'
 __file_write_ow_soft;
 
 OBJ=\
-'6000
+'3000
 '
 OBJ_PATH='/proc/sys/vm/dirty_expire_centisecs'
 __file_write_ow_soft;
 
 OBJ=\
-'10
+'12
 '
 OBJ_PATH='/proc/sys/vm/dirty_ratio'
 __file_write_ow_soft;
 
 OBJ=\
-'1500
+'3000
 '
 OBJ_PATH='/proc/sys/vm/dirty_writeback_centisecs'
 __file_write_ow_soft;
