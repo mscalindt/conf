@@ -17,6 +17,9 @@ fi
 if [ "$fstab_ext4_commit" ]; then
     __info - -- ",commit=$fstab_ext4_commit"
 fi
+if [ "$fstab_ext4_writeback" ]; then
+    __info - -- ',data=writeback'
+fi
 __info - -- '    '
 __info - - '0    1'
 
