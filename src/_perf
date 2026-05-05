@@ -1,8 +1,7 @@
 # Strict (RAM) NVMe-optimized batching writeback configuration.
 #
-# Currently assumes three things:
-# - 8 GB RAM (for predictable storage write performance);
-# - NVMe (handle at least ~1 GB write efficiently; SLC cache focused);
+# Currently assumes two things:
+# - NVMe (handle at least ~1 GiB write efficiently; SLC cache focused);
 # - No swap and no OOM state.
 #
 # Not recommended for systems with swap, dynamic near-OOM workload.
@@ -16,9 +15,9 @@ for OBJ_PATH in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
 done
 
 OBJ=\
-'6
+'536870912
 '
-OBJ_PATH='/proc/sys/vm/dirty_background_ratio'
+OBJ_PATH='/proc/sys/vm/dirty_background_bytes'
 __file_write_ow_soft;
 
 OBJ=\
@@ -28,9 +27,9 @@ OBJ_PATH='/proc/sys/vm/dirty_expire_centisecs'
 __file_write_ow_soft;
 
 OBJ=\
-'12
+'1073741824
 '
-OBJ_PATH='/proc/sys/vm/dirty_ratio'
+OBJ_PATH='/proc/sys/vm/dirty_bytes'
 __file_write_ow_soft;
 
 OBJ=\
