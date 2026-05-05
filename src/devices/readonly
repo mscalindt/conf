@@ -1,7 +1,8 @@
 readonly \
     _25ju _m533ia arch_linux audio_hq_resamp bluetooth dns dnsmasq efi_fat \
-    env fstab_ext4_nobarrier fstab_ext4_writeback fstab_relatime ipv6 kvantum \
-    optimal_lbaf pipewire pipewire_media_session portal root_ext4 sway \
-    systemd wayland arch_mirlist block_size drive_dev efi_mnt efi_partition \
-    fstab_ext4_commit gid group home hostname interface_wlan \
-    partitioning_reserve_gib root_partition uid user
+    env fstab_ext4_journal_async_commit fstab_ext4_nobarrier \
+    fstab_ext4_writeback fstab_relatime ipv6 kvantum optimal_lbaf pipewire \
+    pipewire_media_session portal root_ext4 sway systemd wayland arch_mirlist \
+    block_size drive_dev efi_mnt efi_partition fstab_ext4_commit gid group \
+    home hostname interface_wlan partitioning_reserve_gib root_partition uid \
+    user
