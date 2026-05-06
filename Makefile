@@ -16,7 +16,7 @@ $(BUILD_CONF): BUILD_TS
 clean:
 	rm ./.build.tmp ./lib/syscfg/syscfg ./syscfg ./conf
 
-config: ./syscfg ./conf
+config:
 	@test -n "$(CN)" || { echo 'CN is empty'; exit 2; }
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_alacritty_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_alsa_conf
