@@ -14,7 +14,8 @@ $(BUILD_CONF): BUILD_TS
 	sh ./scripts/build.sh ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF) ./src/devices/readonly
 
 clean:
-	rm ./.build.tmp ./lib/syscfg/syscfg ./syscfg ./conf
+	-(cd lib/syscfg && $(MAKE) clean)
+	rm -fv ./$(BUILD_CONF) ./syscfg ./conf
 
 config:
 	@test -n "$(CN)" || { echo 'CN is empty'; exit 2; }
