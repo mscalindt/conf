@@ -54,7 +54,7 @@ To execute all intended software configuration, use the `config` recipe and
 specify the `CN` (country) variable:
 
 ```
-$ make CN=bg config
+# make CN=bg config
 ```
 
 ## Releases
