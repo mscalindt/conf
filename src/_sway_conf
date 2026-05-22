@@ -480,8 +480,8 @@ EOF
 AUDIO_SINK="$_NAME"
 } 2> /dev/null
 case "$AUDIO_SINK" in
-    '\''alsa_output'\''*) AUDIO_SINK=ALSA ;;
-    '\''bluez_output'\''*) AUDIO_SINK=BLUEZ ;;
+    '\''alsa_output'\''* | '\''alsa_sink'\''*) AUDIO_SINK=ALSA ;;
+    '\''bluez_output'\''* | '\''bluez_sink'\''*) AUDIO_SINK=BLUEZ ;;
 esac
 
 KB_LAYOUT=$(
