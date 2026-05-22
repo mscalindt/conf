@@ -14,8 +14,8 @@ if [ "$arch_linux" ]; then
     ___RTKIT_DAEMON_SERVICE;
 fi
 
-if [ "$bluetooth" ]; then
-    ___BLUETOOTH_SERVICE;
+if [ "$bluez" ]; then
+    ___BLUEZ_SERVICE;
 fi
 
 if [ "$dns" ] && [ "$dnsmasq" ]; then

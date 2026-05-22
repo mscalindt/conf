@@ -1,7 +1,7 @@
-___BLUETOOTH_SERVICE() {
+___BLUEZ_SERVICE() {
     OBJ=\
 '[Unit]
-Description=Bluetooth service
+Description=BlueZ bluetooth service
 Requires=dbus.service
 After=dbus.service
 
@@ -14,10 +14,10 @@ TimeoutStopSec=3
 [Install]
 WantedBy=multi-user.target
 '
-    OBJ_PATH='/etc/systemd/system/bluetooth.service'
+    OBJ_PATH='/etc/systemd/system/bluez.service'
     __file_write_ow_soft;
 
-    OBJ='/etc/systemd/system/bluetooth.service'
-    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluetooth.service'
+    OBJ='/etc/systemd/system/bluez.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluez.service'
     __obj_link_ow_soft;
 }
