@@ -548,8 +548,8 @@ dbus-update-activation-environment --systemd \
         OBJ="$OBJ"\
 '
 systemctl --user start \
-    xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr \
-    xdg-document-portal xdg-permission-store
+    xdg-desktop-portal xdg-desktop-portal-gtk xdg-document-portal \
+    xdg-permission-store
 '
     fi
     OBJ_PATH="$home/.config/sway/systemd-handler"
