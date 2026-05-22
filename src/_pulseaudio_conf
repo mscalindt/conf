@@ -1,0 +1,9 @@
+OBJ=
+OBJ_PATH='/etc/pulse/default.pa'
+__ed -log "${TMPDIR:-/tmp}/_pulseaudio_conf" -- \
+    -s \
+    'load-module module-suspend-on-idle' \
+    '#load-module module-suspend-on-idle'
+OBJ="$OBJ"
+OBJ_PATH='/etc/pulse/default.pa'
+__file_write_ow_soft -color -log "${TMPDIR:-/tmp}/_pulseaudio_conf"
