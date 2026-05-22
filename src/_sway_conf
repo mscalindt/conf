@@ -519,7 +519,9 @@ case "$BATTERY" in
     100|99) : ;;
     *) STATUS="$STATUS | ~${BATTERY}%" ;;
 esac
-STATUS="$STATUS | ${VOLUME}%"
+if [ "$VOLUME" ]; then
+    STATUS="$STATUS | ${VOLUME}%"
+fi
 if [ "$AUDIO_SINK" ]; then
     STATUS="$STATUS | $AUDIO_SINK"
 fi
