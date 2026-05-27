@@ -104,7 +104,6 @@ bar {
 # Other
 exec_always /usr/bin/sh -c '\''rm -f "${TMPDIR:-/tmp}"/nettotal'\''
 exec_always /home/$USER/.config/sway/import-gsettings
-exec_always /home/$USER/.config/sway/wp-handler_sway
 '
 if [ "$arch_linux" ]; then
     OBJ="$OBJ"\
@@ -560,18 +559,3 @@ systemctl --user start \
         -user "$user" -group "$group" \
         -mode 0755
 fi
-
-OBJ=\
-'#!/bin/sh
-
-'"WP=$home/.config/sway/wp"'
-
-if [ -f "$WP" ]; then
-    swaymsg output '\''*'\'' bg "$WP" fill
-fi
-'
-OBJ_PATH="$home/.config/sway/wp-handler_sway"
-__file_write_ow_soft \
-    -uid "$uid" -gid "$gid" \
-    -user "$user" -group "$group" \
-    -mode 0755
