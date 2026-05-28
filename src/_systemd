@@ -25,20 +25,6 @@ if [ "$_m533ia" ]; then
     ___EVTEST_GRAB_SERVICE;
 fi
 
-if [ "$pipewire" ]; then
-    ___PIPEWIRE_SERVICE;
-    ___PIPEWIRE_PULSE_SERVICE;
-
-    if [ "$arch_linux" ]; then
-        ___PIPEWIRE_SOCKET;
-        ___PIPEWIRE_PULSE_SOCKET;
-    fi
-
-    if [ "$pipewire_media_session" ]; then
-        ___PIPEWIRE_MEDIA_SESSION_SERVICE;
-    fi
-fi
-
 if [ "$portal" ]; then
     ___XDG_DESKTOP_PORTAL_SERVICE;
     ___XDG_DESKTOP_PORTAL_GTK_SERVICE;

@@ -52,8 +52,6 @@ config:
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_openal_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_pacman_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_pam_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_pipewire_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_pipewire_media_session_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_pulseaudio_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_ranger_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_resolv_conf
