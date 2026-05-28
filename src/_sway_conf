@@ -90,7 +90,7 @@ bindsym Mod4+h exec /usr/bin/grim \
 
 # Status bar configuration
 bar {
-    status_command while /home/$USER/.config/sway/status_sway; do sleep 0.1; done
+    status_command while /home/$USER/.config/sway/status; do sleep 0.1; done
     position top
     font pango:Source Code Pro 10
     pango_markup disabled
@@ -192,17 +192,21 @@ __file_write_ow_soft \
 OBJ=\
 '#!/bin/sh
 
+STATUS=
 '
 OBJ="$OBJ"\
 "NET_INTERFACE='$interface_wlan'"
 OBJ="$OBJ"\
 '
 
-TITLE=$(
-    swaymsg -t get_tree | \
-    jq -r '\''.. | select(.type?) | select(.focused==true).name'\'' | \
-    LC_ALL=C tr -cd '\''\11\12\15\40-\176'\''
-)
+TITLE=$(swaymsg -rt get_tree 2> /dev/null)
+if [ "$TITLE" ]; then
+    TITLE=$(
+        printf "%s" "$TITLE" | \
+        jq -r '\''.. | select(.type?) | select(.focused==true).name'\'' | \
+        LC_ALL=C tr -cd '\''\11\12\15\40-\176'\''
+    )
+fi
 
 MEMHOG=$(ps aux 2> /dev/null)
 {
@@ -411,6 +415,9 @@ printf "%s\n" "$TOTAL" > "${TMPDIR:-/tmp}"/cpustatprevt
 DIFF_IDLE=$((IDLE - PREV_IDLE))
 DIFF_TOTAL=$((TOTAL - PREV_TOTAL))
 CPU=$(((1000 * (DIFF_TOTAL - DIFF_IDLE) / DIFF_TOTAL + 5) / 10))
+if [ "$CPU" ]; then
+    CPU="$CPU%"
+fi
 
 { while read -r LINE; do
     case "$LINE" in
@@ -453,8 +460,15 @@ BEGIN {
 done < /proc/meminfo; } 2> /dev/null
 
 { read -r BATTERY < /sys/class/power_supply/BAT0/capacity; } 2> /dev/null
+case "$BATTERY" in
+    100|99) BATTERY= ;;
+    *) if [ "$BATTERY" ]; then BATTERY="~$BATTERY%"; fi ;;
+esac
 
 VOLUME=$(pamixer --get-volume 2> /dev/null)
+if [ "$VOLUME" ]; then
+    VOLUME="$VOLUME%"
+fi
 
 AUDIO_SINK=$(pactl list sinks 2> /dev/null)
 {
@@ -483,10 +497,13 @@ case "$AUDIO_SINK" in
     '\''bluez_output'\''* | '\''bluez_sink'\''*) AUDIO_SINK=BLUEZ ;;
 esac
 
-KB_LAYOUT=$(
-    swaymsg -t get_inputs | \
-    jq '\''map(select(has("xkb_active_layout_name")))[0].xkb_active_layout_name'\''
-)
+KB_LAYOUT=$(swaymsg -rt get_inputs 2> /dev/null)
+if [ "$KB_LAYOUT" ]; then
+    KB_LAYOUT=$(
+        printf "%s" "$KB_LAYOUT" | \
+        jq '\''map(select(has("xkb_active_layout_name")))[0].xkb_active_layout_name'\''
+    )
+fi
 case "$KB_LAYOUT" in
     *'\''English'\''*)
         KB_LAYOUT=EN
@@ -509,26 +526,32 @@ while :; do case "$DATE" in
     ;;
 esac done
 
-STATUS="$TITLE | $MEMHOG"
-if [ "$NET_USAGE" ]; then
-    STATUS="$STATUS | $NET_USAGE"
-fi
-STATUS="$STATUS | ${CPU}% | $MEMORY"
-case "$BATTERY" in
-    100|99) : ;;
-    *) STATUS="$STATUS | ~${BATTERY}%" ;;
-esac
-if [ "$VOLUME" ]; then
-    STATUS="$STATUS | ${VOLUME}%"
-fi
-if [ "$AUDIO_SINK" ]; then
-    STATUS="$STATUS | $AUDIO_SINK"
-fi
-STATUS="$STATUS | $KB_LAYOUT | $DATE |"
+status_add() {
+    [ "$1" ] || return 0
 
+    if [ "$STATUS" ]; then
+        STATUS="$STATUS | $1"
+    else
+        STATUS="$1"
+    fi
+}
+
+status_add "$TITLE"
+status_add "$MEMHOG"
+status_add "$NET_USAGE"
+status_add "$CPU"
+status_add "$MEMORY"
+status_add "$BATTERY"
+status_add "$VOLUME"
+status_add "$AUDIO_SINK"
+status_add "$KB_LAYOUT"
+status_add "$DATE"
+if [ "$STATUS" ]; then
+    STATUS="$STATUS |" # tray icons separator
+fi
 printf "%s" "$STATUS"
 '
-OBJ_PATH="$home/.config/sway/status_sway"
+OBJ_PATH="$home/.config/sway/status"
 __file_write_ow_soft \
     -uid "$uid" -gid "$gid" \
     -user "$user" -group "$group" \
