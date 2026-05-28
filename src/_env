@@ -3,10 +3,6 @@
 ___BASH_PROFILE;
 ___ENV;
 
-if [ "$kvantum" ]; then
-    ___QT_THEME;
-fi
-
 if [ "$wayland" ]; then
     ___DISPLAY_SERVER_wayland;
 fi
