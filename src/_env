@@ -13,8 +13,4 @@ if [ "$wayland" ]; then
     if [ "$portal" ]; then
         ___PORTAL;
     fi
-
-    if [ "$sway" ]; then
-        ___WM_sway;
-    fi
 fi
