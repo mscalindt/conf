@@ -5,6 +5,8 @@ if [ "$arch_linux" ]; then
     ___IWD_SERVICE;
     ___KEYBOXD_SERVICE;
     ___KEYBOXD_SOCKET;
+    ___PIPEWIRE_SERVICE;
+    ___PIPEWIRE_SOCKET;
     ___POLKIT_SERVICE;
     ___RTKIT_DAEMON_SERVICE;
 fi

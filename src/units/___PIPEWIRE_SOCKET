@@ -1,0 +1,7 @@
+___PIPEWIRE_SOCKET() {
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/pipewire.socket"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+}
