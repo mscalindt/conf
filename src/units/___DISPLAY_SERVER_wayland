@@ -6,6 +6,7 @@ MOZ_ENABLE_WAYLAND=1
 QT_QPA_PLATFORM=wayland
 QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 SDL_VIDEODRIVER=wayland
+GTK_USE_PORTAL=1
 '
     OBJ_PATH="$home/.syscfg_env/display_server"
     __file_write_ow_soft \

@@ -9,8 +9,4 @@ fi
 
 if [ "$wayland" ]; then
     ___DISPLAY_SERVER_wayland;
-
-    if [ "$portal" ]; then
-        ___PORTAL;
-    fi
 fi
