@@ -162,7 +162,6 @@ OBJ=\
 (add-hook '\''isearch-mode-hook
   (lambda ()
     (define-key isearch-mode-map (kbd "C-v") #'\''isearch-yank-kill)
-    (define-key isearch-mode-map (kbd "RET") #'\''isearch-repeat-forward)
     (define-key isearch-mode-map [return] #'\''isearch-repeat-forward)))
 
 ;; Keybindings
