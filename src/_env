@@ -1,8 +1,37 @@
 [ "$env" ] || return 0
 
-___BASH_PROFILE;
-___ENV;
+OBJ=\
+'for file in "$HOME"/.syscfg_env/*; do
+    set -a; . "$file"; set +a
+done
+'
+OBJ_PATH="$home/.bash_profile"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
+'EDITOR=nano
+PATH="${PATH}:$HOME/.local/bin:$HOME/scripts"
+QT_STYLE_OVERRIDE=kvantum
+'
+OBJ_PATH="$home/.syscfg_env/env"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
 
 if [ "$wayland" ]; then
-    ___DISPLAY_SERVER_wayland;
+    OBJ=\
+'GTK_A11Y=none
+GDK_BACKEND=wayland
+MOZ_ENABLE_WAYLAND=1
+QT_QPA_PLATFORM=wayland
+QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+SDL_VIDEODRIVER=wayland
+GTK_USE_PORTAL=1
+'
+    OBJ_PATH="$home/.syscfg_env/display_server"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 fi
