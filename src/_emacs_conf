@@ -1,13 +1,5 @@
 OBJ=\
-';; Save: Ctrl+s
-;; Scroll up/down: Alt+a/s
-;; Search: Ctrl+f
-;; Select all: Ctrl+a
-;; Tabs: Alt+1/2/3/4/5/6/7
-;; Close/Open tab: Alt+q/n
-;; Undo/Redo: Ctrl+z Ctrl+Shift+z
-
-;; emacsclient
+';; emacsclient
 (require '\''server)
 (unless (server-running-p) (server-start))
 (advice-add '\''server-visit-files :around
