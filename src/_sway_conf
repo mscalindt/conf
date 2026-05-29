@@ -10,7 +10,6 @@ focus_follows_mouse always
 # Pin programs to specific workspaces
 assign [title="Steam"] 7
 assign [class="steam"] 7
-assign [app_id="featherpad"] 2
 assign [app_id="emacs"] 2
 
 # Tiling configuration for specific programs
