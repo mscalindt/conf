@@ -34,4 +34,12 @@ GTK_USE_PORTAL=1
     __file_write_ow_soft \
         -uid "$uid" -gid "$gid" \
         -user "$user" -group "$group"
+else
+    OBJ=\
+'GTK_A11Y=none
+'
+    OBJ_PATH="$home/.syscfg_env/display_server"
+    __file_write_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
 fi
