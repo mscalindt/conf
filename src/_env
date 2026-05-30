@@ -12,7 +12,7 @@ __file_write_ow_soft \
 
 OBJ=\
 'EDITOR=nano
-PATH="${PATH}:$HOME/.local/bin:$HOME/scripts"
+PATH="${PATH}:$HOME/scripts"
 QT_STYLE_OVERRIDE=kvantum
 GTK_A11Y=none
 '
