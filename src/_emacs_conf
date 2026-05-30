@@ -189,6 +189,12 @@ OBJ=\
 (global-set-key (kbd "M-a") #'\''scroll-down-command)
 (global-set-key (kbd "M-s") #'\''scroll-up-command)
 (global-set-key (kbd "TAB") (lambda () (interactive) (insert "    ")))
+(global-set-key (kbd "<backtab>")
+  (lambda () (interactive)
+    (save-excursion
+      (beginning-of-line)
+      (when (looking-at "^    ")
+        (delete-char 4)))))
 (global-set-key [C-drag-mouse-1] #'\''mouse-set-region) ;; fix unmark on ctrl
 (global-set-key [C-double-mouse-1] #'\''mouse-set-region)
 (global-set-key [double-mouse-1] #'\''mouse-set-region)
