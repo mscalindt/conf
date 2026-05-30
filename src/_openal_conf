@@ -1,5 +1,5 @@
 OBJ=\
-'frequency = 44100
+'frequency = 48000
 '
 OBJ_PATH='/etc/openal/alsoft.conf'
 __file_write_ow_soft;
