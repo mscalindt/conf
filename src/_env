@@ -14,6 +14,7 @@ OBJ=\
 'EDITOR=nano
 PATH="${PATH}:$HOME/.local/bin:$HOME/scripts"
 QT_STYLE_OVERRIDE=kvantum
+GTK_A11Y=none
 '
 OBJ_PATH="$home/.syscfg_env/env"
 __file_write_ow_soft \
@@ -22,21 +23,12 @@ __file_write_ow_soft \
 
 if [ "$wayland" ]; then
     OBJ=\
-'GTK_A11Y=none
-GDK_BACKEND=wayland
+'GDK_BACKEND=wayland
 MOZ_ENABLE_WAYLAND=1
 QT_QPA_PLATFORM=wayland
 QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 SDL_VIDEODRIVER=wayland
 GTK_USE_PORTAL=1
-'
-    OBJ_PATH="$home/.syscfg_env/display_server"
-    __file_write_ow_soft \
-        -uid "$uid" -gid "$gid" \
-        -user "$user" -group "$group"
-else
-    OBJ=\
-'GTK_A11Y=none
 '
     OBJ_PATH="$home/.syscfg_env/display_server"
     __file_write_ow_soft \
