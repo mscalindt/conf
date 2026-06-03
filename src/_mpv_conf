@@ -27,8 +27,8 @@ cscale=bilinear
 [quality]
 hdr-peak-percentile=99.995  # gpu-hq/high-quality default
 hdr-contrast-recovery=0.30  # gpu-hq/high-quality default
-scale=ewa_lanczossharp  # gpu-hq/high-quality default
-cscale=ewa_lanczossharp
+scale=lanczos
+cscale=lanczos
 
 # Video-as-intended configuration:
 # No interpolation, sync display to video FPS. Compromise has to be made in
