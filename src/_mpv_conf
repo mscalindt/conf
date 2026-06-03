@@ -1,4 +1,12 @@
 OBJ=\
+'r cycle-values video-rotate "90" "180" "270" "0"
+'
+OBJ_PATH="$home/.config/mpv/input.conf"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
 '# Named profile to be specified externally for audio files.
 [audio-cfg]
 force-window=yes
