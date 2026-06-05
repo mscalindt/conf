@@ -52,6 +52,7 @@ cursor-autohide=1000  # hide cursor after 1s of inactivity
 
 # Session
 save-position-on-quit=yes
+watch-later-options=start
 
 # Language & Subtitles
 alang=en
