@@ -12,6 +12,7 @@ set max_console_history_size 100
 set mouse_enabled false
 set tilde_in_titlebar true
 set preview_max_size 1010101
+set save_console_history false
 '
 OBJ_PATH="$home/.config/ranger/rc.conf"
 __file_write_ow_soft \
