@@ -24,7 +24,6 @@ __file_write_ow_soft \
 if [ "$wayland" ]; then
     OBJ=\
 'GDK_BACKEND=wayland,x11
-MOZ_ENABLE_WAYLAND=1
 QT_QPA_PLATFORM='\''wayland;xcb'\''
 QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 SDL_VIDEODRIVER=wayland,x11
