@@ -45,7 +45,6 @@ config:
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_initramfs_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_kvantum_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_locale
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_makepkg_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_mpv_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_mutt_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_nano_conf
