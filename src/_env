@@ -13,23 +13,14 @@ __file_write_ow_soft \
 OBJ=\
 'EDITOR=nano
 PATH="${PATH}:$HOME/scripts"
-QT_STYLE_OVERRIDE=kvantum
+GDK_BACKEND=wayland,x11
 GTK_A11Y=none
+QT_QPA_PLATFORM='\''wayland;xcb'\''
+QT_STYLE_OVERRIDE=kvantum
+QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+SDL_VIDEODRIVER=wayland,x11
 '
 OBJ_PATH="$home/.syscfg_env/env"
 __file_write_ow_soft \
     -uid "$uid" -gid "$gid" \
     -user "$user" -group "$group"
-
-if [ "$wayland" ]; then
-    OBJ=\
-'GDK_BACKEND=wayland,x11
-QT_QPA_PLATFORM='\''wayland;xcb'\''
-QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-SDL_VIDEODRIVER=wayland,x11
-'
-    OBJ_PATH="$home/.syscfg_env/display_server"
-    __file_write_ow_soft \
-        -uid "$uid" -gid "$gid" \
-        -user "$user" -group "$group"
-fi

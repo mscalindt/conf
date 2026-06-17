@@ -16,7 +16,6 @@ readonly \
     optimal_lbaf \
     root_ext4 \
     systemd \
-    wayland \
     arch_mirlist \
     block_size \
     drive_dev \
