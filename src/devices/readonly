@@ -15,7 +15,6 @@ readonly \
     ipv6 \
     optimal_lbaf \
     root_ext4 \
-    systemd \
     arch_mirlist \
     block_size \
     drive_dev \

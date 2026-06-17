@@ -1,15 +1,15 @@
-[ "$systemd" ] || return 0
+[ "$arch_linux" ] || return 0
 
-if [ "$arch_linux" ]; then
-    ___AT_SPI_DBUS_BUS_SERVICE;
-    ___IWD_SERVICE;
-    ___KEYBOXD_SERVICE;
-    ___KEYBOXD_SOCKET;
-    ___PIPEWIRE_SERVICE;
-    ___PIPEWIRE_SOCKET;
-    ___POLKIT_SERVICE;
-    ___RTKIT_DAEMON_SERVICE;
-fi
+# Masks {
+___AT_SPI_DBUS_BUS_SERVICE;
+___IWD_SERVICE;
+___KEYBOXD_SERVICE;
+___KEYBOXD_SOCKET;
+___PIPEWIRE_SERVICE;
+___PIPEWIRE_SOCKET;
+___POLKIT_SERVICE;
+___RTKIT_DAEMON_SERVICE;
+# }
 
 if [ "$bluez" ]; then
     ___BLUEZ_SERVICE;
