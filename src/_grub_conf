@@ -39,4 +39,4 @@ OBJ="$OBJ"\
 OBJ_PATH='/etc/default/grub'
 __file_write_ow_soft;
 
-__cmd -- grub-mkconfig -o "$efi_mnt"/EFI/BOOT/grub/grub.cfg
+__info -white - 'Re-install GRUB to apply any changes.'

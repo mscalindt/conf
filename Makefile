@@ -37,8 +37,11 @@ config:
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_gai_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_git_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_gpg_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_grub
+	# First configure GRUB before install.
+	# {
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_grub_conf
+	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_grub
+	# }
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_gtk_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_hostname
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_hosts
