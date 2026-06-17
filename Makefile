@@ -34,8 +34,8 @@ config:
 	rm -f /etc/fstab
 	sh ./syscfg --no-color --status-pager -So /etc/fstab -s ./conf -- ./src/_fstab
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_fuse_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_gai_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_git_conf
+	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_glibc_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_gpg_conf
 	# First configure GRUB before install.
 	# {
