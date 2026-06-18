@@ -35,7 +35,11 @@ config:
 	sh ./syscfg --no-color --status-pager -So /etc/fstab -s ./conf -- ./src/_fstab
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_fuse_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_git_conf
+	# First configure locales before generation.
+	# {
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_glibc_conf
+	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_locale
+	# }
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_gpg_conf
 	# First configure GRUB before install.
 	# {
@@ -47,7 +51,6 @@ config:
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_hosts
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_initramfs
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_kvantum_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_locale
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_mpv_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_mutt_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_nano_conf
