@@ -1,9 +1,11 @@
-# English locale config
+# /etc/locale.conf is read and exported by systemd.
 
-OBJ=\
-'LANG=en_US.UTF-8
+if [ "$arch_linux" ]; then
+    OBJ=\
+'LANG=C.UTF-8
 '
-OBJ_PATH='/etc/locale.conf'
-__file_write_ow_soft;
+    OBJ_PATH='/etc/locale.conf'
+    __file_write_ow_soft;
+fi
 
 __cmd -- locale-gen
