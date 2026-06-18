@@ -16,3 +16,5 @@ en_US.UTF-8 UTF-8
 '
 OBJ_PATH='/etc/locale.gen'
 __file_write_ow_soft;
+
+__info -white - 'Re-generate locales to apply any changes.'
