@@ -45,7 +45,7 @@ config:
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_gtk_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_hostname
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_hosts
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_initramfs_conf
+	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_initramfs
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_kvantum_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_locale
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_mpv_conf
