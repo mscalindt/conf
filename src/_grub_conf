@@ -1,12 +1,3 @@
-# To simulate a config file, we drop-in our replacement of /etc/default/grub,
-# even though this shall usually only be done in a predefined environment
-# (such as ours: 'syscfg grub grub-conf')
-#
-# As indicated by the above statement, GRUB is old and rather fixed on its
-# configuration; that is, it does not provide the same flexibility as, for
-# example, the configuration of rEFInd. rEFInd should be considered as a
-# replacement.
-
 OBJ=\
 'GRUB_PRELOAD_MODULES="part_gpt"
 GRUB_TIMEOUT_STYLE=menu
