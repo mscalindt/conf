@@ -27,7 +27,7 @@ config:
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_doas_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_emacs_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_env
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_face_bin
+	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_face
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_featherpad_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_firefox_conf
 	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_fontconfig_conf
