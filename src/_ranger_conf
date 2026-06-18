@@ -20,12 +20,17 @@ __file_write_ow_soft \
     -user "$user" -group "$group"
 
 OBJ=\
-'# TEXT / CODE
+'# DEFAULTS (the format is FIFO)
+ext 1|5 = man "$1"
+
+# TEXT / CODE
+ext 1|5,    has emacsclient,        X, flag f = emacsclient -n "$@"
 ext ini,    has emacsclient,        X, flag f = emacsclient -n "$@"
 ext js,     has emacsclient,        X, flag f = emacsclient -n "$@"
 ext sh,     has emacsclient,        X, flag f = emacsclient -n "$@"
 ext shfn,   has emacsclient,        X, flag f = emacsclient -n "$@"
 mime ^text, has emacsclient,        X, flag f = emacsclient -n "$@"
+ext 1|5,    has featherpad,         X, flag f = featherpad "$@"
 ext ini,    has featherpad,         X, flag f = featherpad "$@"
 ext js,     has featherpad,         X, flag f = featherpad "$@"
 ext sh,     has featherpad,         X, flag f = featherpad "$@"
@@ -74,7 +79,6 @@ ext zst,    has tar = tar vvtf "$1" | "$PAGER"
 ext zst,    has tar = for file in "$@"; do tar vvxf "$file"; done
 
 # Misc exts
-ext 1|5 = man "$1"
 ext exe = wine "$1"
 ext x?html?, has firefox,     X, flag f = firefox -- "$@"
 ext x?html?, has chromium,    X, flag f = chromium -- "$@"
