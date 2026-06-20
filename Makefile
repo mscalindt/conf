@@ -1,9 +1,9 @@
-.PHONY: build clean config run rel sbm_up srcs
+.PHONY: build clean config rel sbm_up srcs
 
 CONF ?= m533ia.conf
 BUILD_CONF = .build.tmp
 
-build: ./syscfg ./conf
+build: ./syscfg ./conf ./run
 BUILD_TS:
 $(BUILD_CONF): BUILD_TS
 	@sh ./scripts/build_ts.sh "$(BUILD_CONF)" "$(CONF)"
@@ -12,67 +12,65 @@ $(BUILD_CONF): BUILD_TS
 	cp lib/syscfg/syscfg ./syscfg
 ./conf: $(BUILD_CONF) ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF)
 	sh ./scripts/build.sh ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF) ./src/devices/readonly
+./run: ./scripts/run.sh
+	cp scripts/run.sh ./run
 
 clean:
 	-(cd lib/syscfg && $(MAKE) clean)
-	rm -fv ./$(BUILD_CONF) ./syscfg ./conf
+	rm -fv ./$(BUILD_CONF) ./syscfg ./conf ./run
 
 config:
 	@test -n "$(CN)" || { echo 'CN is empty'; exit 2; }
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_alacritty_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_alsa_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_bash_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_dhcpcd_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_dnsmasq_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_doas_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_emacs_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_env
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_face
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_featherpad_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_firefox_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_fontconfig_conf
+	./run --no-color --status-pager -- ./src/_alacritty_conf
+	./run --no-color --status-pager -- ./src/_alsa_conf
+	./run --no-color --status-pager -- ./src/_bash_conf
+	./run --no-color --status-pager -- ./src/_dhcpcd_conf
+	./run --no-color --status-pager -- ./src/_dnsmasq_conf
+	./run --no-color --status-pager -- ./src/_doas_conf
+	./run --no-color --status-pager -- ./src/_emacs_conf
+	./run --no-color --status-pager -- ./src/_env
+	./run --no-color --status-pager -- ./src/_face
+	./run --no-color --status-pager -- ./src/_featherpad_conf
+	./run --no-color --status-pager -- ./src/_firefox_conf
+	./run --no-color --status-pager -- ./src/_fontconfig_conf
 	rm -f /etc/fstab
-	sh ./syscfg --no-color --status-pager -So /etc/fstab -s ./conf -- ./src/_fstab
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_fuse_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_git_conf
+	./run --no-color --status-pager -So /etc/fstab -- ./src/_fstab
+	./run --no-color --status-pager -- ./src/_fuse_conf
+	./run --no-color --status-pager -- ./src/_git_conf
 	# First configure locales before generation.
 	# {
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_glibc_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_locale
+	./run --no-color --status-pager -- ./src/_glibc_conf
+	./run --no-color --status-pager -- ./src/_locale
 	# }
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_gpg_conf
+	./run --no-color --status-pager -- ./src/_gpg_conf
 	# First configure GRUB before install.
 	# {
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_grub_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_grub
+	./run --no-color --status-pager -- ./src/_grub_conf
+	./run --no-color --status-pager -- ./src/_grub
 	# }
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_gtk_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_hostname
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_hosts
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_initramfs
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_kvantum_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_mpv_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_mutt_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_nano_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_openal_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_pacman_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_pam_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_pulseaudio_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_ranger_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_resolv
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_sh
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_sudo_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_sway_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_swayimg_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_swaylock_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_systemd
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_systemd_conf
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_tz_$(CN)
-	sh ./syscfg --no-color --status-pager -s ./conf -- ./src/_xdg_conf
-
-run:
-	@test -n "$(FUNC)" || { echo 'FUNC is empty'; exit 2; }
-	sh ./scripts/run.sh ./src/$(FUNC) "$(OUT)"
+	./run --no-color --status-pager -- ./src/_gtk_conf
+	./run --no-color --status-pager -- ./src/_hostname
+	./run --no-color --status-pager -- ./src/_hosts
+	./run --no-color --status-pager -- ./src/_initramfs
+	./run --no-color --status-pager -- ./src/_kvantum_conf
+	./run --no-color --status-pager -- ./src/_mpv_conf
+	./run --no-color --status-pager -- ./src/_mutt_conf
+	./run --no-color --status-pager -- ./src/_nano_conf
+	./run --no-color --status-pager -- ./src/_openal_conf
+	./run --no-color --status-pager -- ./src/_pacman_conf
+	./run --no-color --status-pager -- ./src/_pam_conf
+	./run --no-color --status-pager -- ./src/_pulseaudio_conf
+	./run --no-color --status-pager -- ./src/_ranger_conf
+	./run --no-color --status-pager -- ./src/_resolv
+	./run --no-color --status-pager -- ./src/_sh
+	./run --no-color --status-pager -- ./src/_sudo_conf
+	./run --no-color --status-pager -- ./src/_sway_conf
+	./run --no-color --status-pager -- ./src/_swayimg_conf
+	./run --no-color --status-pager -- ./src/_swaylock_conf
+	./run --no-color --status-pager -- ./src/_systemd
+	./run --no-color --status-pager -- ./src/_systemd_conf
+	./run --no-color --status-pager -- ./src/_tz_$(CN)
+	./run --no-color --status-pager -- ./src/_xdg_conf
 
 rel:
 	@test -n "$(REL)" || { echo 'REL is empty'; exit 2; }

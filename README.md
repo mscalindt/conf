@@ -41,20 +41,25 @@ git submodule update --init --recursive
 
 ## Run
 
-The output of a function can be redirected using the `OUT` variable.
+Build the project to obtain `run` script.
 
-To execute a specific function, use the `run` recipe with the `FUNC` variable
-defined. Example:
-
-```
-$ make FUNC=_face_bin run
-```
-
-To execute all intended software configuration, use the `config` recipe and
-specify the `CN` (country) variable:
+Simply run a configuration file:
 
 ```
-# make CN=bg config
+./run [--] <path> [args]
+```
+
+Also redirect output:
+
+```
+./run [-S] -o <path> [--] <path> [args]
+```
+
+To execute all intended software configuration, use the `config` recipe in
+a root shell and specify the `CN` (country code) variable:
+
+```
+$ make CN=bg config
 ```
 
 ## Releases
