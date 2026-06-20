@@ -114,6 +114,9 @@ OBJ=\
 (defface backslash-face
   '\''((t (:foreground "#ff4d4d")))
   "Face for backslash characters.")
+(defface hash-face
+  '\''((t (:foreground "#00ffff")))
+  "Face for number sign / hash characters.")
 (modify-syntax-entry ?\" "." (syntax-table))
 (font-lock-add-keywords '\''fundamental-mode
                         '\''(("\\\\." . '\''backslash-face)
@@ -125,7 +128,8 @@ OBJ=\
                           ("[{]" . '\''word-face)
                           ("[}]" . '\''word-face)
                           ("`" . '\''word-face)
-                          ("[0-9]+" . '\''word-face)))
+                          ("[0-9]+" . '\''word-face)
+                          ("#" . '\''hash-face)))
 (global-hl-line-mode 1)
 (set-face-attribute '\''hl-line nil
                     :background "#2c2c2c"
