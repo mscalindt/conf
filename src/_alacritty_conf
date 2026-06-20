@@ -24,7 +24,7 @@ style.blinking = "On"
 
 [colors]
   [colors.primary]
-  background = "#300924"
+  background = "#2a132a"
 
   [colors.normal]
   black   = "#767676"
@@ -45,9 +45,6 @@ style.blinking = "On"
   magenta = "#fd28ff"
   cyan    = "#14ffff"
   white   = "#ffffff"
-
-[window]
-opacity = 0.5
 
 [keyboard]
 bindings = [
