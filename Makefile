@@ -39,7 +39,7 @@ config:
 	./run --no-color --status-pager -- ./src/_git_conf
 	# First configure locales before generation.
 	# {
-	./run --no-color --status-pager -- ./src/_glibc_conf
+	./run --no-color --status-pager -- ./src/_glibc_conf "$(CN)"
 	./run --no-color --status-pager -- ./src/_locale
 	# }
 	./run --no-color --status-pager -- ./src/_gpg_conf
@@ -69,7 +69,6 @@ config:
 	./run --no-color --status-pager -- ./src/_swaylock_conf
 	./run --no-color --status-pager -- ./src/_systemd
 	./run --no-color --status-pager -- ./src/_systemd_conf
-	./run --no-color --status-pager -- ./src/_tz_$(CN)
 	./run --no-color --status-pager -- ./src/_xdg_conf
 
 rel:

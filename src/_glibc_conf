@@ -18,3 +18,20 @@ OBJ_PATH='/etc/locale.gen'
 __file_write_ow_soft;
 
 __info -white - 'Re-generate locales to apply any changes.'
+
+# $1 = country code
+if [ "$1" = bg ]; then
+    OBJ='/usr/share/zoneinfo/Europe/Sofia'
+    OBJ_PATH='/etc/localtime'
+    __obj_link_ow_soft;
+
+    __info -white - 'Synchronize the hardware clock to apply any changes.'
+elif [ "$1" = de ]; then
+    OBJ='/usr/share/zoneinfo/Europe/Berlin'
+    OBJ_PATH='/etc/localtime'
+    __obj_link_ow_soft;
+
+    __info -white - 'Synchronize the hardware clock to apply any changes.'
+else
+    __info -yellow - "No timezone configuration specified. (\$1 = '$1')"
+fi
