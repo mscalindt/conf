@@ -89,7 +89,7 @@ OBJ=\
 (require '\''whitespace)
 (setq whitespace-style '\''(tabs face))
 (custom-set-faces
-'\''(whitespace-tab ((t (:background "#7c7c7c")))))
+'\''(whitespace-tab ((t (:background "#3a3a3a")))))
 (global-whitespace-mode 1)
 (setq tab-always-indent nil)
 (setq indent-tabs-mode nil)
