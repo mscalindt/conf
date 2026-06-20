@@ -224,6 +224,7 @@ OBJ=\
 (global-set-key [C-down-mouse-2] nil)
 (global-set-key [C-down-mouse-3] nil)
 (global-set-key [mouse-1] #'\''ignore)
+(global-set-key [mouse-2] nil)
 (global-set-key [M-mouse-2] nil)
 (global-set-key [M-mouse-3] nil)
 '
