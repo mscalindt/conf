@@ -10,7 +10,7 @@ $(BUILD_CONF): BUILD_TS
 ./syscfg: ./lib/syscfg/src/syscfg.sh
 	(cd lib/syscfg && $(MAKE))
 	cp lib/syscfg/syscfg ./syscfg
-./conf: $(BUILD_CONF) ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF)
+./conf: $(BUILD_CONF) ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF) ./src/devices/readonly
 	sh ./scripts/build.sh ./src/units/ ./src/devices/main.conf ./src/devices/$(CONF) ./src/devices/readonly
 ./run: ./scripts/run.sh
 	cp scripts/run.sh ./run
