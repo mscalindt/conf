@@ -36,9 +36,6 @@ input * {
     accel_profile flat
 }
 
-# Disable MMB clipboard paste.
-primary_selection disabled
-
 # Solid color as wallpaper
 output * bg #241f31 solid_color
 
