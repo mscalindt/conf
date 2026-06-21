@@ -131,13 +131,15 @@ OBJ=\
                           ("[0-9]+" . '\''word-face)
                           ("#" . '\''hash-face)))
 (global-hl-line-mode 1)
-(set-face-attribute '\''hl-line nil
-                    :background "#2c2c2c"
-                    :underline nil
-                    :box nil
-                    :strike-through nil
-                    :overline nil
-                    :extend t)
+(custom-set-faces
+  '\''(hl-line
+    ((t (:background "#2c2c2c"
+         :foreground unspecified
+         :underline nil
+         :box nil
+         :strike-through nil
+         :overline nil
+         :extend t)))))
 (setq scroll-preserve-screen-position t)
 (setq auto-window-vscroll nil)
 (setq scroll-conservatively 10000)
