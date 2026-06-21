@@ -147,6 +147,7 @@ OBJ=\
 (setq mouse-wheel-progressive-speed nil)
 (setq mouse-wheel-follow-mouse t)
 (setq mark-even-if-inactive t)
+(set-fringe-mode '\''(8 . 0))
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
