@@ -181,7 +181,7 @@ OBJ=\
       (let ((buf (current-buffer)))
         (tab-close)
         (kill-buffer buf)))))
-
+(global-set-key (kbd "C-x") #'\''kill-whole-line)
 (global-set-key (kbd "C-c") '\''kill-ring-save)
 (global-set-key [mouse-3] '\''kill-ring-save)
 (global-set-key (kbd "C-v") '\''yank)
