@@ -203,15 +203,27 @@ OBJ=\
 (global-set-key (kbd "M-s") #'\''scroll-up-command)
 (global-set-key (kbd "TAB")
   (lambda () (interactive)
-    (save-excursion
-      (beginning-of-line)
-      (insert "    "))))
+    (let ((move-to-eol nil))
+      (save-excursion
+        (beginning-of-line)
+        (insert "    ")
+        (beginning-of-line)
+        (when (looking-at "^\\s-*$")
+          (setq move-to-eol t)))
+      (when move-to-eol
+        (end-of-line)))))
 (global-set-key (kbd "<backtab>")
   (lambda () (interactive)
-    (save-excursion
-      (beginning-of-line)
-      (when (looking-at "^    ")
-        (delete-char 4)))))
+    (let ((move-p nil))
+      (save-excursion
+        (beginning-of-line)
+        (when (looking-at "^    ")
+          (delete-char 4))
+        (when (looking-at "^\\s-*$")
+          (setq move-p t)))
+      (when move-p
+        (beginning-of-line)
+        (end-of-line)))))
 (global-set-key [C-drag-mouse-1] #'\''mouse-set-region) ;; fix unmark on ctrl
 (global-set-key [C-double-mouse-1] #'\''mouse-set-region)
 (global-set-key [double-mouse-1] #'\''mouse-set-region)
