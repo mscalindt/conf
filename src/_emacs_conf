@@ -108,9 +108,9 @@ OBJ=\
 (defface dq-face
   '\''((t (:foreground "#95e454" :weight bold)))
   "Face for double quotes.")
-(defface word-face
+(defface struc-face
   '\''((t (:foreground "#ff69b4")))
-  "Face for word boundary characters.")
+  "Face for structure-like characters.")
 (defface backslash-face
   '\''((t (:foreground "#ff4d4d")))
   "Face for backslash characters.")
@@ -125,12 +125,12 @@ OBJ=\
                         '\''(("\\\\." . '\''backslash-face)
                           ("'\''" . '\''sq-face)
                           ("\"" . '\''dq-face)
-                          ("\\$" . '\''word-face)
-                          ("[(]" . '\''word-face)
-                          ("[)]" . '\''word-face)
-                          ("[{]" . '\''word-face)
-                          ("[}]" . '\''word-face)
-                          ("`" . '\''word-face)
+                          ("\\$" . '\''struc-face)
+                          ("[(]" . '\''struc-face)
+                          ("[)]" . '\''struc-face)
+                          ("[{]" . '\''struc-face)
+                          ("[}]" . '\''struc-face)
+                          ("`" . '\''struc-face)
                           ("[0-9]+" . '\''num-face)
                           ("#" . '\''hash-face)))
 (global-hl-line-mode 1)
