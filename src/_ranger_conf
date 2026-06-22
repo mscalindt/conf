@@ -22,6 +22,7 @@ __file_write_ow_soft \
 OBJ=\
 '# DEFAULTS (the format is FIFO)
 ext 1|5 = man "$1"
+ext exe = wine "$1"
 
 # TEXT / CODE
 ext 1|5,    has emacsclient,        X, flag f = emacsclient -n "$@"
@@ -79,7 +80,6 @@ ext zst,    has tar = tar vvtf "$1" | "$PAGER"
 ext zst,    has tar = for file in "$@"; do tar vvxf "$file"; done
 
 # Misc exts
-ext exe = wine "$1"
 ext x?html?, has firefox,     X, flag f = firefox -- "$@"
 ext x?html?, has chromium,    X, flag f = chromium -- "$@"
 
