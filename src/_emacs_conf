@@ -101,6 +101,27 @@ OBJ=\
   (lambda (orig &rest args)
     (let ((inhibit-message t))
       (apply orig args))))
+(modify-syntax-entry ?\" "." (syntax-table))
+(global-hl-line-mode 1)
+(custom-set-faces
+  '\''(hl-line
+    ((t (:background "#2c2c2c"
+         :foreground unspecified
+         :underline nil
+         :box nil
+         :strike-through nil
+         :overline nil
+         :extend t)))))
+(setq scroll-preserve-screen-position t)
+(setq auto-window-vscroll nil)
+(setq scroll-conservatively 10000)
+(setq scroll-margin 0)
+(setq mouse-wheel-progressive-speed nil)
+(setq mouse-wheel-follow-mouse t)
+(setq mark-even-if-inactive t)
+(set-fringe-mode '\''(8 . 0))
+
+;; General syntax highlighting using Font Lock (shell-syntax-oriented)
 (add-hook '\''fundamental-mode-hook #'\''font-lock-mode)
 (defface sq-face
   '\''((t (:foreground "#ff8c00" :weight bold)))
@@ -120,7 +141,6 @@ OBJ=\
 (defface num-face
   '\''((t (:foreground "#FFD600")))
   "Face for number characters.")
-(modify-syntax-entry ?\" "." (syntax-table))
 (font-lock-add-keywords '\''fundamental-mode
                         '\''(("\\\\." . '\''backslash-face)
                           ("'\''" . '\''sq-face)
@@ -133,24 +153,6 @@ OBJ=\
                           ("`" . '\''struc-face)
                           ("[0-9]+" . '\''num-face)
                           ("#" . '\''hash-face)))
-(global-hl-line-mode 1)
-(custom-set-faces
-  '\''(hl-line
-    ((t (:background "#2c2c2c"
-         :foreground unspecified
-         :underline nil
-         :box nil
-         :strike-through nil
-         :overline nil
-         :extend t)))))
-(setq scroll-preserve-screen-position t)
-(setq auto-window-vscroll nil)
-(setq scroll-conservatively 10000)
-(setq scroll-margin 0)
-(setq mouse-wheel-progressive-speed nil)
-(setq mouse-wheel-follow-mouse t)
-(setq mark-even-if-inactive t)
-(set-fringe-mode '\''(8 . 0))
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
