@@ -52,6 +52,7 @@ config:
 	./run --no-color --status-pager -- ./src/_hosts
 	./run --no-color --status-pager -- ./src/_initramfs
 	./run --no-color --status-pager -- ./src/_kvantum_conf
+	./run --no-color --status-pager -- ./src/_modprobe_conf
 	./run --no-color --status-pager -- ./src/_mpv_conf
 	./run --no-color --status-pager -- ./src/_mutt_conf
 	./run --no-color --status-pager -- ./src/_nano_conf

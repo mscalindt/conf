@@ -2,12 +2,6 @@
 # to be aware of file changes and any breakage, which is expected of systemd.
 
 OBJ=\
-'options snd_hda_intel power_save=0 power_save_controller=N
-'
-OBJ_PATH='/etc/modprobe.d/99-snd_powersave.conf'
-__file_write_ow_soft;
-
-OBJ=\
 'kernel.sysrq = 1
 '
 OBJ_PATH='/etc/sysctl.d/99-sysctl.conf'

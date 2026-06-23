@@ -1,0 +1,5 @@
+OBJ=\
+'options snd_hda_intel power_save=0 power_save_controller=N
+'
+OBJ_PATH='/etc/modprobe.d/1-snd_hda_intel.conf'
+__file_write_ow_soft;
