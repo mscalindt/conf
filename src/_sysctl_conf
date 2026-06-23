@@ -1,0 +1,5 @@
+OBJ=\
+'kernel.sysrq = 1
+'
+OBJ_PATH='/etc/sysctl.d/1-sysrq.conf'
+__file_write_ow_soft;

@@ -67,6 +67,7 @@ config:
 	./run --no-color --status-pager -- ./src/_sway_conf
 	./run --no-color --status-pager -- ./src/_swayimg_conf
 	./run --no-color --status-pager -- ./src/_swaylock_conf
+	./run --no-color --status-pager -- ./src/_sysctl_conf
 	./run --no-color --status-pager -- ./src/_systemd
 	./run --no-color --status-pager -- ./src/_systemd_conf
 	./run --no-color --status-pager -- ./src/_xdg_conf

@@ -1,14 +1,9 @@
 # Directly modifies config files and doesn't use *.d drop-ins, because I want
 # to be aware of file changes and any breakage, which is expected of systemd.
+#
+# Guarded because the files are never created by us; the configuration depends
+# on Arch Linux system.
 
-OBJ=\
-'kernel.sysrq = 1
-'
-OBJ_PATH='/etc/sysctl.d/99-sysctl.conf'
-__file_write_ow_soft;
-
-# A guard because the following files are never created by us;
-# the configuration depends on Arch Linux system.
 [ "$arch_linux" ] || return 0
 
 OBJ=
