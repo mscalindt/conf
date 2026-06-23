@@ -13,6 +13,10 @@ OBJ=\
 OBJ_PATH='/etc/sysctl.d/99-sysctl.conf'
 __file_write_ow_soft;
 
+# A guard because the following files are never created by us;
+# the configuration depends on Arch Linux system.
+[ "$arch_linux" ] || return 0
+
 OBJ=
 OBJ_PATH='/etc/systemd/logind.conf'
 __ed -log "${TMPDIR:-/tmp}/_systemd_conf" -- \
