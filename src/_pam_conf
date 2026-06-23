@@ -8,6 +8,10 @@ unlock_time=600
 OBJ_PATH='/etc/security/faillock.conf'
 __file_write_ow_soft;
 
+# A guard because the following files are never created by us;
+# the configuration depends on Arch Linux system.
+[ "$arch_linux" ] || return 0
+
 OBJ=
 OBJ_PATH='/etc/pam.d/su'
 __ed -crc 3615679525 -log "${TMPDIR:-/tmp}/_pam_conf" -- \
