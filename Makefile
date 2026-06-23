@@ -28,7 +28,6 @@ config:
 	./run --no-color --status-pager -- ./src/_dnsmasq_conf
 	./run --no-color --status-pager -- ./src/_doas_conf
 	./run --no-color --status-pager -- ./src/_emacs_conf
-	./run --no-color --status-pager -- ./src/_env
 	./run --no-color --status-pager -- ./src/_face
 	./run --no-color --status-pager -- ./src/_featherpad_conf
 	./run --no-color --status-pager -- ./src/_firefox_conf

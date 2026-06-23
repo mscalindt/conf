@@ -149,6 +149,23 @@ __file_write_ow_soft \
     -user "$user" -group "$group"
 
 OBJ=\
+'set -a
+EDITOR=nano
+PATH="${PATH}:$HOME/scripts"
+GDK_BACKEND=wayland,x11
+GTK_A11Y=none
+QT_QPA_PLATFORM='\''wayland;xcb'\''
+QT_STYLE_OVERRIDE=kvantum
+QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+SDL_VIDEODRIVER=wayland,x11
+set +a
+'
+OBJ_PATH="$home/.bash_profile"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
 '# Don'\''t parse .bashrc if not running interactively
 [[ $- != *i* ]] && return
 

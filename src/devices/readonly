@@ -7,7 +7,6 @@ readonly \
     dns \
     dnsmasq \
     efi_fat \
-    env \
     fstab_ext4_journal_async_commit \
     fstab_ext4_nobarrier \
     fstab_ext4_writeback \
