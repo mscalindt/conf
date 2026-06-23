@@ -1,3 +1,8 @@
+# Guarded because the files are never created by us; the configuration depends
+# on Arch Linux system.
+
+[ "$arch_linux" ] || return 0
+
 OBJ=
 OBJ_PATH='/etc/pulse/default.pa'
 __ed -log "${TMPDIR:-/tmp}/_pulseaudio_conf" -- \
