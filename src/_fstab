@@ -1,43 +1,50 @@
-__say "$root_partition    "
-__say '/    '
-if [ "$root_ext4" ]; then
-    __say 'ext4    '
-else
-    __err -red - 'Root filesystem type has not been specified.'; exit 1
-fi
-__say 'rw'
-if [ "$fstab_relatime" ]; then
-    __say ',relatime'
-else
-    __say ',noatime'
-fi
-if [ "$fstab_ext4_nobarrier" ]; then
-    __say ',barrier=0'
-fi
-if [ "$fstab_ext4_commit" ]; then
-    __say ",commit=$fstab_ext4_commit"
-fi
-if [ "$fstab_ext4_journal_async_commit" ]; then
-    __say ',journal_async_commit'
-fi
-if [ "$fstab_ext4_writeback" ]; then
-    __say ',data=writeback'
-fi
-__say '    0    1
+OBJ=$(
+    __say "$root_partition    "
+    __say '/    '
+    if [ "$root_ext4" ]; then
+        __say 'ext4    '
+    else
+        __err -red - 'Root filesystem type has not been specified.'; exit 1
+    fi
+    __say 'rw'
+    if [ "$fstab_relatime" ]; then
+        __say ',relatime'
+    else
+        __say ',noatime'
+    fi
+    if [ "$fstab_ext4_nobarrier" ]; then
+        __say ',barrier=0'
+    fi
+    if [ "$fstab_ext4_commit" ]; then
+        __say ",commit=$fstab_ext4_commit"
+    fi
+    if [ "$fstab_ext4_journal_async_commit" ]; then
+        __say ',journal_async_commit'
+    fi
+    if [ "$fstab_ext4_writeback" ]; then
+        __say ',data=writeback'
+    fi
+    __say '    0    1
 '
 
-__say "$efi_partition    "
-__say "$efi_mnt    "
-if [ "$efi_fat" ]; then
-    __say 'vfat    '
-else
-    __err -red - 'EFI filesystem type has not been specified.'; exit 1
-fi
-__say 'rw'
-if [ "$fstab_relatime" ]; then
-    __say ',relatime'
-else
-    __say ',noatime'
-fi
-__say '    0    2
+    __say "$efi_partition    "
+    __say "$efi_mnt    "
+    if [ "$efi_fat" ]; then
+        __say 'vfat    '
+    else
+        __err -red - 'EFI filesystem type has not been specified.'; exit 1
+    fi
+    __say 'rw'
+    if [ "$fstab_relatime" ]; then
+        __say ',relatime'
+    else
+        __say ',noatime'
+    fi
+    __say '    0    2
 '
+
+__say 'x'
+)
+OBJ="${OBJ%?}"
+OBJ_PATH='/etc/fstab'
+__file_write_ow_soft;
