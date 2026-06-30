@@ -33,7 +33,7 @@ config:
 	./run --no-color --status-pager -- ./src/_firefox_conf
 	./run --no-color --status-pager -- ./src/_fontconfig_conf
 	rm -f /etc/fstab
-	./run --no-color --status-pager -So /etc/fstab -- ./src/_fstab
+	./run --no-color --status-pager -o /etc/fstab -- ./src/_fstab
 	./run --no-color --status-pager -- ./src/_fuse_conf
 	./run --no-color --status-pager -- ./src/_git_conf
 	# First configure locales before generation.

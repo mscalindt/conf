@@ -1,43 +1,43 @@
-__info - -- "$root_partition    "
-__info - -- '/    '
+__say "$root_partition    "
+__say '/    '
 if [ "$root_ext4" ]; then
-    __info - -- 'ext4    '
+    __say 'ext4    '
 else
     __err -red - 'Root filesystem type has not been specified.'; exit 1
 fi
-__info - -- 'rw'
+__say 'rw'
 if [ "$fstab_relatime" ]; then
-    __info - -- ',relatime'
+    __say ',relatime'
 else
-    __info - -- ',noatime'
+    __say ',noatime'
 fi
 if [ "$fstab_ext4_nobarrier" ]; then
-    __info - -- ',barrier=0'
+    __say ',barrier=0'
 fi
 if [ "$fstab_ext4_commit" ]; then
-    __info - -- ",commit=$fstab_ext4_commit"
+    __say ",commit=$fstab_ext4_commit"
 fi
 if [ "$fstab_ext4_journal_async_commit" ]; then
-    __info - -- ',journal_async_commit'
+    __say ',journal_async_commit'
 fi
 if [ "$fstab_ext4_writeback" ]; then
-    __info - -- ',data=writeback'
+    __say ',data=writeback'
 fi
-__info - -- '    '
-__info - - '0    1'
+__say '    0    1
+'
 
-__info - -- "$efi_partition    "
-__info - -- "$efi_mnt    "
+__say "$efi_partition    "
+__say "$efi_mnt    "
 if [ "$efi_fat" ]; then
-    __info - -- 'vfat    '
+    __say 'vfat    '
 else
     __err -red - 'EFI filesystem type has not been specified.'; exit 1
 fi
-__info - -- 'rw'
+__say 'rw'
 if [ "$fstab_relatime" ]; then
-    __info - -- ',relatime'
+    __say ',relatime'
 else
-    __info - -- ',noatime'
+    __say ',noatime'
 fi
-__info - -- '    '
-__info - - '0    2'
+__say '    0    2
+'
