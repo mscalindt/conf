@@ -1,0 +1,8 @@
+# /etc/locale.conf is read and exported by systemd.
+[ "$arch_linux" ] || return 0
+
+OBJ=\
+'LANG=C.UTF-8
+'
+OBJ_PATH='/etc/locale.conf'
+__file_write_ow_soft;

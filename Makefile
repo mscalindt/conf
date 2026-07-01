@@ -39,6 +39,7 @@ config:
 	# {
 	./run --no-color --status-pager -- ./src/_glibc_conf "$(CN)"
 	./run --no-color --status-pager -- ./src/_locale
+	./run --no-color --status-pager -- ./src/_locale_conf
 	# }
 	./run --no-color --status-pager -- ./src/_gpg_conf
 	# First configure GRUB before install.
