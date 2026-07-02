@@ -26,12 +26,6 @@ cd conf
 make CONF=__DEVICE__.conf
 ```
 
-List device configurations:
-
-```
-ls src/devices
-```
-
 If the repository has been cloned without the submodules, they can be
 initialized and fetched with:
 
@@ -39,9 +33,15 @@ initialized and fetched with:
 git submodule update --init --recursive
 ```
 
+List device (and miscellaneous) configurations:
+
+```
+ls src/configs
+```
+
 ## Run
 
-Build the project to obtain `run` script.
+Build the project to obtain a `run` script.
 
 Simply run a configuration file:
 
@@ -56,10 +56,10 @@ Also redirect output:
 ```
 
 To execute all intended software configuration, use the `config` recipe in
-a root shell and specify the `CN` (country code) variable:
+a root shell and specify the `cc` (ISO 3166-1 alpha-2) variable:
 
 ```
-$ make CN=bg config
+$ make cc=BG config
 ```
 
 ## Releases
