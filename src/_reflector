@@ -1,12 +1,10 @@
 __cmd -req-out -out-save OBJ -- \
     reflector \
-    --country Bulgaria \
-    --connection-timeout 1 \
-    --download-timeout 20 \
+    --connection-timeout 2 \
+    --download-timeout 10 \
     --protocol https \
     --completion-percent 100 \
     --sort rate \
-    --threads 8 \
     --latest 10 \
     --number 3
 OBJ="$OBJ"
