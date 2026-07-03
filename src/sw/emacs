@@ -176,7 +176,7 @@ OBJ=\
 (global-set-key (kbd "M-5") (lambda () (interactive) (tab-bar-select-tab 5)))
 (global-set-key (kbd "M-6") (lambda () (interactive) (tab-bar-select-tab 6)))
 (global-set-key (kbd "M-7") (lambda () (interactive) (tab-bar-select-tab 7)))
-(global-set-key (kbd "M-n")
+(global-set-key (kbd "M-t")
   (lambda () (interactive)
     (tab-new)
     (switch-to-buffer (generate-new-buffer "Untitled"))))
