@@ -20,7 +20,7 @@ OBJ=\
 (load-theme '\''wombat t)
 (tool-bar-mode -1)
 (setq-default cursor-type '\''bar)
-(set-cursor-color "white")
+(set-cursor-color "#ffffff")
 (set-face-attribute '\''tab-bar nil
                     :background "#2a2a2a"
                     :foreground "#cccccc")
@@ -34,7 +34,7 @@ OBJ=\
                     :box nil)
 (set-face-attribute '\''show-paren-match nil
                     :background nil
-                    :foreground "red")
+                    :foreground "#ff0000")
 (set-face-attribute '\''default nil
                     :family "Source Code Pro"
                     :height 120)
