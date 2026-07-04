@@ -3,21 +3,21 @@
 CONF = m533ia.conf
 BUILD_CONF = .build.tmp
 
-build: ./syscfg ./conf ./run
+build: ./.conf ./run ./syscfg
 BUILD_TS:
 $(BUILD_CONF): BUILD_TS
 	@sh ./scripts/build_ts.sh "$(BUILD_CONF)" "$(CONF)"
-./syscfg: ./lib/syscfg/src/syscfg.sh
-	(cd lib/syscfg && $(MAKE))
-	cp lib/syscfg/syscfg ./syscfg
-./conf: $(BUILD_CONF) ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
+./.conf: $(BUILD_CONF) ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
 	sh ./scripts/build.sh ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
 ./run: ./scripts/run.sh
 	cp scripts/run.sh ./run
+./syscfg: ./lib/syscfg/src/syscfg.sh
+	(cd lib/syscfg && $(MAKE))
+	cp lib/syscfg/syscfg ./syscfg
 
 clean:
 	-(cd lib/syscfg && $(MAKE) clean)
-	rm -fv ./$(BUILD_CONF) ./syscfg ./conf ./run
+	rm -fv ./$(BUILD_CONF) ./.conf ./run ./syscfg
 
 # The order is explicit while alphabetical; /sys configuration shall be last,
 # as it depends on prior entries. Examples:

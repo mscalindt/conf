@@ -6,6 +6,6 @@ for file in "$@"; do
 $conf"
 done
 
-NAME='conf'
+NAME='.conf'
 printf "%s\n" "$FILE" > ./"$NAME"
 printf "%s\n" "> $PWD/$NAME"

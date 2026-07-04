@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./syscfg -s ./conf "$@"
+./syscfg -s ./.conf "$@"

@@ -1,5 +1,5 @@
 !.gitignore
 .build.tmp
-conf
+.conf
 run
 syscfg
