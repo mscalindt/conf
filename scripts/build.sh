@@ -1,13 +1,5 @@
 set -e
 
-for unit in "$1"/*; do
-    unit=$(cat "$unit")
-    FILE="$FILE
-$unit"
-done
-
-shift
-
 for file in "$@"; do
     conf=$(cat "$file")
     FILE="$FILE

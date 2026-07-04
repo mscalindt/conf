@@ -10,8 +10,8 @@ $(BUILD_CONF): BUILD_TS
 ./syscfg: ./lib/syscfg/src/syscfg.sh
 	(cd lib/syscfg && $(MAKE))
 	cp lib/syscfg/syscfg ./syscfg
-./conf: $(BUILD_CONF) ./src/units/ ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
-	sh ./scripts/build.sh ./src/units/ ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
+./conf: $(BUILD_CONF) ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
+	sh ./scripts/build.sh ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
 ./run: ./scripts/run.sh
 	cp scripts/run.sh ./run
 

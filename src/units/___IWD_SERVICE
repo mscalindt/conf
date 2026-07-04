@@ -1,5 +1,0 @@
-___IWD_SERVICE() {
-    OBJ='/dev/null'
-    OBJ_PATH='/etc/systemd/system/iwd.service'
-    __obj_link_ow_soft;
-}

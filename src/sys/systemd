@@ -1,24 +1,120 @@
 if [ "$arch_linux" ]; then
-    # Masks {
-    ___AT_SPI_DBUS_BUS_SERVICE;
-    ___IWD_SERVICE;
-    ___KEYBOXD_SERVICE;
-    ___KEYBOXD_SOCKET;
-    ___PIPEWIRE_SERVICE;
-    ___PIPEWIRE_SOCKET;
-    ___POLKIT_SERVICE;
-    ___RTKIT_DAEMON_SERVICE;
-    # }
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/at-spi-dbus-bus.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/iwd.service'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/keyboxd.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/keyboxd.socket"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/pipewire.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/pipewire.socket"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/polkit.service'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
+    __obj_link_ow_soft;
 fi
 
 if [ "$bluez" ]; then
-    ___BLUEZ_SERVICE;
+    OBJ=\
+'[Unit]
+Description=BlueZ bluetooth service
+Requires=dbus.service
+After=dbus.service
+
+[Service]
+Type=dbus
+BusName=org.bluez
+ExecStart=/usr/lib/bluetooth/bluetoothd
+TimeoutStopSec=3
+
+[Install]
+WantedBy=multi-user.target
+'
+    OBJ_PATH='/etc/systemd/system/bluez.service'
+    __file_write_ow_soft;
+
+    OBJ='/etc/systemd/system/bluez.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/bluez.service'
+    __obj_link_ow_soft;
 fi
 
 if [ "$dns" ] && [ "$dnsmasq" ]; then
-    ___DNSMASQ_SERVICE;
+    OBJ=\
+'[Unit]
+Description=Caching DNS server
+Wants=dbus.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/dnsmasq -k --user=dnsmasq
+TimeoutStopSec=3
+
+[Install]
+WantedBy=multi-user.target
+'
+    OBJ_PATH='/etc/systemd/system/dnsmasq.service'
+    __file_write_ow_soft;
+
+    OBJ='/etc/systemd/system/dnsmasq.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/dnsmasq.service'
+    __obj_link_ow_soft;
 fi
 
 if [ "$_m533ia" ]; then
-    ___EVTEST_GRAB_SERVICE;
+    OBJ=\
+'[Unit]
+Description=Grab m533ia keyboard at startup
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c '\''\
+device="$(/usr/bin/awk '\''\'\'''\''\
+/AT Translated Set 2 keyboard/ { found=1; next } \
+found && /Handlers=/ { \
+  for (i=1; i<=NF; i++) \
+    if ($i ~ /^event[0-9]+$/) { \
+      print "/dev/input/" $i; exit \
+    } \
+}'\''\'\'''\'' /proc/bus/input/devices)"; \
+exec /usr/bin/evtest --grab "$device"'\''
+User=root
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target
+'
+    OBJ_PATH='/etc/systemd/system/evtest-grab.service'
+    __file_write_ow_soft;
+
+    OBJ='/etc/systemd/system/evtest-grab.service'
+    OBJ_PATH='/etc/systemd/system/multi-user.target.wants/evtest-grab.service'
+    __obj_link_ow_soft;
 fi
