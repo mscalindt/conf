@@ -1,23 +1,28 @@
-.PHONY: build clean config rel sbm_up srcs
+build: ./.conf ./run ./syscfg
 
 CONF = m533ia.conf
 BUILD_CONF = .build.tmp
 
-build: ./.conf ./run ./syscfg
-BUILD_TS:
-$(BUILD_CONF): BUILD_TS
-	@sh ./scripts/build_ts.sh "$(BUILD_CONF)" "$(CONF)"
-./.conf: $(BUILD_CONF) ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
-	sh ./scripts/build.sh ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
-./run: ./scripts/run.sh
-	cp scripts/run.sh ./run
-./syscfg: ./lib/syscfg/src/syscfg.sh
-	(cd lib/syscfg && $(MAKE))
-	cp lib/syscfg/syscfg ./syscfg
+# A 'FORCE' prerequisite to always run a certain target. Similar to a target
+# defined in `.PHONY`.
+FORCE:
 
-clean:
-	-(cd lib/syscfg && $(MAKE) clean)
+$(BUILD_CONF): FORCE
+	@sh ./scripts/build_conf.sh "$(BUILD_CONF)" "$(CONF)"
+./.conf: $(BUILD_CONF) ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
+	@sh ./scripts/build.sh ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
+./run: ./scripts/run.sh
+	@cp scripts/run.sh ./$@
+	@printf "%s\n" "> $$PWD/$@"
+./lib/syscfg/syscfg: FORCE
+	@(cd lib/syscfg && $(MAKE))
+./syscfg: ./lib/syscfg/syscfg
+	@cp lib/syscfg/syscfg ./$@
+	@printf "%s\n" "> $$PWD/$@"
+
+clean: FORCE
 	rm -fv ./$(BUILD_CONF) ./.conf ./run ./syscfg
+	@-(cd lib/syscfg && $(MAKE) clean)
 
 # The order is explicit while alphabetical; /sys configuration shall be last,
 # as it depends on prior entries. Examples:
@@ -27,7 +32,7 @@ clean:
 # If it so happens that the alphabetical convention cannot naturally
 # accommodate a conditional, any conditionals shall be placed at the top of
 # the recipe.
-config:
+config: FORCE
 	@test -n "$(cc)" || { echo 'Define $cc (ISO 3166-1 alpha-2)'; exit 2; }
 	./run --no-color --status-pager -- src/fs/face
 	./run --no-color --status-pager -- src/fs/fstab
@@ -74,16 +79,16 @@ config:
 	./run --no-color --status-pager -- src/sys/sh
 	./run --no-color --status-pager -- src/sys/systemd
 
-rel:
+rel: FORCE
 	@test -n "$(REL)" || { echo 'REL is empty'; exit 2; }
 	@test -n "$(PRE)" || { echo 'PRE is empty'; exit 2; }
 	@test -n "$(CUR)" || { echo 'CUR is empty'; exit 2; }
 	sh ./scripts/rel.sh "$(REL)" "$(PRE)" "$(CUR)"
 
-sbm_up:
+sbm_up: FORCE
 	@test -n "$(SUB)" || { echo 'SUB is empty'; exit 2; }
 	@test -n "$(TAG)" || { echo 'TAG is empty'; exit 2; }
 	sh ./scripts/sbm_up.sh "$(SUB)" "$(TAG)"
 
-srcs:
+srcs: FORCE
 	sh ./scripts/srcs.sh
