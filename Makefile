@@ -12,12 +12,12 @@ $(BUILD_CONF): FORCE
 ./.conf: $(BUILD_CONF) ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
 	@sh ./scripts/build.sh ./src/configs/main.conf ./src/configs/$(CONF) ./src/configs/readonly
 ./run: ./scripts/run.sh
-	@cp scripts/run.sh ./$@
+	@cp $< ./$@
 	@printf "%s\n" "> $$PWD/$@"
 ./lib/syscfg/syscfg: FORCE
 	@(cd lib/syscfg && $(MAKE))
 ./syscfg: ./lib/syscfg/syscfg
-	@cp lib/syscfg/syscfg ./$@
+	@cp $< ./$@
 	@printf "%s\n" "> $$PWD/$@"
 
 clean: FORCE
