@@ -120,6 +120,11 @@ OBJ=\
 (setq mouse-wheel-follow-mouse t)
 (setq mark-even-if-inactive t)
 (set-fringe-mode '\''(8 . 0))
+(advice-add '\''scroll-bar-toolkit-scroll :before
+  (lambda (&rest _)
+    (setq deactivate-mark t
+          mark-active nil)
+    (deactivate-mark)))
 
 ;; General syntax highlighting using Font Lock (shell-syntax-oriented)
 (add-hook '\''fundamental-mode-hook #'\''font-lock-mode)
