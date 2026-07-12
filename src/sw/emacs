@@ -165,8 +165,9 @@ OBJ=\
       lazy-count-initial-delay 0)
 (add-hook '\''isearch-mode-hook
   (lambda ()
-    (define-key isearch-mode-map (kbd "C-v") #'\''isearch-yank-kill)
-    (define-key isearch-mode-map [return] #'\''isearch-repeat-forward)))
+    (define-key isearch-mode-map (kbd "C-f") #'\''isearch-repeat-forward)
+    (define-key isearch-mode-map (kbd "C-S-f") #'\''isearch-repeat-backward)
+    (define-key isearch-mode-map (kbd "C-v") #'\''isearch-yank-kill)))
 
 ;; Keybindings
 (global-set-key (kbd "M-1") (lambda () (interactive) (tab-bar-select-tab 1)))
@@ -237,12 +238,8 @@ OBJ=\
 (global-set-key [C-drag-mouse-1] #'\''mouse-set-region) ;; fix unmark on ctrl
 (global-set-key [C-double-mouse-1] #'\''mouse-set-region)
 (global-set-key [double-mouse-1] #'\''mouse-set-region)
-(global-set-key (kbd "C-f")
-  (lambda () (interactive)
-    (when (bound-and-true-p lazy-highlight-overlays)
-      (mapc #'\''delete-overlay lazy-highlight-overlays)
-      (setq lazy-highlight-overlays nil))
-    (isearch-forward)))
+(global-set-key (kbd "C-f") #'\''isearch-forward)
+(global-set-key (kbd "C-S-f") #'\''isearch-backward)
 (keymap-global-set "C-s" #'\''save-buffer)
 (global-set-key [wheel-down] (lambda () (interactive) (scroll-up 3)))
 (global-set-key [wheel-up] (lambda () (interactive) (scroll-down 3)))
