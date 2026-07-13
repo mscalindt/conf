@@ -50,8 +50,7 @@ OBJ=\
       inhibit-startup-screen t
       initial-scratch-message ""
       initial-buffer-choice t
-      vc-follow-symlinks t
-      transient-mark-mode 0)
+      vc-follow-symlinks t)
 (global-display-line-numbers-mode 1)
 (global-display-fill-column-indicator-mode 1)
 (setq-default fill-column 80)
