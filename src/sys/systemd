@@ -40,6 +40,10 @@ if [ "$arch_linux" ]; then
     OBJ='/dev/null'
     OBJ_PATH='/etc/systemd/system/rtkit-daemon.service'
     __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/systemd-timedated.service'
+    __obj_link_ow_soft;
 fi
 
 if [ "$bluez" ]; then
