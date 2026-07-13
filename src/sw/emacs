@@ -245,6 +245,7 @@ OBJ=\
 (global-set-key (kbd "C-f") #'\''isearch-forward)
 (global-set-key (kbd "C-S-f") #'\''isearch-backward)
 (keymap-global-set "C-s" #'\''save-buffer)
+(global-set-key (kbd "M-`") #'\''tab-bar-switch-to-recent-tab)
 (global-set-key [wheel-down] (lambda () (interactive) (scroll-up 3)))
 (global-set-key [wheel-up] (lambda () (interactive) (scroll-down 3)))
 (global-set-key [M-wheel-down] (lambda () (interactive) (scroll-up 3)))
