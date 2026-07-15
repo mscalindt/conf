@@ -1,5 +1,13 @@
 if [ "$arch_linux" ]; then
     OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/archlinux-keyring-wkd-sync.service'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/archlinux-keyring-wkd-sync.timer'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
     OBJ_PATH="$home/.config/systemd/user/at-spi-dbus-bus.service"
     __obj_link_ow_soft \
         -uid "$uid" -gid "$gid" \
@@ -22,6 +30,14 @@ if [ "$arch_linux" ]; then
         -user "$user" -group "$group"
 
     OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/man-db.service'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/man-db.timer'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
     OBJ_PATH="$home/.config/systemd/user/pipewire.service"
     __obj_link_ow_soft \
         -uid "$uid" -gid "$gid" \
@@ -42,7 +58,47 @@ if [ "$arch_linux" ]; then
     __obj_link_ow_soft;
 
     OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/shadow.service'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/shadow.timer'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
     OBJ_PATH='/etc/systemd/system/systemd-timedated.service'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/systemd-tmpfiles-clean.service'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/systemd-tmpfiles-clean.timer'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/systemd-tmpfiles-clean.service"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ='/dev/null'
+    OBJ_PATH="$home/.config/systemd/user/systemd-tmpfiles-clean.timer"
+    __obj_link_ow_soft \
+        -uid "$uid" -gid "$gid" \
+        -user "$user" -group "$group"
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/systemd-userdbd.service'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/systemd-userdbd.socket'
+    __obj_link_ow_soft;
+
+    OBJ='/dev/null'
+    OBJ_PATH='/etc/systemd/system/var-lib-machines.mount'
     __obj_link_ow_soft;
 fi
 
