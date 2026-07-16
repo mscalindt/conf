@@ -102,13 +102,9 @@ bar {
 
 # Other
 exec_always /usr/bin/sh -c '\''rm -f "${TMPDIR:-/tmp}"/nettotal'\''
+exec_always /home/$USER/.config/sway/import-env
 exec_always /home/$USER/.config/sway/import-gsettings
 '
-if [ "$arch_linux" ]; then
-    OBJ="$OBJ"\
-'exec /home/$USER/.config/sway/systemd-handler
-'
-fi
 OBJ_PATH="$home/.config/sway/config"
 __file_write_ow_soft \
     -uid "$uid" -gid "$gid" \
@@ -166,6 +162,20 @@ while read -r LINE; do
 done < "$cfg"
 '
 OBJ_PATH="$home/.config/sway/import-gsettings"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group" \
+    -mode 0755
+
+OBJ=\
+'#!/bin/sh
+
+export XDG_CURRENT_DESKTOP=sway
+
+dbus-update-activation-environment \
+    DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+'
+OBJ_PATH="$home/.config/sway/import-env"
 __file_write_ow_soft \
     -uid "$uid" -gid "$gid" \
     -user "$user" -group "$group" \
@@ -555,21 +565,3 @@ __file_write_ow_soft \
     -uid "$uid" -gid "$gid" \
     -user "$user" -group "$group" \
     -mode 0755
-
-if [ "$arch_linux" ]; then
-    OBJ=\
-'#!/bin/sh
-
-export XDG_CURRENT_DESKTOP=sway
-
-systemctl --user import-environment \
-    DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-dbus-update-activation-environment --systemd \
-    DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-'
-    OBJ_PATH="$home/.config/sway/systemd-handler"
-    __file_write_ow_soft \
-        -uid "$uid" -gid "$gid" \
-        -user "$user" -group "$group" \
-        -mode 0755
-fi
