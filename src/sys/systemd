@@ -130,7 +130,6 @@ if [ "$dns" ] && [ "$dnsmasq" ]; then
     OBJ=\
 '[Unit]
 Description=Caching DNS server
-Wants=dbus.service
 
 [Service]
 Type=simple
