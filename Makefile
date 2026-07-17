@@ -33,7 +33,7 @@ clean: FORCE
 # accommodate a conditional, any conditionals shall be placed at the top of
 # the recipe.
 config: FORCE
-	@test -n "$(cc)" || { echo 'Define $cc (ISO 3166-1 alpha-2)'; exit 2; }
+	@test -n "$(cc)" || { echo 'Define $$cc (ISO 3166-1 alpha-2)'; exit 2; }
 	./run --no-color --status-pager -- src/fs/face
 	./run --no-color --status-pager -- src/fs/fstab
 	./run --no-color --status-pager -- src/fs/hostname
