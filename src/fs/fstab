@@ -43,8 +43,8 @@ OBJ=$(
     __say '    0    2
 '
 
-__say 'x'
+__say '.'
 )
-OBJ="${OBJ%?}"
+OBJ="${OBJ%.}"
 OBJ_PATH='/etc/fstab'
 __file_write_ow_soft;
