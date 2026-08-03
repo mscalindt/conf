@@ -7,9 +7,9 @@ OBJ=\
 
     cp -p "$1" /tmp/"$1" || return "$?"
     cd /tmp || return "$?"
-    gpg_d "$1" || return "$?"
+    gpgd "$1" || return "$?"
     rm -rf "$1"
-    tar_e "${1%????}" || return "$?"
+    tare "${1%????}" || return "$?"
     rm -f "${1%????}"
     cd "$OLDPWD" || return "$?"
 
@@ -28,9 +28,9 @@ OBJ=\
 faste() {
     cp -pr "$1" /tmp/"$1" || return "$?"
     cd /tmp || return "$?"
-    tar_c "$1" || return "$?"
+    tarc "$1" || return "$?"
     rm -rf "$1"
-    gpg_e "$1".tar || return "$?"
+    gpge "$1".tar || return "$?"
     rm -f "$1".tar
     cd "$OLDPWD" || return "$?"
 
@@ -47,8 +47,7 @@ faste() {
     esac
 }
 
-# gpg
-gpg_d() {
+gpgd() {
     case "$1" in
         *.gpg) ;;
         *) echo EINVAL; return 1 ;;
@@ -60,7 +59,7 @@ gpg_d() {
     gpg -o "${1%.gpg}" -d "$1" || return "$?"
     touch -r "$1" "${1%.gpg}"
 }
-gpg_e() {
+gpge() {
     case "$1" in
         *.gpg) echo EINVAL; return 1 ;;
     esac
@@ -72,8 +71,7 @@ gpg_e() {
     touch -r "$1" "$1".gpg
 }
 
-# tar
-tar_c() {
+tarc() {
     case "$1" in
         *.tar) echo EINVAL; return 1 ;;
     esac
@@ -84,7 +82,7 @@ tar_c() {
     tar --numeric-owner -cvpf "$1".tar "$1" || return "$?"
     touch -r "$1" "$1".tar
 }
-tar_e() {
+tare() {
     case "$1" in
         *.tar) ;;
         *) echo EINVAL; return 1 ;;
