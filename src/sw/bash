@@ -157,6 +157,12 @@ QT_STYLE_OVERRIDE=kvantum
 QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 SDL_VIDEODRIVER=wayland,x11
 set +a
+
+runsway() {
+    export WLR_DRM_NO_ATOMIC=1
+
+    exec sway > "${TMPDIR:-/tmp}"/sway.log 2>&1
+}
 '
 OBJ_PATH="$home/.bash_profile"
 __file_write_ow_soft \
