@@ -64,6 +64,10 @@ bindsym Mod4+5 workspace number 5
 bindsym Mod4+6 workspace number 6
 bindsym Mod4+7 workspace number 7
 bindsym Mod4+8 workspace number 8
+bindsym Mod4+Up focus up
+bindsym Mod4+Left focus left
+bindsym Mod4+Down focus down
+bindsym Mod4+Right focus right
 bindsym Mod4+q kill
 bindsym Mod4+f fullscreen
 bindsym Mod4+w move container to workspace 8
