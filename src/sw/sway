@@ -209,6 +209,9 @@ __file_write_ow_soft \
 OBJ=\
 '#!/bin/sh
 
+LC_ALL=C
+export LC_ALL
+
 STATUS=
 '
 OBJ="$OBJ"\
@@ -221,7 +224,7 @@ if [ "$TITLE" ]; then
     TITLE=$(
         printf "%s" "$TITLE" | \
         jq -r '\''.. | select(.type?) | select(.focused==true).name'\'' | \
-        LC_ALL=C tr -cd '\''\11\12\15\40-\176'\''
+        tr -cd '\''\11\12\15\40-\176'\''
     )
 fi
 
