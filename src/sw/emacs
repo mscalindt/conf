@@ -56,7 +56,8 @@ OBJ=\
       initial-buffer-choice t
       vc-follow-symlinks t)
 (global-display-line-numbers-mode 1)
-(setq display-line-numbers-grow-only t)
+(setq display-line-numbers-grow-only t
+      display-line-numbers-width-start 3)
 (global-display-fill-column-indicator-mode 1)
 (setq-default fill-column 80)
 (setq frame-title-format "%f")
