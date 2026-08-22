@@ -42,6 +42,10 @@ OBJ=\
                     :background "#5294e2"
                     :foreground nil
                     :extend t)
+(set-face-attribute '\''line-number nil
+                    :foreground "#444444")
+(set-face-attribute '\''line-number-current-line nil
+                    :foreground "#555555")
 
 ;; Other Emacs configuration
 (setq make-backup-files nil
