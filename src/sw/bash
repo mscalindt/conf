@@ -203,6 +203,12 @@ alias r='\''setsid'\''
 # '\''-ixon'\'': Disable "Ctrl + S"; WHY IS THIS STILL DEFAULT?
 # '\''susp undef'\'': Disable "Ctrl + Z"
 stty -ixon susp undef
+
+# Disable Readline "repeat count" key bindings.
+bind -r "\\e-"
+for n in {0..9}; do
+    bind -r "\\e$n"
+done
 '
 OBJ_PATH="$home/.bashrc"
 __file_write_ow_soft \
