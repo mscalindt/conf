@@ -1,4 +1,12 @@
 OBJ=\
+'(setq package-enable-at-startup nil)
+'
+OBJ_PATH="$home/.emacs.d/early-init.el"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
 ';; emacsclient
 (require '\''server)
 (unless (server-running-p) (server-start))
