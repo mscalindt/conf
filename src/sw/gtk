@@ -51,6 +51,7 @@ gtk-font-name="Cantarell 12"
 gtk-cursor-theme-size=0
 gtk-application-prefer-dark-theme=true
 gtk-enable-primary-paste=false
+gtk-long-press-time=99999
 gtk-toolbar-style=GTK_TOOLBAR_ICONS
 gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
 gtk-button-images=1
@@ -63,6 +64,15 @@ gtk-xft-hintstyle=hintfull
 gtk-xft-rgba=rgb
 '
 OBJ_PATH="$home/.config/gtk-3.0/settings.ini"
+__file_write_ow_soft \
+    -uid "$uid" -gid "$gid" \
+    -user "$user" -group "$group"
+
+OBJ=\
+'[Settings]
+gtk-long-press-time=99999
+'
+OBJ_PATH="$home/.config/gtk-4.0/settings.ini"
 __file_write_ow_soft \
     -uid "$uid" -gid "$gid" \
     -user "$user" -group "$group"
