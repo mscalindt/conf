@@ -1,13 +1,13 @@
 OBJ=\
-'swayimg.enable_overlay(true)
-swayimg.enable_decoration(false)
+'swayimg.overlay = true
+swayimg.decoration = false
 swayimg.viewer.set_window_background(0x00000000)
-swayimg.enable_antialiasing(true)
-swayimg.text.set_size(24)
-swayimg.text.set_padding(0)
-swayimg.text.set_timeout(0)
-swayimg.text.set_shadow(0xff000000)
-swayimg.viewer.set_default_scale("fit")
+swayimg.antialiasing = true
+swayimg.text.size = 24
+swayimg.text.padding = 0
+swayimg.text.timeout = 0
+swayimg.text.shadow = 0xff000000
+swayimg.viewer.default_scale = "fit"
 
 swayimg.viewer.set_text("topleft", {
   "Scale: {scale}"
@@ -31,7 +31,7 @@ swayimg.viewer.set_text("bottomright", {
   "Time:      {meta.Exif.Photo.DateTimeOriginal}"
 })
 
-swayimg.text.set_font("Source Code Pro")
+swayimg.text.font = "Source Code Pro"
 
 swayimg.on_window_resize(function()
   swayimg.viewer.set_fix_scale("optimal")
