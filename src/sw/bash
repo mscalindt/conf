@@ -196,6 +196,7 @@ alias gchk='\''git diff --check HEAD~10'\''
 alias c='\''tput reset; stty -ixon susp undef'\''
 alias q='\''exit'\''
 alias r='\''setsid'\''
+rq() { setsid "$@" && exit; }
 
 # Source useful custom functions
 [ ! -f "$HOME"/.bash_functions ] || . "$HOME"/.bash_functions
