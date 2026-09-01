@@ -6,6 +6,9 @@ GRUB_GFXMODE=auto
 GRUB_GFXPAYLOAD_LINUX=keep
 GRUB_DISABLE_RECOVERY=true
 
+# `nvme_core.default_ps_max_latency_us=0` turns APST off. Do not turn it back
+# on -- it is not worth it. After *a few days* with APST off, the NVMe here
+# (Kingston OM8PCP3512F-AB) returned back to its top notch performance.
 GRUB_DEFAULT=0
 GRUB_TIMEOUT=5
 GRUB_CMDLINE_LINUX="\
