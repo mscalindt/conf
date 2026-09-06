@@ -87,7 +87,9 @@ OBJ=\
                                  mod-str
                                  (if (and last-char (/= last-char ?\n))
                                      " | NO LF"
-                                   ""))))))
+                                   ""))))
+               " | "
+               '\''(:eval (format "Lines: %d" (count-lines (point-min) (point-max))))))
 (defadvice kill-ring-save (after keep-transient-mark-active ())
   (setq deactivate-mark nil))
 (ad-activate '\''kill-ring-save)
