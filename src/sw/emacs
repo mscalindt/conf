@@ -112,6 +112,7 @@ OBJ=\
 (electric-indent-mode -1)
 (modify-syntax-entry ?_ "w")
 (modify-syntax-entry ?\$ "." (syntax-table))
+(modify-syntax-entry ?\% "." (syntax-table))
 (advice-add '\''push-mark :around
   (lambda (orig &rest args)
     (let ((inhibit-message t))
