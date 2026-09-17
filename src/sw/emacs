@@ -60,6 +60,7 @@ OBJ=\
                     :foreground "#555555")
 
 ;; Other Emacs configuration
+(require '\''display-line-numbers)
 (setq make-backup-files nil
       auto-save-default nil
       create-lockfiles nil
@@ -94,15 +95,15 @@ OBJ=\
                                    ""))))
                " | "
                '\''(:eval (format "Lines: %d" (count-lines (point-min) (point-max))))))
-(defadvice kill-ring-save (after keep-transient-mark-active ())
-  (setq deactivate-mark nil))
-(ad-activate '\''kill-ring-save)
+(advice-add '\''kill-ring-save :after
+  (lambda (&rest _)
+    (setq deactivate-mark nil)))
 (advice-add '\''self-insert-command :before
-  (lambda (&rest args)
+  (lambda (&rest _)
     (when (use-region-p)
       (delete-region (region-beginning) (region-end)))))
 (advice-add '\''yank :before
-  (lambda (&rest args)
+  (lambda (&rest _)
     (when (use-region-p)
       (delete-region (region-beginning) (region-end)))))
 (require '\''whitespace)
@@ -152,24 +153,33 @@ OBJ=\
 
 ;; General syntax highlighting using Font Lock (shell-syntax-oriented)
 (add-hook '\''fundamental-mode-hook #'\''font-lock-mode)
+(defgroup shell-syntax-faces nil
+  "Faces for shell-style syntax highlighting."
+  :group '\''faces)
 (defface sq-face
   '\''((t (:foreground "#ff8c00" :weight bold)))
-  "Face for single quotes.")
+  "Face for single quotes."
+  :group '\''shell-syntax-faces)
 (defface dq-face
   '\''((t (:foreground "#95e454" :weight bold)))
-  "Face for double quotes.")
+  "Face for double quotes."
+  :group '\''shell-syntax-faces)
 (defface struc-face
   '\''((t (:foreground "#ff69b4")))
-  "Face for structure-like characters.")
+  "Face for structure-like characters."
+  :group '\''shell-syntax-faces)
 (defface backslash-face
   '\''((t (:foreground "#ff4d4d")))
-  "Face for backslash characters.")
+  "Face for backslash characters."
+  :group '\''shell-syntax-faces)
 (defface hash-face
   '\''((t (:foreground "#00ffff")))
-  "Face for number sign / hash characters.")
+  "Face for number sign / hash characters."
+  :group '\''shell-syntax-faces)
 (defface num-face
   '\''((t (:foreground "#FFD600")))
-  "Face for number characters.")
+  "Face for number characters."
+  :group '\''shell-syntax-faces)
 (font-lock-add-keywords '\''fundamental-mode
                         '\''(("\\\\." . '\''backslash-face)
                           ("'\''" . '\''sq-face)
@@ -190,8 +200,7 @@ OBJ=\
       lazy-highlight-initial-delay 0
       isearch-lazy-count t
       lazy-count-prefix-format "(%s/%s) "
-      lazy-count-suffix-format nil
-      lazy-count-initial-delay 0)
+      lazy-count-suffix-format nil)
 (add-hook '\''isearch-mode-hook
   (lambda ()
     (define-key isearch-mode-map (kbd "C-f") #'\''isearch-repeat-forward)
