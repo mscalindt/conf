@@ -1,5 +1,7 @@
 OBJ=\
-'(setq package-enable-at-startup nil)
+';;; -*- lexical-binding: t -*-
+
+(setq package-enable-at-startup nil)
 '
 OBJ_PATH="$home/.emacs.d/early-init.el"
 __file_write_ow_soft \
@@ -7,7 +9,9 @@ __file_write_ow_soft \
     -user "$user" -group "$group"
 
 OBJ=\
-';; emacsclient
+';;; -*- lexical-binding: t -*-
+
+;; emacsclient
 (require '\''server)
 (unless (server-running-p) (server-start))
 (advice-add '\''server-visit-files :around
