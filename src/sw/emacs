@@ -141,6 +141,10 @@ OBJ=\
     (setq deactivate-mark t
           mark-active nil)
     (deactivate-mark)))
+(advice-add '\''kill-new :after
+  (lambda (&rest _)
+    (message "Copy buffer changed.")))
+
 
 ;; General syntax highlighting using Font Lock (shell-syntax-oriented)
 (add-hook '\''fundamental-mode-hook #'\''font-lock-mode)
