@@ -170,9 +170,9 @@ OBJ=\
   '\''((t (:foreground "#ff4d4d")))
   "Face for backslash characters."
   :group '\''shell-syntax-faces)
-(defface hash-face
+(defface exp-face
   '\''((t (:foreground "#00ffff")))
-  "Face for number sign / hash characters."
+  "Face for some parameter and arithmetic expansion characters."
   :group '\''shell-syntax-faces)
 (defface num-face
   '\''((t (:foreground "#FFD600")))
@@ -189,7 +189,12 @@ OBJ=\
                           ("[}]" . '\''struc-face)
                           ("`" . '\''struc-face)
                           ("[0-9]+" . '\''num-face)
-                          ("#" . '\''hash-face)))
+                          ("#" . '\''exp-face)
+                          ("%" . '\''exp-face)
+                          ("+" . '\''exp-face)
+                          ("-" . '\''exp-face)
+                          ("/" . '\''exp-face)
+                          ("*" . '\''exp-face)))
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
