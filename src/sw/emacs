@@ -79,8 +79,6 @@ OBJ=\
 (setq-default mode-line-format
               (list
                '\''(:eval (or buffer-file-name ""))
-               " | "
-               '\''mode-name
                '\''(:eval (let* ((last-char (when (> (point-max) 0)
                                            (char-before (point-max))))
                               (mod-str (if (buffer-modified-p) " | MOD" ""))
