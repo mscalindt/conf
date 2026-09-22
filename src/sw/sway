@@ -81,8 +81,8 @@ bindsym Mod4+Shift+q exec /home/$USER/.config/sway/fkill_sway
 bindsym Mod4+Space exec /home/$USER/.config/sway/music_toggle
 bindsym Mod4+z exec /usr/bin/pamixer -d5
 bindsym Mod4+x exec /usr/bin/pamixer -i5
-bindsym Mod4+c exec /usr/bin/brightnessctl s 5%-
-bindsym Mod4+v exec /usr/bin/brightnessctl s 5%+
+bindsym Mod4+c exec /usr/bin/brightnessctl s 5%- > /dev/null
+bindsym Mod4+v exec /usr/bin/brightnessctl s 5%+ > /dev/null
 bindsym print exec /usr/bin/grim \
     -l 9 $(/usr/bin/date +'\''SS_%Y%m%d_%H%M%S.png'\'')
 bindsym Mod4+p exec /usr/bin/grim \
