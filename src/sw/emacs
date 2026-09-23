@@ -49,6 +49,7 @@ OBJ=\
                     :foreground "#ff0000")
 (set-face-attribute '\''default nil
                     :family "Source Code Pro"
+                    :foreground "#cccccc"
                     :height 120)
 (set-face-attribute '\''region nil
                     :background "#5294e2"
@@ -178,6 +179,10 @@ OBJ=\
   '\''((t (:foreground "#FFD600")))
   "Face for number characters."
   :group '\''shell-syntax-faces)
+(defface white-face
+  '\''((t (:foreground "#ffffff")))
+  "Face for fully white characters."
+  :group '\''shell-syntax-faces)
 (font-lock-add-keywords '\''fundamental-mode
                         '\''(("\\\\." . '\''backslash-face)
                           ("'\''" . '\''sq-face)
@@ -194,7 +199,8 @@ OBJ=\
                           ("+" . '\''exp-face)
                           ("-" . '\''exp-face)
                           ("/" . '\''exp-face)
-                          ("*" . '\''exp-face)))
+                          ("*" . '\''exp-face)
+                          ("_" . '\''white-face)))
 
 ;; Search overhaul for simplicity / usability
 (setq isearch-wrap-pause '\''no
