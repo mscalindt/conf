@@ -21,72 +21,51 @@ __file_write_ow_soft \
 
 OBJ=\
 '# DEFAULTS (the format is FIFO)
-ext 1|5 = man "$1"
-ext exe = wine "$1"
+ext 1|5 = man "$@"
 
-# TEXT / CODE
-ext 1|5,    has emacsclient,        X, flag f = emacsclient -n "$@"
-ext ini,    has emacsclient,        X, flag f = emacsclient -n "$@"
-ext js,     has emacsclient,        X, flag f = emacsclient -n "$@"
-ext sh,     has emacsclient,        X, flag f = emacsclient -n "$@"
-ext shfn,   has emacsclient,        X, flag f = emacsclient -n "$@"
-mime ^text, has emacsclient,        X, flag f = emacsclient -n "$@"
+# Text
+ext 1|5, has emacsclient, X, flag f = emacsclient -n "$@"
+ext ini, has emacsclient, X, flag f = emacsclient -n "$@"
+ext js, has emacsclient, X, flag f = emacsclient -n "$@"
+ext sh, has emacsclient, X, flag f = emacsclient -n "$@"
+ext shfn, has emacsclient, X, flag f = emacsclient -n "$@"
+mime ^text, has emacsclient, X, flag f = emacsclient -n "$@"
 mime ^inode/x-empty$, has emacsclient, X, flag f = emacsclient -n "$@"
-ext 1|5,    has featherpad,         X, flag f = featherpad "$@"
-ext ini,    has featherpad,         X, flag f = featherpad "$@"
-ext js,     has featherpad,         X, flag f = featherpad "$@"
-ext sh,     has featherpad,         X, flag f = featherpad "$@"
-ext shfn,   has featherpad,         X, flag f = featherpad "$@"
-mime ^text, has featherpad,         X, flag f = featherpad "$@"
+ext 1|5, has featherpad, X, flag f = featherpad "$@"
+ext ini, has featherpad, X, flag f = featherpad "$@"
+ext js, has featherpad, X, flag f = featherpad "$@"
+ext sh, has featherpad, X, flag f = featherpad "$@"
+ext shfn, has featherpad, X, flag f = featherpad "$@"
+mime ^text, has featherpad, X, flag f = featherpad "$@"
 mime ^inode/x-empty$, has featherpad, X, flag f = featherpad "$@"
 
 # Video
-mime ^video, has mpv,       X,  flag f = mpv --profile=video-cfg -- "$@"
+mime ^video, has mpv, X, flag f = mpv --profile=video-cfg -- "$@"
 
 # Audio
-mime ^audio, has mpv,       flag f = mpv --profile=audio-cfg -- "$@"
+mime ^audio, has mpv, X, flag f = mpv --profile=audio-cfg -- "$@"
 
 # Images
-ext xcf, has gimp,                X, flag f = gimp -- "$@"
-mime ^image/svg, has inkscape,    X, flag f = inkscape -- "$@"
-mime ^image/svg, has display,     X, flag f = display -- "$@"
-mime ^image, has swayimg,         X, flag f = swayimg -- "$@"
-mime ^image, has gimp,            X, flag f = gimp -- "$@"
+ext xcf, has gimp, X, flag f = gimp -- "$@"
+mime ^image/svg, has inkscape, X, flag f = inkscape -- "$@"
+mime ^image/svg, has display, X, flag f = display -- "$@"
+mime ^image, has swayimg, X, flag f = swayimg -- "$@"
+mime ^image, has gimp, X, flag f = gimp -- "$@"
 
-# PDF/Books
-ext pdf, has firefox,          X, flag f = firefox -- "$@"
+# Documents
+ext pdf, has firefox, X, flag f = firefox -- "$@"
 
 # Archives (atool)
-ext 7z|ace|ar|arc|bz2?|cab|cpio|cpt|deb|dgc|dmg|gz|iso|jar|msi|pkg|rar|shar|tar|tgz|xar|xpi|xz|zip,    has atool = atool --list --each -- "$@" | "$PAGER"
-ext 7z|ace|ar|arc|bz2?|cab|cpio|cpt|deb|dgc|dmg|gz|iso|jar|msi|pkg|rar|shar|tar|tgz|xar|xpi|xz|zip,    has atool = atool --extract --each -- "$@"
+ext 7z|ace|ar|arc|bz2?|cab|cpio|cpt|deb|dgc|dmg|gz|iso|jar|msi|pkg|rar|shar|tar|tgz|xar|xpi|xz|zip, has atool = atool --list --each -- "$@" | "$PAGER"
+ext 7z|ace|ar|arc|bz2?|cab|cpio|cpt|deb|dgc|dmg|gz|iso|jar|msi|pkg|rar|shar|tar|tgz|xar|xpi|xz|zip, has atool = atool --extract --each -- "$@"
 
 # Archives
-ext 7z      has 7z = 7z -p l "$@" | "$PAGER"
-ext 7z,     has 7z = for file in "$@"; do 7z -p -o"${file%???}" x -- "$file"; done
-ext ace,    has unace = unace l "$1" | less
-ext ace,    has unace = for file in "$@"; do unace e "$file"; done
-ext bz2,    has tar = tar vvtf "$1" | "$PAGER"
-ext bz2,    has tar = for file in "$@"; do tar vvxf "$file"; done
-ext bz2,    has bzip2 = for file in "$@"; do bzip2 -dk "$file"; done
-ext gz,     has tar = tar vvtf "$1" | "$PAGER"
-ext gz,     has tar = for file in "$@"; do tar vvxf "$file"; done
-ext rar,    has unrar = unrar l "$1" | less
-ext rar,    has unrar = for file in "$@"; do unrar x "$file"; done
-ext tar,    has tar = tar vvtf "$1" | "$PAGER"
-ext tar,    has tar = for file in "$@"; do tar vvxf "$file"; done
-ext xz,     has tar = tar vvtf "$1" | "$PAGER"
-ext xz,     has tar = for file in "$@"; do tar vvxf "$file"; done
-ext zip,    has unzip = unzip -l "$1" | less
-ext zip,    has unzip = for file in "$@"; do unzip -d "${file%.*}" "$file"; done
-ext zst,    has tar = tar vvtf "$1" | "$PAGER"
-ext zst,    has tar = for file in "$@"; do tar vvxf "$file"; done
+ext zst, has tar = tar -vvtf "$@" | "$PAGER"
+ext zst, has tar = tar --one-top-level -vvxf "$@"
 
-# Misc exts
-ext x?html?, has firefox,     X, flag f = firefox -- "$@"
-ext x?html?, has chromium,    X, flag f = chromium -- "$@"
-
-# Misc mEmes
-mime application/x-executable               = "$1"
+# Misc
+ext x?html?, has firefox, X, flag f = firefox -- "$@"
+ext x?html?, has chromium, X, flag f = chromium -- "$@"
 '
 OBJ_PATH="$home/.config/ranger/rifle.conf"
 __file_write_ow_soft \
