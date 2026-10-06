@@ -33,7 +33,7 @@ __ed -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
     'VerbosePkgLists' \
     -s \
     'NoExtract' \
-    'NoExtract = etc/xdg/*'
+    'NoExtract = etc/xdg/* */xdg-open'
 OBJ="$OBJ"
 __ed -crc 2870886219 -log "${TMPDIR:-/tmp}/_pacman_conf" -- \
     -m s -s \
