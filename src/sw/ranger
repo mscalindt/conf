@@ -58,6 +58,8 @@ ext pdf, has firefox, X, flag f = firefox -- "$@"
 # Archives (atool)
 ext 7z|ace|ar|arc|bz2?|cab|cpio|cpt|deb|dgc|dmg|gz|iso|jar|msi|pkg|rar|shar|tar|tgz|xar|xpi|xz|zip, has atool = atool --list --each -- "$@" | "$PAGER"
 ext 7z|ace|ar|arc|bz2?|cab|cpio|cpt|deb|dgc|dmg|gz|iso|jar|msi|pkg|rar|shar|tar|tgz|xar|xpi|xz|zip, has atool = atool --extract --each -- "$@"
+ext kmz, has atool = atool --format zip --list --each -- "$@" | "$PAGER"
+ext kmz, has atool = atool --format zip --extract --each -- "$@"
 
 # Archives
 ext zst, has tar = tar -vvtf "$@" | "$PAGER"
