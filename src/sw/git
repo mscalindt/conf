@@ -9,11 +9,6 @@ OBJ=\
 	log = 10000
 [rerere]
 	enabled = true
-[sendemail]
-        smtpuser = mscalindt@gmail.com
-	smtpserver = smtp.gmail.com
-	smtpencryption = tls
-	smtpserverport = 587
 [user]
 	email = mscalindt@protonmail.com
 	name = Dimitar Yurukov
