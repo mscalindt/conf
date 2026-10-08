@@ -9,27 +9,26 @@ swayimg.text.timeout = 0
 swayimg.text.shadow = 0xff000000
 swayimg.viewer.default_scale = "fit"
 
-swayimg.viewer.set_text("topleft", {
-  "Scale: {scale}"
-})
-
-swayimg.viewer.set_text("topright", {
-})
-
-swayimg.viewer.set_text("bottomleft", {
-  "File name:  {name}",
-  "File size:  {sizehr}",
-  "File time:  {time}",
-  "Image size: {frame.width}x{frame.height}"
-})
-
-swayimg.viewer.set_text("bottomright", {
-  "Camera:    {meta.Exif.Image.Model}",
-  "Exposure:  {meta.Exif.Image.ExposureTime}",
-  "F Number:  {meta.Exif.Image.FNumber}",
-  "ISO:       {meta.Exif.Image.ISOSpeedRatings}",
-  "Time:      {meta.Exif.Photo.DateTimeOriginal}"
-})
+swayimg.viewer.text = {
+  topleft = {
+    "Scale:  {scale}",
+  },
+  topright = {
+  },
+  bottomleft = {
+    "File name:   {name}",
+    "File size:   {sizehr}",
+    "File time:   {time}",
+    "Image size:  {frame.width}x{frame.height}",
+  },
+  bottomright = {
+    "Camera:    {meta.Exif.Image.Model}",
+    "Exposure:  {meta.Exif.Image.ExposureTime}",
+    "F Number:  {meta.Exif.Image.FNumber}",
+    "ISO:       {meta.Exif.Image.ISOSpeedRatings}",
+    "Time:      {meta.Exif.Photo.DateTimeOriginal}",
+  },
+}
 
 swayimg.text.font = "Source Code Pro"
 
