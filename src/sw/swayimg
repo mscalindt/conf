@@ -11,7 +11,8 @@ swayimg.viewer.default_scale = "fit"
 
 swayimg.viewer.text = {
   topleft = {
-    "Scale:  {scale}",
+    "Resolution:  {frame.width}x{frame.height}",
+    "Scale:       {scale}",
   },
   topright = {
   },
@@ -19,7 +20,6 @@ swayimg.viewer.text = {
     "File name:   {name}",
     "File size:   {sizehr}",
     "File time:   {time}",
-    "Image size:  {frame.width}x{frame.height}",
   },
   bottomright = {
     "Camera:    {meta.Exif.Image.Model}",
