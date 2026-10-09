@@ -132,7 +132,7 @@ OBJ=\
          :strike-through nil
          :overline nil
          :extend t)))))
-(setq scroll-preserve-screen-position t)
+(setq scroll-preserve-screen-position nil)
 (setq auto-window-vscroll nil)
 (setq scroll-conservatively 10000)
 (setq scroll-margin 0)
@@ -148,7 +148,25 @@ OBJ=\
 (advice-add '\''kill-new :after
   (lambda (&rest _)
     (message "Copy buffer changed.")))
-
+(defvar revert-saved-view nil
+  "Alist of (window . start-char) captured before a buffer revert.")
+(advice-add #'\''revert-buffer :before
+  (lambda (&rest _)
+    "Capture the char position of every window showing this buffer."
+    (setq revert-saved-view
+          (mapcar (lambda (w)
+                    (cons w (window-start w)))
+                  (get-buffer-window-list (current-buffer) nil '\''all-frames)))))
+(advice-add #'\''revert-buffer :after
+  (lambda (&rest _)
+    "Restore the previously captured window views using character offsets."
+    (pcase-dolist (`(,w . ,pos) revert-saved-view)
+      (when (and (window-live-p w) (buffer-live-p (window-buffer w)))
+        (with-current-buffer (window-buffer w)
+          (if (<= pos (point-max))
+              (set-window-start w pos t)
+            (set-window-start w (point-max))))))
+    (setq revert-saved-view nil)))
 
 ;; General syntax highlighting using Font Lock (shell-syntax-oriented)
 (add-hook '\''fundamental-mode-hook #'\''font-lock-mode)
