@@ -44,13 +44,13 @@ SRC_LOG=$(
     }
 )
 
-case "$4" in
+case "${4:-0}" in
     0) EDIT= ;;
     1) EDIT='-e' ;;
 esac
 
 if [ "$SRC_LOG" ] && [ ! "$SRC_LOG" = "$LOG" ]; then
-    git tag "$EDIT" -m \
+    git tag $EDIT -m \
 "conf $1
 
 - Filtered log of core changes:
@@ -59,11 +59,11 @@ $SRC_LOG
 - Complete log between $2 and $1 (${3%"${3#???????}"}):
 $LOG" -as "$1" "$3"
 elif [ "$LOG" ]; then
-    git tag "$EDIT" -m \
+    git tag $EDIT -m \
 "conf $1
 
 - Complete log between $2 and $1 (${3%"${3#???????}"}):
 $LOG" -as "$1" "$3"
 else
-    git tag "$EDIT" -m "conf $1" -as "$1" "$3"
+    git tag $EDIT -m "conf $1" -as "$1" "$3"
 fi
