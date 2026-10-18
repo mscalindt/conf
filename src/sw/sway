@@ -195,7 +195,7 @@ OBJ=\
 MPV_PID=$(ps -e | awk '\''/[m]pv$/ {print $1}'\'')
 
 if [ "$MPV_PID" ]; then
-    kill "$MPV_PID" 2> /dev/null
+    kill -9 "$MPV_PID" 2> /dev/null
 else
     playerctl play-pause > /dev/null 2>&1
 fi
