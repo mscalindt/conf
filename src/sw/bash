@@ -94,6 +94,10 @@ tare() {
     tar --numeric-owner -xvpf "$1"
 }
 
+upc() {
+    printf "%s\n" "$@" | uconv -x "Any-Upper"
+}
+
 # unfinished
 dgrd() (
     if [ ! "$1" ] || [ ! "$2" ]; then
