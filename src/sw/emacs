@@ -244,7 +244,7 @@ OBJ=\
 (global-set-key (kbd "M-7") (lambda () (interactive) (tab-bar-select-tab 7)))
 (global-set-key (kbd "M-8") (lambda () (interactive) (tab-bar-select-tab 8)))
 (global-set-key (kbd "M-9") (lambda () (interactive) (tab-bar-select-tab 9)))
-(global-set-key (kbd "M-t")
+(global-set-key (kbd "M-z")
   (lambda () (interactive)
     (tab-new)
     (switch-to-buffer (generate-new-buffer "Untitled"))
